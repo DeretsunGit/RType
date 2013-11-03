@@ -6,6 +6,7 @@
 
 class Game
 {
+	bool				_end;
 	Player				_players[4];
 	short int			_nbPlayers;
 	// Script			_script;
@@ -23,4 +24,6 @@ public:
 	void	waveGeneration();
 	void	mapGeneration();
 	void	playerReset();
+
+	void movePlayers();
 };

@@ -4,8 +4,6 @@
 
 class Ennemy : public Element
 {
-	int			_hp;
-
 public:
 	Ennemy();
 	~Ennemy();

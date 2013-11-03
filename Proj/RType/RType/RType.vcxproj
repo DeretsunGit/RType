@@ -66,6 +66,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="rtype_common.h" />
     <ClInclude Include="Wave.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Client.h" />
