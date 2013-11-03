@@ -1,0 +1,478 @@
+Network Working Group                                       K. Gilmaire
+Request for Comments : 0                                   October 2013
+Category: Standards Track
+
+
+                      RTYPE NETWORK SPECIFICATION
+					  
+Abstract
+
+   This document describes the network's specification between a
+   RType client and a RType server.  It concerns on the one hand,
+   the Transmission Control Protocol (TCP) connection between both,
+   used to resources transfer, and on the other hand the User 
+   Datagram Protocol (UDP) used for in game communication.
+
+Status of This Memo
+
+   This document specifies an Internet standards track protocol for 
+   the Internet community, and requests discussion and suggestions 
+   for improvements.  Please refer to the current edition of the 
+   "Internet Official Protocol Standards" (STD 1) for the
+   standardization state and status of this protocol.  Distribution of
+   this memo is unlimited.
+
+Table of Contents	
+
+   1. Introduction ...................................................0
+      1.1. Conventions Used in This Document .........................0
+   2. TCP Session ....................................................0
+      2.1. Session Management ........................................0
+      2.2. Message Exchange ..........................................0
+         2.2.1. Client Repartition ...................................0
+         2.2.2. Resources Update .....................................0
+      2.3. Available Command List ....................................0
+         2.3.1. Server Side ..........................................0
+         2.3.2. Client Side ..........................................0
+      2.4. Data Unit Format ..........................................0
+      2.5. Transport Considerations ..................................0
+   3. UDP Communication ..............................................0
+      3.1. Management ................................................0
+      3.2. Message Exchange ..........................................0
+      3.3. Available Command List ....................................0
+         3.3.1. Server Side ..........................................0
+         3.3.2. Client Side ..........................................0
+      3.4. Data Unit Format ..........................................0
+   4. Internalization Considerations .................................0
+   5. IANA Considerations ............................................0
+   6. Security Considerations ........................................0
+   7. Acknowledgements ...............................................0
+   8. References .....................................................0
+
+	
+
+
+
+
+
+Gilmaire                      Informational                    [Page 1]
+
+RFC ....              RTYPE network specification          October 2013
+
+
+1.  Introduction
+
+   This document describes how the RType network communication is 
+   mapped onto multiple client to single server TCP and UDP
+   connection.  TCP is described in [RFC0793]. UDP is described in
+   [RFC0768].
+
+1.1.  Conventions Used in This Document
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+   
+2.  TCP Session
+
+   The TCP Session is used to transfer resources between the
+   client and the server.  Those resources concerns all out game
+   information to be handled by the client.
+	
+2.1.  Session Management
+
+   Initializing TCP session requires a connection between two peers,
+   one that initiates the connection request and one that responds to
+   the connection request.  The initiating peer is called the 
+   "client", and the responding peer is called the "server".  n RType
+   server MUST listen for TCP connection requests on a standard TCP
+   port assigned by IANA.
+
+   The client MUST issue an active OPEN call, specifying the TCP port
+   number on which the server is listening for connection attempts.
+   The RType server MUST return an answer to the client after the TCP
+   session has been established.
+
+   The TCP session is normally ended by the client issuing a <logout>
+   command or/and a disconnection.  A server receiving a <logout>
+   command MUST end the TCP session and close the TCP connection with
+   a CLOSE call.  A client MAY end a TCP session by issuing a CLOSE
+   call.
+
+   A server MAY limit the life span of an established TCP connection.
+   TCP sessions that are inactive for more than a server-defined
+   period MAY be ended by a server issuing a CLOSE call.  A server MAY
+   also close TCP connections that have been open and active for
+   longer than a server-defined period.
+
+2.2.  Message Exchange
+
+   With the exception of the RType server greeting, exchange and
+   resources transfer are initiated by the RType server.  The TCP
+   communication is divided between client repartition phase and
+   resources update, happening simultaneously. 
+
+
+
+
+Gilmaire                      Informational                    [Page 2]
+
+RFC ....              RTYPE network specification          October 2013
+
+
+   2.2.1.  Client Repartition
+
+      Once the communication is set, the server MUST send to the 
+      client the information on available games.  The client MUST  
+      answer correctly to be assigned by the server to a session.
+      A RType server MUST handle properly each client connection and
+      create game session if needed.  A RType server MUST be able to
+      assign a client to a session if this one has not reach the
+      maximum client number connected to a same session. 
+	
+   2.2.2.  Resources Update
+
+      The server MUST launch an update session with each client
+      at the connection.  In this session, the server ask for the
+      current version of the cache owned by the client.  If needed,
+      the server MUST transfer the updated files to the client.
+      The client MUST handle only one file transfer at a time. The
+      client MUST confirm to the server the full reception of the
+      file according to the file header.
+      The server MUST check that the client is up to date before
+      launching a game.
+
+   If the TCP connection is closed after a server receives and 
+   successfully processes a command but before the response can be
+   returned to the client, the server MAY attempt to undo the effects
+   of the command and to close his session properly.  The TCP session
+   MUST NOT be closed until client or server requests it explicitly.
+   A RType client MUST NOT communicate with a RType server over
+   multiple TCP connections.
+
+   A well-formed command consists of a valid call leading to a valid
+   answer.  During client repartition and resources update, a server
+   SHOULD impose a limit on the amount of time required for a client
+   to issue a well-formed command.  A server SHOULD end the TCP
+   session if a well-formed command is not received within the time
+   limit.
+
+2.3.  Available Command List
+
+   2.3.1.  Server Side
+
+      send room list
+      : opcode = 0x01
+      : [room_name_1]:[nb_player]:[nb_player_max];[room_name_2]:...
+
+      send player list
+      : opcode = 0x02
+      : [room_name]:[player_1]:[player_2]:...
+
+      ask if file is owned by client
+      : opcode = 0x03
+      : [filename_X1];[filename_X2];...
+
+
+
+Gilmaire                      Informational                    [Page 3]
+
+RFC ....              RTYPE network specification          October 2013
+
+
+      send file
+      : opcode = 0x04
+      : [filename]\n[filedata]
+
+      start loading
+      : opcode = 0x05
+      : No_Data
+
+      start game
+      : opcode = 0x06
+      : No_Data
+
+   2.3.2.  Client Side
+
+      choose a room
+      : opcode = 0x07
+      : [player_nickname]:[room_name]
+
+      update nickname info
+      : opcode = 0x08
+      : [new_player_nickname]
+
+      update user resolution info
+      : opcode = 0x09
+      : [new_resolution]
+
+      send owned file
+      : opcode = 0x10
+      : [filename_1]:[file_1_version];[filename_2]:...
+
+      confirm file reception
+      : opcode = 0x11
+      : [filename]:[file_version]
+
+      send confirmation to start the game
+      : opcode = 0x12
+      : No_Data
+
+      ask for map download
+      : opcode = 0x13
+      : No_Data
+
+      upload map
+      : opcode = 0x14
+      : [filename]\n[filedata]
+
+
+
+
+
+
+
+
+
+
+Gilmaire                      Informational                    [Page 4]
+
+RFC ....              RTYPE network specification          October 2013
+
+
+2.4.  Data Unit Format
+
+   The data unit used for the TCP communication contains three fields:
+   a byte opcode that describes the command to call, and the data unit.
+   A receiver MUST successfully read that many octets to retrieve the
+   complete data and send an answer with success opcode, or send an
+   answer with error opcode.
+
+   TCP Data Unit Format (one tick mark represents one bit position):
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |      opcode       |                  DATA                     |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                            DATA                               |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ 
+2.5.  Transport Considerations	
+
+   TCP includes features to provide reliability, flow control, ordered
+   delivery, and congestion control.  Section 1.5 of RFC 793 [RFC0793]
+   describes these features in detail; congestion control principles
+   are described further in RFC 2581 [RFC2581] and RFC 2914 [RFC2914].
+   TCP is a connection-oriented protocol, and Section 2 of this
+   document describes how TCP is used.
+
+3.  UDP Communication
+
+   The UDP is used for the in game communication between the client and
+   the server.  In this section, "UDP session" will be used to represent
+   this communication.
+
+3.1.  Management
+
+   UDP is free of connection and session.  The server and the client
+   send packets to each other using IP address and port number.  A
+   RType server and a RType client MUST listen for UDP packets on a
+   standard UPD port assigned by IANA.
+
+   A "ping pong" communication between the server and the client is
+   OPTIONAL.  The server MUST prevent all clients assigned to a
+   session when the session is launched.  All clients of a same session
+   SHOULD be ready to handle server communication when the session is
+   launched.
+
+3.2.  Message exchange
+
+   Client-server interaction using UDP is not considered as a 
+   command-response exchange during execution.  The server SHOULD NOT
+   handle client disconnection or reception problems.  Information
+   are repeatedly sent through UDP and can be lost without being
+   handled by the server or the client.
+
+
+Gilmaire                      Informational                    [Page 5]
+
+RFC ....              RTYPE network specification          October 2013
+
+
+   UDP message MUST be well-formed, which means correspond to a
+   precise command and prototype. A server MUST handle a client sending
+   a wrong message and considerer its as corrupted or non-functional.
+   
+2.3.   Available Command List
+
+   2.3.1.  Server Side
+
+      send map (one char per case, 288 cases representing 288 bytes)
+      : opcode = 0x15
+      : [data]
+
+      send elements (players, ennemis, bullets, 48 by block)
+      : opcode = 0x16
+      : [2 bytes X position][2 bytes Y position][1 byte sprite id]
+      : [1 byte element id]...
+
+      send players status (4 player by blocks = 44 bits by block)
+      : opcode = 0x17
+      : [1 byte alive][1 bit win][1 bit defeat][1 bit shield]...
+
+   2.3.2.  Client Side
+
+      send input to server
+      : opcode = 0x18
+      : [1 byte X orientation][1 byte Y orientation][1 bit fire]
+      : [1 bit shield][1 bit pause]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gilmaire                      Informational                    [Page 6]
+
+RFC ....              RTYPE network specification          October 2013
+
+
+2.4.   Data Unit Format
+
+   The data unit used for the UDP communication contains three fields:
+   a 4-bit opcode that describes the command to call and the data unit.
+   A receiver MUST successfully read that many octets to retrieve the
+   complete data. The blocks sent by the client has a data unit limited
+   of eleven bytes. The blocks sent by the server has a 288 bytes data
+   unit.
+
+   UDP Data Unit Format, client side
+   (one tick mark represents one bit position):
+
+      0                   1
+      0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+
+     |      opcode       |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     | DATA  (total of 11 bytes) |
+     +-+-+-+-+-+-+//-+-+-+-+-+-+-+
+
+   UDP Data Unit Format, server side
+   (one tick mark represents one bit position):
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |       opcode      |                  DATA                     |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                  DATA (total of 288 bytes)                    |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   
+4.  Internationalization Considerations   
+   
+   This document does not introduce or present any internationalization
+   or localization issues.   
+   
+5.  IANA Considerations   
+   
+   This document does not include any IANA issues.
+
+6.  Security Considerations
+
+   The RType network is only designed to work between RType client and
+   RType server. Any unexpected connection or unwanted communication
+   will be ignored (in case of UDP communication) or will lead to a
+   CLOSE all (in case of TCP communication).   
+
+
+
+
+
+
+
+
+
+Gilmaire                      Informational                    [Page 7]
+
+RFC ....              RTYPE network specification          October 2013
+
+
+7.  Acknowledgements
+
+  RFC .... suggests a way to develop a functional RType network.
+  Specific suggestions that have been incorporated into this document
+  were provided by Julien Edmond, Benjamin Pomarelle, Noe Gambini,
+  Paul-Antoine Riva and Maxime Miramond.
+
+8.  References
+
+   [RFC0768]  Postel, J., "User Datagram Protocol", RFC 768,
+              August 1980.
+
+   [RFC0793]  Postel, J., "Transmission Control Protocol", STD 7,
+              RFC 793, September 1981.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2581]  Allman, M., Paxson, V., and W. Stevens, "TCP Congestion
+              Control", RFC 2581, April 1999.
+
+   [RFC2914]  Floyd, S., "Congestion Control Principles", BCP 41,
+              RFC 2914, September 2000.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gilmaire                      Informational                    [Page 8]

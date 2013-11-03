@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Fichiers sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Thread">
+      <UniqueIdentifier>{38b042ff-16cc-4701-8dad-3564b3ddd134}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Thread">
+      <UniqueIdentifier>{5a9ebae5-3d75-48d8-954f-9e4ae6107db1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Mutex">
+      <UniqueIdentifier>{a9ceb0e3-7862-49ad-8220-7348176ceaf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Mutex">
+      <UniqueIdentifier>{58115228-a18b-410b-858b-830d1d26c06a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\CondVar">
+      <UniqueIdentifier>{63cba271-48dd-4967-914f-7178741d0a3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\CondVar">
+      <UniqueIdentifier>{4d6f19cc-a9bb-499c-8d4c-d57334196d8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\CircularBuffer">
+      <UniqueIdentifier>{4ec5cbe4-b95d-4e39-8f67-6cd1fce1f7fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\SocketPool">
+      <UniqueIdentifier>{652f1064-4d23-4289-8f68-5a6a84b33916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Socket">
+      <UniqueIdentifier>{681b150b-51d0-4a85-8d66-6baca48498d8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="WinThread.h">
+      <Filter>Fichiers d%27en-tête\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="IThread.h">
+      <Filter>Fichiers d%27en-tête\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Caller.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="IMutex.h">
+      <Filter>Fichiers d%27en-tête\Mutex</Filter>
+    </ClInclude>
+    <ClInclude Include="WinMutex.h">
+      <Filter>Fichiers d%27en-tête\Mutex</Filter>
+    </ClInclude>
+    <ClInclude Include="Mutex.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="ICondVar.h">
+      <Filter>Fichiers d%27en-tête\CondVar</Filter>
+    </ClInclude>
+    <ClInclude Include="CondVar.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="WinCondVar.h">
+      <Filter>Fichiers d%27en-tête\CondVar</Filter>
+    </ClInclude>
+    <ClInclude Include="CircularBuffer.h">
+      <Filter>Fichiers d%27en-tête\CircularBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="IOBuff.h">
+      <Filter>Fichiers d%27en-tête\CircularBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketPool.h">
+      <Filter>Fichiers d%27en-tête\SocketPool</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket.h">
+      <Filter>Fichiers d%27en-tête\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="RTypeServer.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Element.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Ennemy.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Wave.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="WinThread.cpp">
+      <Filter>Fichiers sources\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="WinMutex.cpp">
+      <Filter>Fichiers sources\Mutex</Filter>
+    </ClCompile>
+    <ClCompile Include="WinCondVar.cpp">
+      <Filter>Fichiers sources\CondVar</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketPool.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RTypeServer.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Element.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Ennemy.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Wave.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
