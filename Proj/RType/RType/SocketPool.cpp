@@ -64,15 +64,20 @@ SocketPool::Executer::Executer(fd_set& rfds, fd_set& wfds)
   : _rfds(rfds), _wfds(wfds)
 {}
 
+SocketPool::Executer::Executer(const Executer& e)
+  : _rfds(e._rfds), _wfds(e._wfds)
+{}
+
 SocketPool::Executer::~Executer()
 {}
 
-void  SocketPool::Executer::operator()(ASocket *s)
+bool  SocketPool::Executer::operator()(ASocket *s)
 {
   if (FD_ISSET(s->getId(), &this->_rfds))
     s->readFromSock();
   if (FD_ISSET(s->getId(), &this->_wfds))
     s->writeToSock();
+  return (!s->isLive());
 }
 
 void			SocketPool::watcher()
@@ -96,7 +101,7 @@ void			SocketPool::watcher()
       to.tv_usec = SPTOUSEC;
       std::for_each<std::list<ASocket*>::iterator, SocketPool::Setter&>(this->_list.begin(), this->_list.end(), s);
       select(static_cast<int>(max), &rfds, &wfds, NULL, &to);
-      std::for_each<std::list<ASocket*>::iterator, SocketPool::Executer&>(this->_list.begin(), this->_list.end(), e);
+      std::remove_if(this->_list.begin(), this->_list.end(), e);
       this->_m.unlock();
     }
   }

@@ -50,13 +50,13 @@ private:
   {
   public:
     Executer(fd_set& rfds, fd_set& wfds);
+    Executer(const Executer&);
     ~Executer();
 
-    void  operator()(ASocket* sock);
+    bool  operator()(ASocket* sock);
 
   private:
     Executer();
-    Executer(const Executer&);
     Executer& operator=(const Executer&);
 
     fd_set& _rfds;
