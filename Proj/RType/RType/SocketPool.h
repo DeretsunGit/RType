@@ -24,7 +24,7 @@ private:
   class Setter
   {
   public:
-    Setter(fd_set& rfds, fd_set& wfds, unsigned int& max);
+    Setter(fd_set& rfds, fd_set& wfds, ASocket::SocketId& max);
     ~Setter();
 
     void  operator()(ASocket* sock);
@@ -37,7 +37,7 @@ private:
 
     fd_set&	  _rfds;
     fd_set&	  _wfds;
-    unsigned int& _max;
+    ASocket::SocketId& _max;
   };
 
   class Executer

@@ -34,7 +34,7 @@ void  SocketPool::releaseSocket(ASocket* s)
   this->_m.unlock();
 }
 
-SocketPool::Setter::Setter(fd_set& rfds, fd_set& wfds, unsigned int& max)
+SocketPool::Setter::Setter(fd_set& rfds, fd_set& wfds, ASocket::SocketId& max)
   : _rfds(rfds), _wfds(wfds), _max(max)
 {}
 
@@ -92,7 +92,7 @@ void			SocketPool::watcher()
       to.tv_sec = SPTOSEC;
       to.tv_usec = SPTOUSEC;
       std::for_each<std::list<ASocket*>::iterator, SocketPool::Setter&>(this->_list.begin(), this->_list.end(), s);
-      select(max, &rfds, &wfds, NULL, &to);
+      select(static_cast<int>(max), &rfds, &wfds, NULL, &to);
       std::for_each<std::list<ASocket*>::iterator, SocketPool::Executer&>(this->_list.begin(), this->_list.end(), e);
       this->_m.unlock();
     }

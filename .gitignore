@@ -6,6 +6,12 @@
 *.user
 *.sln.docstates
 
+# Fockin vcproj
+*.vcxproj
+*.vcxproj.filters
+*.sln
+*.cmake
+
 # Build results
 
 [Dd]ebug/
