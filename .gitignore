@@ -12,6 +12,7 @@
 *.sln
 *.cmake
 
+
 # Build results
 
 [Dd]ebug/
