@@ -17,6 +17,7 @@
 #include "Mutex.h"
 #include "CondVar.h"
 #include "IOBuff.h"
+#include "Vector2.hpp"
 
 #ifndef	_WIN32
 
