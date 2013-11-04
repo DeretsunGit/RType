@@ -5,9 +5,6 @@
 // Login   <gilmai_k@epitech.net>
 //
 
-#pragma once
-
-
 int main()
 {
 	return (0);
