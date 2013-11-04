@@ -68,6 +68,20 @@ add_executable (Client
 	../client/ClientCommunication.cpp
 	../client/Packet.hpp
 	../client/main.cpp
+	../client/Background.h
+	../client/Background.cpp
+	../client/Drawable.h
+	../client/Drawable.cpp
+	../client/Gameloop.h
+	../client/Gameloop.cpp
+	../client/Menu.h
+	../client/Menu.cpp
+	../client/MenuManager.h
+	../client/MenuManager.cpp
+	../client/PlayerShip.h
+	../client/Playership.cpp
+	../client/SpriteManager.h
+	../client/SpriteManager.cpp
 	)
 
 find_package (Threads REQUIRED)

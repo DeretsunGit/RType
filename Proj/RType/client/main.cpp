@@ -1,11 +1,10 @@
-//
-// main.cpp for RType
-//
-// Made by kevin gilmaire
-// Login   <gilmai_k@epitech.net>
-//
+#include "GameLoop.h"
+#include "MenuManager.h"
 
 int main()
 {
-	return (0);
+	MenuManager		menu;
+	
+	menu.init();
+    return 0;
 }
