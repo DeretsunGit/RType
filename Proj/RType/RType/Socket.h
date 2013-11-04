@@ -21,7 +21,7 @@ public:
   virtual bool	    wantToWrite() const = 0;
   virtual void	    readFromSock() = 0;
   virtual void	    writeToSock() = 0;
-  virtual bool	    isLive() const = 0;
+  virtual bool		isLive() const = 0;
 
 private:
   ASocket(const ASocket&);

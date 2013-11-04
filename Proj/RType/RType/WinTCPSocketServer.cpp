@@ -14,6 +14,7 @@ WinTCPSocketServer::WinTCPSocketServer(unsigned short port, bool localHost)
 		throw new std::exception();
 	if (!this->configSocket(localHost))
 		throw new std::exception();
+	this->_live = true;
 	SocketPool::getInstance().watchSocket(this);
 }
 
@@ -97,16 +98,6 @@ WinTCPSocketClient*		WinTCPSocketServer::accept()
 	return (winTCPSocketClient);
 }
 
-void WinTCPSocketServer::send(char *buff, unsigned int size)
-{
-	this->_buff._output.writeSome(buff, size);
-}
-
-unsigned int WinTCPSocketServer::recv(char *buff, unsigned int size)
-{
-	return (this->_buff._input.readSome(buff, size));
-}
-
 WinTCPSocketServer::SocketId  WinTCPSocketServer::getId() const
 {
 	return (this->_sock);
@@ -129,6 +120,8 @@ void	    WinTCPSocketServer::readFromSock()
 	int					clientSize = sizeof(client);
 	WinTCPSocketClient	*winTCPSocketClient = NULL;
 
+	if (!this->_live)
+		return ;
 	this->_lock.lock();
 	winTCPSocketClient = new WinTCPSocketClient;
 	std::cout << "accept !!!" << std::endl;
@@ -137,6 +130,7 @@ void	    WinTCPSocketServer::readFromSock()
 		std::cerr << "WSAAccept() function failed with error: " << WSAGetLastError() << std::endl;
 		closesocket(this->_sock);
 		delete winTCPSocketClient;
+		this->_live = false;
 		this->_lock.unlock();
 		return;
 	}

@@ -2,13 +2,17 @@
 
 #ifdef _WIN32
 
-# include "ATCPSock.h"
+# include "Socket.h"
+# include "IOBuff.h"
 
-class WinTCPSocketClient : public ATCPSock
+#define DATA_BUFSIZE	1024
+
+class WinTCPSocketClient : public ASocket
 {
 private:
 	SocketId		_sock;
 	bool			_live;
+	IOBuff<>		_buff;
 public:
 	WinTCPSocketClient();
 	virtual ~WinTCPSocketClient();

@@ -4,13 +4,13 @@
 
 # include <queue>
 # include <mutex>
-# include "ATCPSock.h"
+# include "Socket.h"
 # include "WinTCPSocketClient.h"
 
 # define LOCALHOST	1
 # define LOCAL		2
 
-class WinTCPSocketServer : public ATCPSock
+class WinTCPSocketServer : public ASocket
 {
 private:
 	bool			_live;
@@ -22,8 +22,6 @@ private:
 public:
 	WinTCPSocketServer(unsigned short, bool = false);
 	virtual ~WinTCPSocketServer();
-	void send(char *buff, unsigned int size);
-	unsigned int recv(char *buff, unsigned int size);
 	SocketId	getId() const;
 	bool		wantToWrite() const;
 	void	    readFromSock();

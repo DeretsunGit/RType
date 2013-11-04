@@ -68,11 +68,11 @@ void	watch_count(long id)
 */
 int	main()
 {
-	// WinTCPSocketServer	winTCPSocketServer(1234, false);
-	// WinTCPSocketClient	*winTCPSocketClient;
-	// while (!(winTCPSocketClient = winTCPSocketServer.accept())){}
+	WinTCPSocketServer	winTCPSocketServer(1234, false);
+	 WinTCPSocketClient	*winTCPSocketClient;
+	 while (!(winTCPSocketClient = winTCPSocketServer.accept())){}
 
-	// std::cin.get();
-	// delete winTCPSocketClient;
+	 std::cin.get();
+	 delete winTCPSocketClient;
 	return (0);
 }

@@ -58,7 +58,6 @@ add_executable (Server
 	WinTCPSocketClient.h
 	WinTCPSocketServer.cpp
 	WinTCPSocketServer.h
-	ATCPSock.h
 	Wall.cpp
 	Wall.h
 	)
