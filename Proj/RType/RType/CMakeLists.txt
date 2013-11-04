@@ -72,8 +72,8 @@ add_executable (Client
 	../client/Background.cpp
 	../client/Drawable.h
 	../client/Drawable.cpp
-	../client/Gameloop.h
-	../client/Gameloop.cpp
+	../client/GameLoop.h
+	../client/GameLoop.cpp
 	../client/Menu.h
 	../client/Menu.cpp
 	../client/MenuManager.h
