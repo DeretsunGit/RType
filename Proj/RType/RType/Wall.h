@@ -4,6 +4,7 @@
 
 class Wall : public Element
 {
+
 public:
 	Wall();
 	~Wall();

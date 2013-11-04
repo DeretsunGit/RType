@@ -15,6 +15,7 @@ class Game
 
 	// maps
 	// Script			_script;
+	bool				_endGame;
 	std::list<Element*>	_map[18][17];
 	char				_globalMapTop[256];
 	char				_globalMapBot[256];
@@ -34,4 +35,5 @@ public:
 	void	waveGeneration();
 	void	mapGeneration();
 	void	playerReset();
+	void	colision();
 };

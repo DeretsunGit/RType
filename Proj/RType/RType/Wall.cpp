@@ -2,6 +2,7 @@
 
 Wall::Wall()
 {
+
 }
 
 Wall::~Wall()

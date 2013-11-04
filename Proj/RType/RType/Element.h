@@ -8,6 +8,8 @@ class Element
 	t_coord	_hitboxSize;
 	t_coord	_spritePos;
 	t_coord	_center;
+
+	int		_id;
 	char	_spriteId;
 	int		_hp;
 public:
@@ -20,7 +22,8 @@ public:
 	t_coord getHitboxSize() const;
 	char	getSpriteId() const;
 	int		getHP() const;
-	void	move();
+	int		getId() const;
 
-	bool isColision(std::list<Element*>);
+	void	move();
+	int isColision(std::list<Element*>);
 };

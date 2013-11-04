@@ -2,6 +2,7 @@
 
 Game::Game()
 {
+	this->_endGame = false;
 	// on récupère Script en argument
 	// on récupère de Script la map et les waves
 	// on instancie les waves, les ennemis, et plein de bullets
@@ -60,14 +61,18 @@ void	Game::genPool()
 
 void	Game::gameLoop()
 {
+	while (this->_endGame != true)
+	{
+		// check évènements des joueurs + déplacements
+		// déplacement de Waves en fonction du script
+		// déplacement bullets
+		// check colisions
 
-	// check évènements des joueurs + déplacements
-	// déplacement de Waves en fonction du script
-	// déplacement bullets
-	// check colisions
-	// (pop de Wave)
-	// send au client
-	// timer pour égaliser le temps de boucle
+		// (pop de Wave)
+		// send au client
+		// timer pour égaliser le temps de boucle
+	}
+	// on dit aux clients de lancer l'ecran de fin (win ou lose)
 }
 
 void	Game::playerReset()
