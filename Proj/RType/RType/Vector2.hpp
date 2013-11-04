@@ -110,3 +110,6 @@ private:
   T   _x;
   T   _y;
 };
+
+typedef Vector2<int>	Vector2i;
+typedef Vector2<float>	Vector2f;
