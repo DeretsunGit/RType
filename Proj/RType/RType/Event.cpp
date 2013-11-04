@@ -62,25 +62,25 @@ Event::~Event(void)
 
 void	Event::start()
 {
-	std::map<float, std::string>::iterator ite;
+  std::map<float, std::string>::iterator ite;
 
-	if (!_clock.initialise())
-		return ;
-	while (_clock.getTimeBySec())  /*< execution time*/
+  if (!_clock.initialise())
+    return ;
+  while (_clock.getTimeBySec())  /*< execution time*/
+    {
+      if (_events.size() != 0)
 	{
-		if (_events.size() != 0)
-		{
-			ite = _events.begin();
-		}
-		while (ite != _events.end())
-		{
-			if (ite->first <= _clock.getTimeBySec())
-			{
-				std::cout << ite->second << std::endl;
-				ite = _events.erase(ite);
-				break;
-			}
-			++ite;
-		}
+	  ite = _events.begin();
 	}
+      while (ite != _events.end())
+	{
+	  if (ite->first <= _clock.getTimeBySec())
+	    {
+	      std::cout << ite->second << std::endl;
+	      _events.erase(ite);
+	      break ;
+	    }
+	  ++ite;
+	}
+    }
 }

@@ -5,6 +5,7 @@
 // Login   <gilmai_k@epitech.net>
 //
 
+#include <cstring>
 #include "ServerCommunication.h"
 
 ServerCommunication::ServerCommunication()
@@ -68,7 +69,7 @@ void	ServerCommunication::TCPgetMap(const char* data) const
 void	ServerCommunication::UDPinterpretInputs(const char* data) const
 {
 	s_inputs inputs;
-	
+
 	memcpy(&inputs, data, sizeof(s_inputs));
 	// the inputs struct is filled from here
 }

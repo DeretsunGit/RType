@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8)
 project(RType)
 add_executable (Server
 	Bullet.cpp
@@ -25,7 +26,7 @@ add_executable (Server
 	CondVar.h
 	RTypeServer.cpp
 	Wave.h
-    RTypeServer.h
+	RTypeServer.h
 	WinCondVar.cpp
 	Element.cpp
 	Room.cpp
@@ -69,6 +70,12 @@ add_executable (Client
 	../client/main.cpp
 	)
 
+find_package (Threads REQUIRED)
+
 target_link_libraries (Server
-	Ws2_32.lib
+	${CMAKE_THREAD_LIBS_INIT}
 	)
+
+if(WIN32)
+	target_link(Server Ws2_32.lib)
+endif(WIN32)
