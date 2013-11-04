@@ -45,7 +45,7 @@ void  WinTCPSocketClient::setId(SocketId sock)
 	this->_live = true;
 }
 
-bool	WinTCPSocketClient::isLive()
+bool	WinTCPSocketClient::isLive() const
 {
 	return (this->_live);
 }

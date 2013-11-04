@@ -13,6 +13,7 @@
 class WinTCPSocketServer : public ATCPSock
 {
 private:
+	bool			_live;
 	SocketId		_sock;
 	unsigned short	_port;
 	char*			_ip;
@@ -30,6 +31,7 @@ public:
 	bool		createSocket();
 	bool		configSocket(bool);
 	WinTCPSocketClient*		accept();
+	bool		isLive() const;
 };
 
 #endif // _WIN32

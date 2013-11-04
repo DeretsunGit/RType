@@ -112,6 +112,11 @@ WinTCPSocketServer::SocketId  WinTCPSocketServer::getId() const
 	return (this->_sock);
 }
 
+bool	WinTCPSocketServer::isLive() const
+{
+	return (this->_live);
+}
+
 bool		WinTCPSocketServer::wantToWrite() const
 {
 	return (false);

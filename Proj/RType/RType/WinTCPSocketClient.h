@@ -19,7 +19,7 @@ public:
 	bool		wantToWrite() const;
 	void	    readFromSock();
 	void	    writeToSock();
-	bool		isLive();
+	bool		isLive() const;
 };
 
 #endif // _WIN32
