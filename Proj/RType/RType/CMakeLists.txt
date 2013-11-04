@@ -1,5 +1,5 @@
 project(RType)
-add_executable (Server.exe
+add_executable (Server
 	Bullet.cpp
 	IMutex.h
 	UnixCondVar.cpp
@@ -53,6 +53,6 @@ add_executable (Server.exe
 	ICondVar.h
 	Thread.h
 	)
-target_link_libraries (Server.exe
+target_link_libraries (Server
 	Ws2_32.lib
 	)

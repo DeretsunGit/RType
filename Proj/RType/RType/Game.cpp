@@ -29,8 +29,8 @@ void	Game::mapGeneration()
 		while (x < 17)
 		{
 			// parcourir pools jusqu'à trouver hp == 0
-			if (this->_globalMapTop[x] >= y || this->_globalMapBot[x] >= 18 - y)
-				this->_map[y][x].push_back(new Wall);
+//			if (this->_globalMapTop[x] >= y || this->_globalMapBot[x] >= 18 - y)
+//				this->_map[y][x].push_back(new Wall);
 			x++;
 		}
 		y++;
@@ -43,7 +43,7 @@ void	Game::genPool()
 
 	while (i <= 50)
 	{
-		this->_wallPool.push_back(new Wall);
+//		this->_wallPool.push_back(new Wall);
 		i++;
 	}
 }
