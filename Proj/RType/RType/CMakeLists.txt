@@ -77,5 +77,5 @@ target_link_libraries (Server
 	)
 
 if(WIN32)
-	target_link(Server Ws2_32.lib)
+	target_link_libraries(Server Ws2_32.lib)
 endif(WIN32)
