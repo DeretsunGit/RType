@@ -13,7 +13,6 @@
 
 ASocket::ASocket()
 {
-  SocketPool::getInstance().watchSocket(this);
 }
 
 ASocket::~ASocket()

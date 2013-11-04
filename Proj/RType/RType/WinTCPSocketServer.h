@@ -2,6 +2,8 @@
 
 #ifdef _WIN32
 
+# include <queue>
+# include <mutex>
 # include "ATCPSock.h"
 # include "WinTCPSocketClient.h"
 
@@ -14,7 +16,8 @@ private:
 	SocketId		_sock;
 	unsigned short	_port;
 	char*			_ip;
-	int				_accept;
+	std::queue<WinTCPSocketClient*> _winTCPSocketClient;
+	std::mutex						_lock;
 public:
 	WinTCPSocketServer(unsigned short, bool = false);
 	virtual ~WinTCPSocketServer();

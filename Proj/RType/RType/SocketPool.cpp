@@ -6,11 +6,14 @@
 #endif // _WIN32
 
 #include <algorithm>
+#include <iostream>
 #include "SocketPool.h"
 
 SocketPool::SocketPool()
   : _alive(true), _watcher(*this, &SocketPool::watcher)
-{}
+{
+	this->_watcher.start();
+}
 
 SocketPool::~SocketPool()
 {
@@ -83,8 +86,8 @@ void			SocketPool::watcher()
 
   while (this->_alive)
   {
-    if (!this->_list.size())
-      this->_c.wait(this->_m);
+    /*if (!this->_list.size())
+      this->_c.wait(this->_m);*/
     if (this->_list.size())
     {
       this->_m.lock();

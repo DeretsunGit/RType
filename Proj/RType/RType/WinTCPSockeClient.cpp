@@ -5,9 +5,11 @@
 # include <iostream>
 
 # include "WinTCPSocketClient.h"
+# include "SocketPool.h"
 
 WinTCPSocketClient::WinTCPSocketClient()
 {
+	SocketPool::getInstance().watchSocket(this);
 }
 
 WinTCPSocketClient::~WinTCPSocketClient()
@@ -44,17 +46,18 @@ void  WinTCPSocketClient::setId(SocketId sock)
 
 bool		WinTCPSocketClient::wantToWrite() const
 {
-	return (this->_buff._input.readableSize() > 0 ? true : false); //TODO: ?
+	std::cout << "size:" << this->_buff._output.readableSize() << std::endl;
+	return (this->_buff._output.readableSize() > 0 ? true : false); //TODO: ?
 }
 
 void	    WinTCPSocketClient::readFromSock()
 {
-
+	std::cout << "readClient" << std::endl;
 }
 
 void	    WinTCPSocketClient::writeToSock()
 {
-
+	std::cout << "writeClient" << std::endl;
 }
 
 #endif // _WIN32

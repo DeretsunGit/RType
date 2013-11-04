@@ -5,6 +5,7 @@
 # include <iostream>
 
 # include "WinTCPSocketServer.h"
+# include "SocketPool.h"
 
 WinTCPSocketServer::WinTCPSocketServer(unsigned short port, bool localHost)
 : _port(port)
@@ -13,6 +14,7 @@ WinTCPSocketServer::WinTCPSocketServer(unsigned short port, bool localHost)
 		throw new std::exception();
 	if (!this->configSocket(localHost))
 		throw new std::exception();
+	SocketPool::getInstance().watchSocket(this);
 }
 
 WinTCPSocketServer::~WinTCPSocketServer()
@@ -55,6 +57,7 @@ bool		WinTCPSocketServer::configSocket(bool localHost)
 	service.sin_family = AF_INET;
 	WSAHtons(this->_sock, this->_port, &service.sin_port);
 	localHost ? strcpy_s(hostName, "localhost") : gethostname(hostName, 255);
+	std::cout << "hostName:" << hostName << std::endl;
 	thisHost = gethostbyname(hostName);
 	this->_ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
 	std::cout << "ip: " << this->_ip << " port: " << this->_port << std::endl;
@@ -82,19 +85,15 @@ bool		WinTCPSocketServer::configSocket(bool localHost)
 
 WinTCPSocketClient*		WinTCPSocketServer::accept()
 {
-	SocketId			sockAccept;
-	struct sockaddr_in	client;
-	int					clientSize = sizeof(client);
-	WinTCPSocketClient	*winTCPSocketClient = new WinTCPSocketClient;
+	WinTCPSocketClient	*winTCPSocketClient = NULL;
 
-	if ((sockAccept = WSAAccept(this->_sock, (SOCKADDR*) &client, &clientSize, NULL, NULL)) == INVALID_SOCKET)
+	this->_lock.lock();
+	if (!this->_winTCPSocketClient.empty())
 	{
-		std::cerr << "WSAAccept() function failed with error: " << WSAGetLastError() << std::endl;
-		closesocket(this->_sock);
-		WSACleanup();
-		return (false);
+		winTCPSocketClient = this->_winTCPSocketClient.front();
+		this->_winTCPSocketClient.pop();
 	}
-	winTCPSocketClient->setId(sockAccept);
+	this->_lock.unlock();
 	return (winTCPSocketClient);
 }
 
@@ -115,45 +114,35 @@ WinTCPSocketServer::SocketId  WinTCPSocketServer::getId() const
 
 bool		WinTCPSocketServer::wantToWrite() const
 {
-	return (this->_buff._input.readableSize() > 0 ? true : false); //TODO: ?
+	return (false);
 }
 
 void	    WinTCPSocketServer::readFromSock()
 {
-	int		rc, err;
-	DWORD	recvBytes, flags;
-	WSABUF	dataBuf;
-	char	buffer[1024] = { 0 };
+	SocketId			sockAccept;
+	struct sockaddr_in	client;
+	int					clientSize = sizeof(client);
+	WinTCPSocketClient	*winTCPSocketClient = NULL;
 
-	dataBuf.len = 1024;
-	dataBuf.buf = buffer;
-	memset(dataBuf.buf, 0, 1024);
-	flags = 0;
-	rc = WSARecv(this->_sock, &dataBuf, 1, &recvBytes, &flags, NULL, NULL);
-	if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
+	this->_lock.lock();
+	winTCPSocketClient = new WinTCPSocketClient;
+	std::cout << "accept !!!" << std::endl;
+	if ((sockAccept = WSAAccept(this->_sock, (SOCKADDR*) &client, &clientSize, NULL, NULL)) == INVALID_SOCKET)
 	{
-		std::cerr << "WSARecv() failed with error: " << err << std::endl;
+		std::cerr << "WSAAccept() function failed with error: " << WSAGetLastError() << std::endl;
+		closesocket(this->_sock);
+		delete winTCPSocketClient;
+		this->_lock.unlock();
 		return;
 	}
-	if (recvBytes == 0)
-	{
-		this->_accept++;
-		std::cout << "this->_accept: " << this->_accept << std::endl;
-	}
-	else
-		std::cout << dataBuf.buf << std::endl;
+	winTCPSocketClient->setId(sockAccept);
+	this->_winTCPSocketClient.push(winTCPSocketClient);
+	this->_lock.unlock();
 }
 
 void	    WinTCPSocketServer::writeToSock()
 {
-	int		rc, err;
-	DWORD	sendBytes;
 
-	//rc = WSASend(sockAccept, &DataBuf, 1, &sendBytes, 0, NULL, NULL);
-	//if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
-	//{
-	//	std::cerr << "WSASend() failed with error: " << err << std::endl;
-	//}
 }
 
 #endif // _WIN32

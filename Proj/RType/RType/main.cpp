@@ -25,7 +25,7 @@
 # define Sleep(x)	usleep((x) * 1000)
 
 #endif	// ! _WIN32
-
+/*
 Mutex	g_m;
 CondVar	g_c;
 int	count = 0;
@@ -65,10 +65,14 @@ void	watch_count(long id)
     }
   g_m.unlock();
 }
-
+*/
 int	main()
 {
-	WinTCPSocketServer	winTCPSocketServer(4242, true);
-	system("PAUSE");
+	WinTCPSocketServer	winTCPSocketServer(1234, false);
+	WinTCPSocketClient	*winTCPSocketClient;
+	while (!(winTCPSocketClient = winTCPSocketServer.accept())){}
+
+	std::cin.get();
+	delete winTCPSocketClient;
 	return (0);
 }

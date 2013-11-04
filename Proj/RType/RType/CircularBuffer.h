@@ -43,7 +43,7 @@ public:
 
   unsigned long	  readableSize() const
   {
-    return (this->_end > this->_start ? this->_end - this->_start : size - this->_start + this->_end);
+    return (this->_end >= this->_start ? this->_end - this->_start : size - this->_start + this->_end);
   }
 
   unsigned long	  readSome(Type* buff, unsigned long s)
