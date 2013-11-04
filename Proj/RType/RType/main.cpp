@@ -18,6 +18,7 @@
 #include "CondVar.h"
 #include "IOBuff.h"
 #include "Vector2.hpp"
+#include "WinTCPSocketServer.h"
 
 #ifndef	_WIN32
 
@@ -67,25 +68,7 @@ void	watch_count(long id)
 
 int	main()
 {
-/*  Thread	watcher(&watch_count, 0);
-  Thread	inc1(&inc_count, 1);
-  Thread	inc2(&inc_count, 2);
-
-  watcher.start();
-  inc1.start();
-  inc2.start();
-  watcher.join();
-  inc1.join();
-  inc2.join();*/
-
-  IOBuff<>   b;
-  char			    buff[7];
-
-  memset(buff, 0, sizeof(buff));
-  b._input.writeSome("coucou", 7);
-  std::cout << b._input.readableSize() << '/' << b._input.getSize() << std::endl;
-  b._input.readSome(buff, sizeof(buff));
-  std::cout << buff << std::endl;
-  std::cin.get();
-  return (0);
+	WinTCPSocketServer	winTCPSocketServer(4242, true);
+	system("PAUSE");
+	return (0);
 }
