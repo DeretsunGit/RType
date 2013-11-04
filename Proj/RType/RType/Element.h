@@ -34,5 +34,5 @@ public:
 	char	getFaction() const;
 
 	void	move();
-	int isColision(std::list<Element*>);
+	int isCollision(std::list<Element*>);
 };
