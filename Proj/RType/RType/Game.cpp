@@ -3,10 +3,12 @@
 Game::Game()
 {
 	this->_endGame = false;
+	// on push back les player dans _collisionnableElem
+
 	// on récupère Script en argument
 	// on récupère de Script la map et les waves
 	// on instancie les waves, les ennemis, et plein de bullets
-	// 
+	//
 }
 
 void	Game::mapGeneration()
@@ -38,6 +40,7 @@ void	Game::mapGeneration()
 					{
 						this->_map[y][x].push_back(*it);
 						(*it)->setHP(1);
+					//	this->_collisionableElem.push_back(*it);
 					}
 				}
 			}
@@ -77,7 +80,18 @@ void	Game::gameLoop()
 
 void	Game::collision()
 {
-	// on check les colisions des joueurs, des murs et des objets enemis destructibles avec des projectiles
+	std::list<Element*>::iterator	it;
+	short int x = 0;
+	short int y = 0;
+
+//	for (it = (this->_collisionableElem).begin(); it != (this->_collisionableElem).end(); it++)
+//	{
+//		if ((*it)->getHP() != 0)
+//		{
+//			(*it)->isCollision();
+//		}
+//	}
+// on check les colisions des joueurs, des murs et des objets enemis destructibles avec des projectiles
 
 }
 

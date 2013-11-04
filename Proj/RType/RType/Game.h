@@ -22,7 +22,6 @@ class Game
 
 	// pools
 	std::list<Wall*>	_wallPool;
-	std::list<Ennemy*>	_ennemyPool;
 	std::list<Bullet*>	_bulletPool;
 
 public:

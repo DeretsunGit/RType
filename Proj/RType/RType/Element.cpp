@@ -38,7 +38,7 @@ int Element::isCollision(std::list<Element*> cell)
 		}
 		it ++;
 	}
-	return (false);
+	return (NULL);
 }
 
 void	Element::setHP(int hp)

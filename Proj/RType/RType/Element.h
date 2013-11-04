@@ -15,6 +15,7 @@ class Element
 	int		_hp;
 	int		_id;
 	char	_spriteId;
+
 public:
 	Element();
 	~Element();
