@@ -2,6 +2,7 @@
 
 Player::Player()
 {
+	this->setFaction(1);
 }
 
 bool	Player::getReady() const
