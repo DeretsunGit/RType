@@ -53,6 +53,14 @@ add_executable (Server
 	ICondVar.h
 	Thread.h
 	)
+	
+add_executable (Client
+	../client/ClientCommunication.h
+	../client/ClientCommunication.cpp
+	../client/Packet.hpp
+	../client/main.cpp
+	)
+	
 target_link_libraries (Server
 	Ws2_32.lib
 	)
