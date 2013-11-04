@@ -46,13 +46,27 @@ void  WinTCPSocketClient::setId(SocketId sock)
 
 bool		WinTCPSocketClient::wantToWrite() const
 {
-	std::cout << "size:" << this->_buff._output.readableSize() << std::endl;
-	return (this->_buff._output.readableSize() > 0 ? true : false); //TODO: ?
+	//std::cout << "size:" << this->_buff._output.readableSize() << std::endl;
+	return (this->_buff._output.readableSize() > 0 ? true : false);
 }
 
 void	    WinTCPSocketClient::readFromSock()
 {
-	std::cout << "readClient" << std::endl;
+	int		rc, err;
+	DWORD	recvBytes, flags;
+	WSABUF	dataBuf;
+	char	buffer[1024] = { 0 };
+
+	dataBuf.len = 1024;
+	dataBuf.buf = buffer;
+	flags = 0;
+	rc = WSARecv(this->_sock, &dataBuf, 1, &recvBytes, &flags, NULL, NULL);
+	if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
+	{
+		std::cerr << "WSARecv() failed with error: " << err << std::endl;
+		return;
+	}
+	this->_buff._input.writeSome(dataBuf.buf, dataBuf.len);
 }
 
 void	    WinTCPSocketClient::writeToSock()
