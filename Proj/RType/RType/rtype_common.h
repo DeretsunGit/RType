@@ -1,5 +1,8 @@
 #pragma once
 
+#include <list>
+#include <iterator>
+
 #define K_TOP	0
 #define K_BOT	1
 #define K_RIGHT	2

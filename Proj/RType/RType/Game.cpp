@@ -64,6 +64,7 @@ void	Game::gameLoop()
 	// check évènements des joueurs + déplacements
 	// déplacement de Waves en fonction du script
 	// déplacement bullets
+	// check colisions
 	// (pop de Wave)
 	// send au client
 	// timer pour égaliser le temps de boucle
