@@ -162,3 +162,8 @@ $RECYCLE.BIN/
 
 # PowerAmc files
 *.boo
+
+# Unused files
+Makefile
+CMakeFiles
+CMakeCache.txt

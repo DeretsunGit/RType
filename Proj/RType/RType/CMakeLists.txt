@@ -28,39 +28,40 @@ add_executable (Server
     RTypeServer.h
 	WinCondVar.cpp
 	Element.cpp
-	Room.cpp         
+	Room.cpp
 	WinCondVar.h
 	Element.h
-	Room.h  
+	Room.h
 	WinMutex.cpp
-	Ennemy.cpp   
+	Ennemy.cpp
 	ServerCommunication.cpp
 	WinMutex.h
-	Ennemy.h 
-	ServerCommunication.h  
+	Ennemy.h
+	ServerCommunication.h
 	WinThread.cpp
-	Event.cpp 
-	Singleton.h 
+	Event.cpp
+	Singleton.h
 	WinThread.h
-	Event.h 
-	Socket.h   
+	Event.h
+	Socket.h
 	main.cpp
-	Game.cpp   
+	Game.cpp
 	SocketPool.cpp
 	rtype_common.h
-	Game.h   
+	Game.h
 	SocketPool.h
 	ICondVar.h
 	Thread.h
+	ASocket.cpp
 	)
-	
+
 add_executable (Client
 	../client/ClientCommunication.h
 	../client/ClientCommunication.cpp
 	../client/Packet.hpp
 	../client/main.cpp
 	)
-	
+
 target_link_libraries (Server
 	Ws2_32.lib
 	)
