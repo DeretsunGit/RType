@@ -14,6 +14,7 @@ void	Game::mapGeneration()
 	short int i = 0;
 	short int x = 0;
 	short int y = 0;
+	std::list<Wall*>::iterator	it;
 
 	while (i < 256)
 	{
@@ -28,9 +29,17 @@ void	Game::mapGeneration()
 		x = 0;
 		while (x < 17)
 		{
-			// parcourir pools jusqu'à trouver hp == 0
-//			if (this->_globalMapTop[x] >= y || this->_globalMapBot[x] >= 18 - y)
-//				this->_map[y][x].push_back(new Wall);
+			if (this->_globalMapTop[x] >= y || this->_globalMapBot[x] >= 18 - y)
+			{
+				for (it = (this->_wallPool).begin(); it != (this->_wallPool).end(); it++)
+				{
+					if ((*it)->getHP() == 0)
+					{
+						this->_map[y][x].push_back(*it);
+						(*it)->setHP(1);
+					}
+				}
+			}
 			x++;
 		}
 		y++;
@@ -43,20 +52,21 @@ void	Game::genPool()
 
 	while (i <= 50)
 	{
-//		this->_wallPool.push_back(new Wall);
+		this->_wallPool.push_back(new Wall);
+		this->_bulletPool.push_back(new Bullet);
 		i++;
 	}
 }
 
 void	Game::gameLoop()
 {
+
 	// check évènements des joueurs + déplacements
 	// déplacement de Waves en fonction du script
 	// déplacement bullets
 	// (pop de Wave)
 	// send au client
 	// timer pour égaliser le temps de boucle
-
 }
 
 void	Game::playerReset()
