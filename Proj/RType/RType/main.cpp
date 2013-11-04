@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Thu Oct 24 14:57:20 2013 julien edmond
-// Last update Mon Nov  4 22:09:37 2013 julien edmond
+// Last update Mon Nov  4 23:37:57 2013 julien edmond
 //
 
 #include <cstdlib>
@@ -68,11 +68,11 @@ void	watch_count(long id)
 */
 int	main()
 {
-	WinTCPSocketServer	winTCPSocketServer(1234, false);
-	 WinTCPSocketClient	*winTCPSocketClient;
-	 while (!(winTCPSocketClient = winTCPSocketServer.accept())){}
+	// WinTCPSocketServer	winTCPSocketServer(1234, false);
+	//  WinTCPSocketClient	*winTCPSocketClient;
+	//  while (!(winTCPSocketClient = winTCPSocketServer.accept())){}
 
-	 std::cin.get();
-	 delete winTCPSocketClient;
+	//  std::cin.get();
+	//  delete winTCPSocketClient;
 	return (0);
 }

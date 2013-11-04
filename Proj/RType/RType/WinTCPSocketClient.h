@@ -2,12 +2,12 @@
 
 #ifdef _WIN32
 
-# include "Socket.h"
+# include "ATCPSocketClient.h"
 # include "IOBuff.h"
 
 #define DATA_BUFSIZE	1024
 
-class WinTCPSocketClient : public ASocket
+class WinTCPSocketClient : public ATCPSocketClient
 {
 private:
 	SocketId		_sock;
