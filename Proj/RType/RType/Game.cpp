@@ -67,7 +67,7 @@ void	Game::gameLoop()
 		// déplacement de Waves en fonction du script
 		// déplacement bullets
 		// check colisions
-		this->colision();
+		this->collision();
 		// (pop de Wave)
 		// send au client
 		// timer pour égaliser le temps de boucle
@@ -75,7 +75,7 @@ void	Game::gameLoop()
 	// on dit aux clients de lancer l'ecran de fin (win ou lose)
 }
 
-void	Game::colision()
+void	Game::collision()
 {
 	// on check les colisions des joueurs, des murs et des objets enemis destructibles avec des projectiles
 
