@@ -2,16 +2,10 @@
 
 Game::Game()
 {
-	this->_end = false;
-	this->_nbPlayers = 4;
 	// on récupère Script en argument
 	// on récupère de Script la map et les waves
-	this->mapGeneration();
-	this->playerReset();
 	// on instancie les waves, les ennemis, et plein de bullets
-	// on lance la gameloop
-	this->gameLoop();
-
+	// 
 }
 
 void	Game::mapGeneration()
@@ -24,7 +18,7 @@ void	Game::mapGeneration()
 	while (i < 256)
 	{
 		this->_globalMapTop[i] = '2';
-		this->_globalMapBot[i] = '2';
+		this->_globalMapBot[i] =	 '2';
 		i++;
 	}
 	// on génère maintenant visibleMap
@@ -34,46 +28,36 @@ void	Game::mapGeneration()
 		x = 0;
 		while (x < 17)
 		{
-			if (this->_globalMapTop[x] >= y)
-				this->_visibleMap[y][x] = '1';
-			else if (this->_globalMapBot[x] >= 18 - y)
-				this->_visibleMap[y][x] = '1';
-			else
-				this->_visibleMap[y][x] = '0';
+			// parcourir pools jusqu'à trouver hp == 0
+			if (this->_globalMapTop[x] >= y || this->_globalMapBot[x] >= 18 - y)
+				this->_map[y][x].push_back(new Wall);
 			x++;
 		}
 		y++;
 	}
 }
 
-void	Game::gameLoop()
-{
-	while (this->_end != true)
-	{
-	// check évènements des joueurs + déplacements
-		this->movePlayers();
-	// déplacement de Waves en fonction du script
-	// déplacement bullets
-	// (pop de Wave)
-	// si il le faut, geénération de la suite de la visible map
-	// send au client
-	// timer pour égaliser le temps de boucle
-	}
-	// ecran de fin, + menus
-}
-
-void Game::movePlayers()
+void	Game::genPool()
 {
 	int i = 0;
 
-	while (i < this->_nbPlayers)
+	while (i <= 50)
 	{
-		this->_players[i].move();
-		this->_players[i].isColision(this->_visibleMap);
+		this->_wallPool.push_back(new Wall);
 		i++;
 	}
 }
 
+void	Game::gameLoop()
+{
+	// check évènements des joueurs + déplacements
+	// déplacement de Waves en fonction du script
+	// déplacement bullets
+	// (pop de Wave)
+	// send au client
+	// timer pour égaliser le temps de boucle
+
+}
 
 void	Game::playerReset()
 {
@@ -82,7 +66,6 @@ void	Game::playerReset()
 	while (i < this->_nbPlayers)
 	{
 		this->_players[i].setReady(1);
-		this->_players[i].setScore(0);
 		i++;
 	}
 }

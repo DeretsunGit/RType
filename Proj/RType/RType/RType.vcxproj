@@ -101,6 +101,7 @@
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="ServerCommunication.cpp" />
+    <ClCompile Include="Wall.cpp" />
     <ClCompile Include="Wave.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Client.cpp" />
