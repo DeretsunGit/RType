@@ -79,7 +79,7 @@ add_executable (Client
 	../client/MenuManager.h
 	../client/MenuManager.cpp
 	../client/PlayerShip.h
-	../client/Playership.cpp
+	../client/PlayerShip.cpp
 	../client/SpriteManager.h
 	../client/SpriteManager.cpp
 	)
