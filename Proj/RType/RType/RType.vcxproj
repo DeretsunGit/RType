@@ -66,10 +66,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Visual Studio 2012\Projects\ConsoleApplication1\ConsoleApplication1\Clock.h" />
-    <ClInclude Include="..\..\..\..\..\Visual Studio 2012\Projects\ConsoleApplication1\ConsoleApplication1\Event.h" />
-    <ClInclude Include="..\..\..\..\rtype_obsolete\Proj\RType\RType\ServerCommunication.h" />
+    <ClInclude Include="Clock.h" />
+    <ClInclude Include="Event.h" />
     <ClInclude Include="rtype_common.h" />
+    <ClInclude Include="ServerCommunication.h" />
     <ClInclude Include="Wave.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Client.h" />
@@ -96,9 +96,9 @@
     <ClInclude Include="WinThread.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Visual Studio 2012\Projects\ConsoleApplication1\ConsoleApplication1\Clock.cpp" />
-    <ClCompile Include="..\..\..\..\..\Visual Studio 2012\Projects\ConsoleApplication1\ConsoleApplication1\Event.cpp" />
-    <ClCompile Include="..\..\..\..\rtype_obsolete\Proj\RType\RType\ServerCommunication.cpp" />
+    <ClCompile Include="Clock.cpp" />
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="ServerCommunication.cpp" />
     <ClCompile Include="Wave.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Client.cpp" />

@@ -117,13 +117,13 @@
     <ClInclude Include="rtype_common.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\rtype_obsolete\Proj\RType\RType\ServerCommunication.h">
+    <ClInclude Include="Clock.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Visual Studio 2012\Projects\ConsoleApplication1\ConsoleApplication1\Clock.h">
+    <ClInclude Include="Event.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Visual Studio 2012\Projects\ConsoleApplication1\ConsoleApplication1\Event.h">
+    <ClInclude Include="ServerCommunication.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -170,13 +170,13 @@
     <ClCompile Include="Wave.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Visual Studio 2012\Projects\ConsoleApplication1\ConsoleApplication1\Clock.cpp">
+    <ClCompile Include="Clock.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Visual Studio 2012\Projects\ConsoleApplication1\ConsoleApplication1\Event.cpp">
+    <ClCompile Include="Event.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\rtype_obsolete\Proj\RType\RType\ServerCommunication.cpp">
+    <ClCompile Include="ServerCommunication.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
