@@ -21,17 +21,17 @@ SocketPool::~SocketPool()
 
 void  SocketPool::watchSocket(ASocket* s)
 {
-  ScopedLock  lock(this->_m);
-
+  this->_m.lock();
   this->_list.push_back(s);
   this->_c.signal();
+  this->_m.unlock();
 }
 
 void  SocketPool::releaseSocket(ASocket* s)
 {
-  ScopedLock  lock(this->_m);
-
+  this->_m.lock();
   this->_list.remove(s);
+  this->_m.unlock();
 }
 
 SocketPool::Setter::Setter(fd_set& rfds, fd_set& wfds, unsigned int& max)
@@ -87,14 +87,14 @@ void			SocketPool::watcher()
       this->_c.wait(this->_m);
     if (this->_list.size())
     {
-      ScopedLock  lock(this->_m);
-
+      this->_m.lock();
       s.reset();
-      to.tv_sec = 0;
-      to.tv_usec = 500000;
+      to.tv_sec = SPTOSEC;
+      to.tv_usec = SPTOUSEC;
       std::for_each<std::list<ASocket*>::iterator, SocketPool::Setter&>(this->_list.begin(), this->_list.end(), s);
       select(max, &rfds, &wfds, NULL, &to);
       std::for_each<std::list<ASocket*>::iterator, SocketPool::Executer&>(this->_list.begin(), this->_list.end(), e);
+      this->_m.unlock();
     }
   }
 }
