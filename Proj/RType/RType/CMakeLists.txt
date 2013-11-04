@@ -53,6 +53,11 @@ add_executable (Server
 	ICondVar.h
 	Thread.h
 	ASocket.cpp
+	WinTCPSockeClient.cpp
+	WinTCPSocketClient.h
+	WinTCPSocketServer.cpp
+	WinTCPSocketServer.h
+	ATCPSock.h
 	)
 
 add_executable (Client

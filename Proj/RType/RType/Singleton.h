@@ -11,6 +11,7 @@ public:
     if (Singleton<Type>::_instanciated)
       throw std::runtime_error("A singleton can only be instanciate once");
     Singleton<Type>::_instanciated = true;
+	Singleton<Type>::_instance = static_cast<Type*>(this);
   }
 
   ~Singleton()
@@ -18,7 +19,7 @@ public:
 
   static Type&	getInstance()
   {
-    return (dynamic_cast<Type&>(*this));
+	  return (*Singleton<Type>::_instance);
   }
 
 private:
@@ -26,7 +27,11 @@ private:
   Singleton&  operator=(const Singleton&);
 
   static bool _instanciated;
+  static Type* _instance;
 };
 
 template<typename Type>
 bool  Singleton<Type>::_instanciated(false);
+
+template<typename Type>
+Type*	Singleton<Type>::_instance(NULL);

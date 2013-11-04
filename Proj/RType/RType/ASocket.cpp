@@ -8,7 +8,7 @@
 // Last update Mon Nov  4 19:17:28 2013 julien edmond
 //
 
-#include	"SocketPool.hpp"
+#include	"SocketPool.h"
 #include	"Socket.h"
 
 ASocket::ASocket()
