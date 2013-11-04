@@ -68,6 +68,7 @@
   <ItemGroup>
     <ClInclude Include="Clock.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="Packet.hpp" />
     <ClInclude Include="rtype_common.h" />
     <ClInclude Include="ServerCommunication.h" />
     <ClInclude Include="Wave.h" />

@@ -15,9 +15,7 @@ ClientCommunication::ClientCommunication()
 	_commandMap[0x04] = &ClientCommunication::TCPgetFile;
 	_commandMap[0x05] = &ClientCommunication::TCPgetStartLoading;
 	_commandMap[0x06] = &ClientCommunication::TCPgetStartGame;
-	_commandMap[0x0f] = &ClientCommunication::UDPgetGameMap;
 	_commandMap[0x10] = &ClientCommunication::UDPgetGameElements;
-	_commandMap[0x11] = &ClientCommunication::UDPgetPlayerStatus;
 }
 
 ClientCommunication::~ClientCommunication()
@@ -55,23 +53,16 @@ void	ClientCommunication::TCPgetStartGame(const char* data) const
 	(void)data;
 }
 
-void	ClientCommunication::UDPgetGameMap(const char* data) const
-{
-	std::string map(data);
-
-	if (map.size() != 288)
-		return /*error*/;
-}
-
 void	ClientCommunication::UDPgetGameElements(const char* data) const
 {
 	int i = 0;
 	std::list<s_element> elements;
+	std::list<s_player> players;
 
 	if (data == NULL)
-		return /*error*/;
+		return ;
 
-	while (i < 48 && strlen(&data[i*sizeof(s_element)]) >= sizeof(s_element))
+	while (i < 100 && strlen(&data[i*sizeof(s_element)]) >= sizeof(s_element))
 	{
 		s_element newElement;
 		memcpy(&newElement, &data[i*sizeof(s_element)], sizeof(s_element)); 
@@ -79,18 +70,7 @@ void	ClientCommunication::UDPgetGameElements(const char* data) const
 		++i;
 	}
 
-	return ;
-}
-
-void	ClientCommunication::UDPgetPlayerStatus(const char* data) const
-{
-	int i = 0;
-	std::list<s_player> players;
-
-	if (data == NULL)
-		return /*error*/;
-
-	while (i < 4 && strlen(&data[i*sizeof(s_player)]), sizeof(s_player))
+	while (i < 104 && strlen(&data[i*sizeof(s_player)]) >= sizeof(s_player))
 	{
 		s_player newPlayer;
 		memcpy(&newPlayer, &data[i*sizeof(s_player)], sizeof(s_player));
@@ -109,53 +89,95 @@ void	ClientCommunication::interpretCommand(const char* command) const
 		(this->*(ite->second))(&command[1]);
 }
 
-void	ClientCommunication::TCProomChoice(const std::string& nickname, int roomId)
+Packet*	ClientCommunication::TCProomChoice(const std::string& nickname, int roomId)
 {
 	(void)nickname; (void)roomId;
+	return (new Packet());
 }
 
-void	ClientCommunication::TCPupdateNickname(const std::string& nickname)
+Packet*	ClientCommunication::TCPupdateNickname(const std::string& nickname)
 {
 	(void)nickname;
+	return (new Packet());
 }
 
-void	ClientCommunication::TCPupdateResolution(const std::string& resolution)
+Packet*	ClientCommunication::TCPupdateResolution(const std::string& resolution)
 {
 	(void)resolution;
+	return (new Packet());
 }
 
-void	ClientCommunication::TCPsendOwnedFiles(const std::list<std::string>& filenames, const std::list<std::string>& versions)
+Packet*	ClientCommunication::TCPsendOwnedFiles(const std::list<std::string>& filenames, const std::list<std::string>& versions)
 {
 	(void)filenames; (void)versions;
+	return (new Packet());
 }
 
-void	ClientCommunication::TCPconfirmFileReception(const std::string& filename, const std::string& version)
+Packet*	ClientCommunication::TCPconfirmFileReception(const std::string& filename, const std::string& version)
 {
 	(void)filename; (void)version;
+	return (new Packet());
 }
 
-void	ClientCommunication::TCPsendReady()
+Packet*	ClientCommunication::TCPsendReady()
 {
-	;
+	s_blocks block;
+	Packet* packet = new Packet();
+	char* buff = new char[3];
+
+	block.opcode = 0x0c;
+	block.datasize = 0;
+	block.data = NULL;
+
+	memcpy(buff, &block, 3);
+	if (!packet->set(buff, 3))
+	{
+		delete buff;
+		delete packet;
+		return (NULL);
+	}
+	return (packet);
 }
 
-void	ClientCommunication::TCPsendMapRequest()
+Packet*	ClientCommunication::TCPsendMapRequest()
 {
-	;
+	s_blocks block;
+	Packet* packet = new Packet();
+	char* buff = new char[3];
+
+	block.opcode = 0x0d;
+	block.datasize = 0;
+	block.data = NULL;
+
+	memcpy(buff, &block, 3);
+	if (!packet->set(buff, 3))
+	{
+		delete buff;
+		delete packet;
+		return (NULL);
+	}
+	return (packet);
 }
 
-void	ClientCommunication::TCPuploadMap(const std::string& filename, const char* filedata)
+Packet*	ClientCommunication::TCPuploadMap(const std::string& filename, const char* filedata)
 {
 	(void)filename; (void)filedata;
+	return (new Packet());
 }
 
-void	ClientCommunication::UDPsendInputs(s_inputs& inputs) const
+Packet*	ClientCommunication::UDPsendInputs(s_inputs& inputs) const
 {
-	char* buffer = (char*)malloc(sizeof(s_inputs) + 1);
-	if (buffer == NULL)
-		return ;
-	buffer[0] = 0x12;
-	memcpy(&buffer[1], &inputs, sizeof(s_inputs));
+	Packet* packet = new Packet();
+	char* buff = new char[sizeof(s_inputs) + 1];
+	
+	buff[0] = 0x12;
+	memcpy(&buff[1], &inputs, sizeof(s_inputs));
 
-	//the buffer is filled and can be send
+	if (!packet->set(buff, sizeof(s_inputs) + 1))
+	{
+		delete buff;
+		delete packet;
+		return (NULL);
+	}
+	return (packet);
 }

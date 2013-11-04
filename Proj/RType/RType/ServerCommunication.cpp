@@ -81,107 +81,118 @@ void	ServerCommunication::interpretCommand(const char* command) const
 		(this->*(ite->second))(&command[1]);
 }
 
-void	ServerCommunication::TCPsendRoomList(const std::list<int>& roomIds, const std::list<int>& playersInRoom, const std::list<int>& maxPlayersNb)
+Packet*	ServerCommunication::TCPsendRoomList(const std::list<int>& roomIds, const std::list<int>& playersInRoom, const std::list<int>& maxPlayersNb)
 {
 	(void)roomIds; (void)playersInRoom; (void)maxPlayersNb;
+	return (new Packet());
 }
 
-void	ServerCommunication::TCPsendPlayerList(int roomId, const std::list<std::string>& players)
+Packet*	ServerCommunication::TCPsendPlayerList(int roomId, const std::list<std::string>& players)
 {
 	(void)roomId; (void)players;
+	return (new Packet());
 }
 
-void	ServerCommunication::TCPaskClientForFiles(const std::list<std::string>& filenames)
+Packet*	ServerCommunication::TCPaskClientForFiles(const std::list<std::string>& filenames)
 {
 	(void)filenames;
+	return (new Packet());
 }
 
-void	ServerCommunication::TCPsendFile(const std::string& filename, const char* fileContent)
+Packet*	ServerCommunication::TCPsendFile(const std::string& filename, const char* fileContent)
 {
 	(void)filename; (void)fileContent;
+	return (new Packet());
 }
 
-void	ServerCommunication::TCPsendStartLoading()
+Packet*	ServerCommunication::TCPsendStartLoading()
 {
-	;
+	s_blocks block;
+	char* buff = new char[3];
+	Packet* packet = new Packet();
+
+	block.opcode = 0x05;
+	block.datasize = 0;
+	block.data = NULL;
+
+	memcpy(buff, &block, 3);
+	if (!packet->set(buff, 3))
+	{
+		delete buff;
+		delete packet;
+		return (NULL);
+	}
+	return (packet);
 }
 
-void	ServerCommunication::TCPsendStartGame()
+Packet*	ServerCommunication::TCPsendStartGame()
 {
-	;
+	s_blocks block;
+	char* buff = new char[3];
+	Packet* packet = new Packet();
+
+	block.opcode = 0x06;
+	block.datasize = 0;
+	block.data = NULL;
+
+	memcpy(buff, &block, 3);
+	if (!packet->set(buff, 3))
+	{
+		delete buff;
+		delete packet;
+		return (NULL);
+	}
+	return (packet);
 }
 
-void	ServerCommunication::UDPsendGameMap(const char* map)
-{
-	if (map == NULL)
-		return /*error*/;
-
-	char* buffer = (char*)malloc(UDPBLOCKS);
-
-	if (buffer == NULL)
-		return /*error*/;
-
-	buffer[0] = 0x0f;
-	memcpy(&buffer[1], map, UDPDATASIZE);
-	//buffer map is filled and ready to be sent
-}
-
-void	ServerCommunication::UDPsendGameElements(const std::list<Element>& elements)
+Packet*	ServerCommunication::UDPsendGameElements(const std::list<Element>& elements, const std::list<Player>& players)
 {
 	int i = 0;
-	std::list<Element>::const_iterator ite = elements.begin();
+	Packet* packet = new Packet();
+	std::list<Element>::const_iterator elem_ite = elements.begin();
+	std::list<Player>::const_iterator play_ite = players.begin();
 
-	if (!elements.size())
-		return ;
+	if (!elements.size() || !players.size())
+	{
+		delete packet;
+		return NULL;
+	}
 
-	char* buffer = (char*)malloc(sizeof(UDPBLOCKS));
-
-	if (buffer == NULL)
-		return ;
+	char* buffer = new char[UDPBLOCKS];
+	char* ctmp;
 
 	buffer[0] = 0x10;
 
-	while (ite != elements.end() && i < 48)
+	while (elem_ite != elements.end() && i < 100)
 	{
 		s_element newElement;
-		newElement.posX = ite->_x;
-		newElement.posY = ite->_y;
-		newElement.spriteId = ite->_spriteId;
-		newElement.id = ite->_elementId;
+		newElement.posX = elem_ite->_x;
+		newElement.posY = elem_ite->_y;
+		newElement.spriteId = elem_ite->_spriteId;
 		memcpy(&buffer[(i*sizeof(s_element))+1], &newElement, sizeof(s_element));
 		++i;
-		++ite;
+		++elem_ite;
 	}
 
-	//buffer element is filled and ready to be sent.
-}
-
-void	ServerCommunication::UDPsendPlayersStatus(const std::list<Player>& players)
-{
-	int i = 0;
-	std::list<Player>::const_iterator ite = players.begin();
-
-	if (!players.size())
-		return ;
-
-	char* buffer = (char*)malloc(sizeof(UDPBLOCKS));
-
-	if (buffer == NULL)
-		return ;
-
-	buffer[0] = 0x11;
-
-	while (ite != players.end() && i < 4)
+	ctmp = &buffer[501];
+	i = 0;
+	while (play_ite != players.end() && i < 4)
 	{
 		s_player newPlayer;
-		newPlayer.alive = ite->alive;
-		newPlayer.win = ite->win;
-		newPlayer.defeat = ite->defeat;
-		newPlayer.shield = ite->shield;
-		memcpy(&buffer[(i*sizeof(s_player))+1], &newPlayer, sizeof(s_player));
+		newPlayer.alive = play_ite->alive;
+		newPlayer.win = play_ite->win;
+		newPlayer.defeat = play_ite->defeat;
+		newPlayer.shield = play_ite->shield;
+		memcpy(&buffer[i*sizeof(s_player)], &newPlayer, sizeof(s_player));
 		++i;
-		++ite;
+		++play_ite;
 	}
 
-	//buffer player is filled and ready to be sent.
+	if (!packet->set(buffer, UDPBLOCKS))
+	{
+		delete buffer;
+		delete packet;
+		return NULL;
+	}
+	return (packet);
 }

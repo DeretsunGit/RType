@@ -10,9 +10,10 @@
 #include <string>
 #include <list>
 #include <map>
+#include "Packet.hpp"
 
-#define UDPBLOCKS 289
-#define UDPDATASIZE 288
+#define UDPBLOCKS 517
+#define UDPDATASIZE 516
 #define OPCODESIZE 1
 
 struct s_blocks
@@ -36,7 +37,6 @@ struct s_element
 	short posX;
 	short posY;
 	char spriteId;
-	char id;
 };
 
 struct s_player
@@ -63,7 +63,7 @@ public:
 class Player
 {
 public:
-	bool alive;
+	char alive;
 	bool win;
 	bool defeat;
 	bool shield;
@@ -93,13 +93,11 @@ public:
 
 	void interpretCommand(const char* command) const;
 
-	void TCPsendRoomList(const std::list<int>& roomIds, const std::list<int>& playersInRoom, const std::list<int>& maxPlayersNb); 
-	void TCPsendPlayerList(int roomId, const std::list<std::string>& players);
-	void TCPaskClientForFiles(const std::list<std::string>& filenames);
-	void TCPsendFile(const std::string& filename, const char* fileContent);
-	void TCPsendStartLoading();
-	void TCPsendStartGame();
-	void UDPsendGameMap(const char* map);
-	void UDPsendGameElements(const std::list<Element>& elements);
-	void UDPsendPlayersStatus(const std::list<Player>& players);
+	Packet* TCPsendRoomList(const std::list<int>& roomIds, const std::list<int>& playersInRoom, const std::list<int>& maxPlayersNb); 
+	Packet* TCPsendPlayerList(int roomId, const std::list<std::string>& players);
+	Packet* TCPaskClientForFiles(const std::list<std::string>& filenames);
+	Packet* TCPsendFile(const std::string& filename, const char* fileContent);
+	Packet* TCPsendStartLoading();
+	Packet* TCPsendStartGame();
+	Packet* UDPsendGameElements(const std::list<Element>& elements, const std::list<Player>& players);
 };

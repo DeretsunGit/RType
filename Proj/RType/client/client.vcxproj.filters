@@ -26,5 +26,8 @@
     <ClInclude Include="ClientCommunication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Packet.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

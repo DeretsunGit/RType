@@ -270,8 +270,8 @@ RFC ....              RTYPE network specification          October 2013
 3.  UDP Communication
 
    The UDP is used for the in game communication between the client and
-   the server.  In this section, "UDP session" will be used to represent
-   this communication.
+   the server.  In this section, "UDP session" will be used to
+   represent this communication.
 
 3.1.  Management
 
@@ -308,25 +308,22 @@ RFC ....              RTYPE network specification          October 2013
 
    2.3.1.  Server Side
 
-      send map (one char per case, 288 cases representing 288 bytes)
-      : opcode = 0x0f
-      : [data]
-
-      send elements (players, ennemis, bullets, 48 by block)
+      send infos and status (players, ennemis, bullets, walls)
       : opcode = 0x10
-      : [2 bytes X position][2 bytes Y position][1 byte sprite id]
-      : [1 byte element id]...
-
-      send players status (4 player by blocks = 44 bits by block)
-      : opcode = 0x11
-      : [1 byte alive][1 bit win][1 bit defeat][1 bit shield]...
+      : 100 x [2 bytes X][2 bytes Y][1 byte sprite id]
+      : 4 x [1 byte alive][1 byte win][1 byte defeat][1 byte shield]
 
    2.3.2.  Client Side
 
       send input to server
       : opcode = 0x12
-      : [1 byte X orientation][1 byte Y orientation][1 bit fire]
-      : [1 bit shield][1 bit pause]
+      : [1 byte X orientation][1 byte Y orientation][1 byte fire]
+      : [1 byte shield][1 byte pause]
+
+
+
+
+
 
 
 
@@ -362,12 +359,12 @@ RFC ....              RTYPE network specification          October 2013
 
 2.4.   Data Unit Format
 
-   The data unit used for the UDP communication contains three fields:
-   a 4-bit opcode that describes the command to call and the data unit.
+   The data unit used for the UDP communication contains two fields:
+   a byte opcode and the data unit.
    A receiver MUST successfully read that many octets to retrieve the
-   complete data. The blocks sent by the client has a data unit limited
-   of eleven bytes. The blocks sent by the server has a 288 bytes data
-   unit.
+   complete data. The blocks sent by the client has a data unit
+   limited of eleven bytes.  The blocks sent by the server has a
+   506 bytes data unit.
 
    UDP Data Unit Format, client side
    (one tick mark represents one bit position):
@@ -377,7 +374,7 @@ RFC ....              RTYPE network specification          October 2013
      +-+-+-+-+-+-+-+-+-+-+
      |      opcode       |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     | DATA  (total of 11 bytes) |
+     | DATA  (total of 5 bytes)  |
      +-+-+-+-+-+-+//-+-+-+-+-+-+-+
 
    UDP Data Unit Format, server side
@@ -388,7 +385,7 @@ RFC ....              RTYPE network specification          October 2013
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
      |       opcode      |                  DATA                     |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |                  DATA (total of 288 bytes)                    |
+     |                  DATA (total of 509 bytes)                    |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    
 4.  Internationalization Considerations   

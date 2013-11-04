@@ -10,10 +10,12 @@
 #include <string>
 #include <list>
 #include <map>
+#include "Packet.hpp"
 
 struct s_blocks
 {
 	char opcode;
+	short datasize;
 	char *data;
 };
 
@@ -53,9 +55,7 @@ private:
 	void	TCPgetFile(const char *data) const;
 	void	TCPgetStartLoading(const char *data) const;
 	void	TCPgetStartGame(const char *data) const;
-	void	UDPgetGameMap(const char *data) const;
 	void	UDPgetGameElements(const char *data) const;
-	void	UDPgetPlayerStatus(const char *data) const;
 
 public:
 	ClientCommunication();
@@ -63,13 +63,13 @@ public:
 
 	void	interpretCommand(const char* command) const;
 
-	void	TCProomChoice(const std::string& nickname, int roomId);
-	void	TCPupdateNickname(const std::string& nickname);
-	void	TCPupdateResolution(const std::string& resolution);
-	void	TCPsendOwnedFiles(const std::list<std::string>& filenames, const std::list<std::string>& versions);
-	void	TCPconfirmFileReception(const std::string& filename, const std::string& version);
-	void	TCPsendReady();
-	void	TCPsendMapRequest();
-	void	TCPuploadMap(const std::string& filename, const char* filedata);
-	void	UDPsendInputs(s_inputs& inputs) const;
+	Packet*	TCProomChoice(const std::string& nickname, int roomId);
+	Packet*	TCPupdateNickname(const std::string& nickname);
+	Packet*	TCPupdateResolution(const std::string& resolution);
+	Packet*	TCPsendOwnedFiles(const std::list<std::string>& filenames, const std::list<std::string>& versions);
+	Packet*	TCPconfirmFileReception(const std::string& filename, const std::string& version);
+	Packet*	TCPsendReady();
+	Packet*	TCPsendMapRequest();
+	Packet*	TCPuploadMap(const std::string& filename, const char* filedata);
+	Packet*	UDPsendInputs(s_inputs& inputs) const;
 };
