@@ -8,6 +8,7 @@ class WinTCPSocketClient : public ATCPSock
 {
 private:
 	SocketId		_sock;
+	bool			_live;
 public:
 	WinTCPSocketClient();
 	virtual ~WinTCPSocketClient();
@@ -18,6 +19,7 @@ public:
 	bool		wantToWrite() const;
 	void	    readFromSock();
 	void	    writeToSock();
+	bool		isLive();
 };
 
 #endif // _WIN32

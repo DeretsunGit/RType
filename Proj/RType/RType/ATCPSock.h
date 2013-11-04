@@ -3,6 +3,8 @@
 #include "Socket.h"
 #include "IOBuff.h"
 
+#define DATA_BUFSIZE 1024
+
 class ATCPSock : public ASocket
 {
 private:
