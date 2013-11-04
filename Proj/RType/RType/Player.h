@@ -9,6 +9,8 @@ class Player : public Element
 	int				_id;
 	bool			_ready;
 	int				_score;
+	bool			_alive;
+	bool			_shield;
 	// TCPSocket		_tcpSock;
 	// UDPSocket		_udpSock;
 public:
@@ -16,10 +18,14 @@ public:
 	Player();
 	~Player();
 
-	bool	getFile(std::string);
-	bool	getReady();
-	int		getId();
-	int		getScore();
+	bool	getFile(std::string) const;
+	bool	getReady() const;
+	int		getId() const;
+	int		getScore() const;
+	bool	isAlive() const;
+	bool	isWinner() const;
+	bool	isDefeated() const;
+	bool	getShield() const;
 
 	void	setId(int);
 	void	setScore(int);

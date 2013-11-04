@@ -38,7 +38,7 @@ struct s_element
 
 struct s_player
 {
-	char alive;
+	bool alive;
 	bool win;
 	bool defeat;
 	bool shield;

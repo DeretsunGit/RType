@@ -11,6 +11,8 @@
 #include <list>
 #include <map>
 #include "Packet.hpp"
+#include "Player.h"
+#include "Element.h"
 
 #define UDPBLOCKS 517
 #define UDPDATASIZE 516
@@ -41,35 +43,10 @@ struct s_element
 
 struct s_player
 {
-	char alive;
+	bool alive;
 	bool win;
 	bool defeat;
 	bool shield;
-};
-
-// declaration of Element class waiting for official one
-class Element
-{
-public:
-	short _x;
-	short _y;
-	char _spriteId;
-	char _elementId;
-
-	Element();
-	~Element();
-};
-// declaration of Player class waiting for official one
-class Player
-{
-public:
-	char alive;
-	bool win;
-	bool defeat;
-	bool shield;
-
-	Player();
-	~Player();
 };
 
 class ServerCommunication

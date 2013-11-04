@@ -166,9 +166,9 @@ Packet*	ServerCommunication::UDPsendGameElements(const std::list<Element>& eleme
 	while (elem_ite != elements.end() && i < 100)
 	{
 		s_element newElement;
-		newElement.posX = elem_ite->_x;
-		newElement.posY = elem_ite->_y;
-		newElement.spriteId = elem_ite->_spriteId;
+		newElement.posX = elem_ite->getPos()._posX;
+		newElement.posY = elem_ite->getPos()._posY;
+		newElement.spriteId = elem_ite->getSpriteId();
 		memcpy(&buffer[(i*sizeof(s_element))+1], &newElement, sizeof(s_element));
 		++i;
 		++elem_ite;
@@ -179,10 +179,10 @@ Packet*	ServerCommunication::UDPsendGameElements(const std::list<Element>& eleme
 	while (play_ite != players.end() && i < 4)
 	{
 		s_player newPlayer;
-		newPlayer.alive = play_ite->alive;
-		newPlayer.win = play_ite->win;
-		newPlayer.defeat = play_ite->defeat;
-		newPlayer.shield = play_ite->shield;
+		newPlayer.alive = play_ite->isAlive();
+		newPlayer.win = play_ite->isWinner();
+		newPlayer.defeat = play_ite->isDefeated();
+		newPlayer.shield = play_ite->getShield();
 		memcpy(&buffer[i*sizeof(s_player)], &newPlayer, sizeof(s_player));
 		++i;
 		++play_ite;
