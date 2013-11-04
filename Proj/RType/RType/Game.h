@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <iterator>
 #include "Player.h"
 #include "Wave.h"
 #include "Wall.h"
@@ -20,7 +21,7 @@ class Game
 
 	// pools
 	std::list<Wall*>	_wallPool;
-	std::list<Ennemy>	_ennemyPool;
+	std::list<Ennemy*>	_ennemyPool;
 	std::list<Bullet*>	_bulletPool;
 
 public:
