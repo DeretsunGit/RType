@@ -11,7 +11,7 @@ Element::~Element()
 {
 }
 
-int Element::isColision(std::list<Element*> cell)
+int Element::isCollision(std::list<Element*> cell)
 {
 	// check uniquement pour les joueurs et les bullet du joueur et les murs
 	std::list<Element*>::iterator it;
@@ -20,6 +20,8 @@ int Element::isColision(std::list<Element*> cell)
 	it = cell.begin();
 	while (it != cell.end())
 	{
+		if ((this->getFaction() != (*it)->getFaction()))
+		{
 		if ((this->_pos._posX < ((*it)->getPos())._posX &&
 			this->_pos._posX + this->_hitboxSize._posX > ((*it)->getPos())._posX) ||
 			(this->_pos._posX < ((*it)->getPos())._posX + ((*it)->getHitboxSize())._posX &&
@@ -32,6 +34,7 @@ int Element::isColision(std::list<Element*> cell)
 				{
 					return ((*it)->getId());
 				}
+		}
 		}
 		it ++;
 	}

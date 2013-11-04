@@ -5,6 +5,7 @@
 // Login   <gilmai_k@epitech.net>
 //
 
+#include <cstring>
 #include "ClientCommunication.h"
 
 ClientCommunication::ClientCommunication()
@@ -65,7 +66,7 @@ void	ClientCommunication::UDPgetGameElements(const char* data) const
 	while (i < 100 && strlen(&data[i*sizeof(s_element)]) >= sizeof(s_element))
 	{
 		s_element newElement;
-		memcpy(&newElement, &data[i*sizeof(s_element)], sizeof(s_element)); 
+		memcpy(&newElement, &data[i*sizeof(s_element)], sizeof(s_element));
 		elements.push_back(newElement);
 		++i;
 	}
@@ -169,7 +170,7 @@ Packet*	ClientCommunication::UDPsendInputs(s_inputs& inputs) const
 {
 	Packet* packet = new Packet();
 	char* buff = new char[sizeof(s_inputs) + 1];
-	
+
 	buff[0] = 0x12;
 	memcpy(&buff[1], &inputs, sizeof(s_inputs));
 

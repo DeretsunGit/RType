@@ -35,5 +35,5 @@ public:
 	void	waveGeneration();
 	void	mapGeneration();
 	void	playerReset();
-	void	colision();
+	void	collision();
 };
