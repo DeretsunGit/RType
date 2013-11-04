@@ -385,7 +385,7 @@ RFC ....              RTYPE network specification          October 2013
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
      |       opcode      |                  DATA                     |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |                  DATA (total of 509 bytes)                    |
+     |                  DATA (total of 516 bytes)                    |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    
 4.  Internationalization Considerations   
