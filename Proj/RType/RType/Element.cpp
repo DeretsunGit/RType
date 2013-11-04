@@ -86,12 +86,12 @@ int		Element::getId() const
 
 bool	Element::getBulletProof() const
 {
-return (this->getBulletProof);
+return (this->_bulletProof);
 }
 
 bool	Element::getShipProof() const
 {
-return (this->getShipProof);
+return (this->_shipProof);
 }
 
 char	Element::getFaction() const
