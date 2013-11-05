@@ -113,14 +113,20 @@ void	Game::collision()
 
 void	Game::sendPriority()
 {
-	std::list<Element *>	elemToSend;
+	short int					maxPriority = 0;
+	std::list<Element *>		elemToSend;
 	std::list<Wall*>::iterator		it_wall;
 
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				elemToSend.push_back(*it_wall);
+				if ((*it_wall)->getSendPriority() > maxPriority)
+					maxPriority = (*it_wall)->getSendPriority();
+				if (elemToSend.size() < 100)
+					elemToSend.push_back(*it_wall);
+				else
+					(*it_wall)->setSendPriority((*it_wall)->getSendPriority() + 1);
 			}
 		}
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
@@ -168,11 +174,11 @@ void	Game::MoveWall()
 				(*it_wall)->setPos(temp);
 			}
 			// on supprime les murs inactifs et on set les nouveaux murs
-			if ((*it_wall)->getPos()._posX == -100)
+			if ((*it_wall)->getPos()._posX <= -100)
 			{
 				decal = true;
 				(*it_wall)->setHP(0);
-
+				(*it_wall)->setSendPriority(2);
 			}
 		}
 	if (decal == true)
