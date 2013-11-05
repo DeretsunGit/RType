@@ -25,6 +25,7 @@ public:
 
   void		send(const char* buff, unsigned int size);
   unsigned int	recv(char* buff, unsigned int size);
+  unsigned int	readable() const;
   SocketId	getId() const;
   bool		wantToWrite() const;
   void		readFromSock();

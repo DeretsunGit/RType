@@ -64,6 +64,11 @@ unsigned int	UnixTCPSocketClient::recv(char* buff, unsigned int size)
   return (sent);
 }
 
+unsigned int	UnixTCPSocketClient::readable() const
+{
+  return (this->_buff._input.readableSize());
+}
+
 ISocket::SocketId	UnixTCPSocketClient::getId() const
 {
   return (this->_sock);

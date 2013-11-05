@@ -71,6 +71,11 @@ WinTCPSocketClient::SocketId  WinTCPSocketClient::getId() const
 	return (this->_sock);
 }
 
+unsigned int	WinTCPSocketClient::readable() const
+{
+  return (this->_buff._input.readableSize());
+}
+
 bool	WinTCPSocketClient::isLive() const
 {
 	return (this->_live);
