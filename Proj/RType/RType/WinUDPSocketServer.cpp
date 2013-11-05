@@ -67,14 +67,7 @@ bool		WinUDPSocketServer::configSocket(unsigned short port)
 		closesocket(this->_sock);
 		return (false);
 	}
-
-	if (listen(this->_sock, 1) == SOCKET_ERROR)
-	{
-		std::cerr << "listen() failed with error: " << WSAGetLastError() << std::endl;
-		closesocket(this->_sock);
-		return (false);
-	}
-	std::cout << "Listening..." << std::endl;
+	std::cout << "Ready..." << std::endl;
 
 	return (true);
 }
@@ -115,7 +108,7 @@ void	    WinUDPSocketServer::readFromSock()
 	//	return;
 	//}
 	//winUDPSocketClient = new WinUDPSocketClient(sockAccept);
-	////this->_winUDPSocketClient.push(winUDPSocketClient);
+	//this->_winUDPSocketClient.push(winUDPSocketClient);
 	//this->_lock.unlock();
 }
 

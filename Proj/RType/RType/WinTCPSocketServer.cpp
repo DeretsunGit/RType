@@ -67,7 +67,14 @@ bool		WinTCPSocketServer::configSocket(unsigned short port)
 		closesocket(this->_sock);
 		return (false);
 	}
-	std::cout << "Ready..." << std::endl;
+
+	if (listen(this->_sock, 1) == SOCKET_ERROR)
+	{
+		std::cerr << "listen() failed with error: " << WSAGetLastError() << std::endl;
+		closesocket(this->_sock);
+		return (false);
+	}
+	std::cout << "Listening..." << std::endl;
 
 	return (true);
 }
