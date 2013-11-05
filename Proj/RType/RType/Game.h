@@ -20,7 +20,7 @@ class Game
 	// Script				_script;
 	bool					_endGame;
 	short int				_firstColumn;
-	std::list<Element*>		_map[18][17];
+	std::list<Element*>		_map[18][17]; // [hauteur y][largeur x]
 	short int				_globalPos;
 	char					_globalMapTop[256];
 	char					_globalMapBot[256];
