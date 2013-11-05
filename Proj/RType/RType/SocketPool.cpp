@@ -12,6 +12,12 @@
 SocketPool::SocketPool()
   : _alive(true), _watcher(*this, &SocketPool::watcher)
 {
+#ifdef _WIN32
+	WSADATA wsaData;
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData))
+		throw std::exception();
+#endif // _WIN32
+
   this->_watcher.start();
 }
 
@@ -20,6 +26,10 @@ SocketPool::~SocketPool()
   this->_alive = false;
   this->_c.signal();
   this->_watcher.join();
+#ifdef _WIN32
+  if (WSACleanup() == SOCKET_ERROR)
+	  std::cerr << "WSACleanup() fail" << std::endl;
+#endif // _WIN32
 }
 
 void  SocketPool::watchSocket(ISocket* s)

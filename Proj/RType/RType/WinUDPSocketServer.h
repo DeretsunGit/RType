@@ -7,7 +7,7 @@
 # include "Socket.h"
 # include "WinUDPSocketClient.h"
 
-class WinUDPSocketServer : public ASocket
+class WinUDPSocketServer : public ISocket
 {
 private:
 	bool			_live;

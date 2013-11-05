@@ -75,13 +75,12 @@ int	main()
 	//  std::cin.get();
 	//  delete winTCPSocketClient;
 
-  UnixTCPSocketClient	socket("localhost", 1234);
+  TCPSocketClient	socket("10.20.86.163", 1234);
   char			buff[255];
   int			ret;
 
   while (socket.isLive())
     {
-      socket.readFromSock();
       if ((ret = socket.recv(buff, sizeof(buff))) > 0)
 	{
 	  buff[ret] = 0;

@@ -25,20 +25,10 @@ WinTCPSocketServer::~WinTCPSocketServer()
 		std::cerr << "closesocket() function failed with error: " << WSAGetLastError() << std::endl;
 		throw std::exception();
 	}
-
-	WSACleanup();
 }
 
 bool		WinTCPSocketServer::createSocket()
 {
-	WSADATA wsaData;
-
-	if (WSAStartup(MAKEWORD(2, 2), &wsaData))
-	{
-		std::cerr << "WSAStartup() failed with error: " << WSAGetLastError() << std::endl;
-		return (false);
-	}
-
 	if ((this->_sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, NULL)) == INVALID_SOCKET)
 	{
 		std::cerr << "WSASocket() function failed with error: " << WSAGetLastError() << std::endl;

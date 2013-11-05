@@ -10,7 +10,7 @@
 # define LOCALHOST	1
 # define LOCAL		2
 
-class WinTCPSocketServer : public ASocket
+class WinTCPSocketServer : public ISocket
 {
 private:
 	bool			_live;

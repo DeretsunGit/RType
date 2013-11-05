@@ -22,7 +22,7 @@ WinTCPSocketClient::WinTCPSocketClient(const char *hostName, unsigned short port
 
 	clientService.sin_family = AF_INET;
 	clientService.sin_addr.s_addr = inet_addr(hostName);
-	WSAHtons(this->_sock, port, &clientService.sin_port);;
+	WSAHtons(this->_sock, port, &clientService.sin_port);
 
 	if (WSAConnect(this->_sock, (SOCKADDR *) & clientService, sizeof (clientService), NULL, NULL, NULL, NULL) == SOCKET_ERROR)
 	{
@@ -32,7 +32,6 @@ WinTCPSocketClient::WinTCPSocketClient(const char *hostName, unsigned short port
 		throw std::exception();
 	}
 	this->_live = true;
-	SocketPool::getInstance().watchSocket(this);
 }
 
 WinTCPSocketClient::~WinTCPSocketClient()
@@ -80,7 +79,7 @@ void	    WinTCPSocketClient::readFromSock()
 	char	buffer[DATA_BUFSIZE] = { 0 };
 
 	if (!this->_live)
-		return;
+		return ;
 	dataBuf.len = DATA_BUFSIZE;
 	dataBuf.buf = buffer;
 	flags = 0;
@@ -91,8 +90,13 @@ void	    WinTCPSocketClient::readFromSock()
 		this->_live = false;
 		return ;
 	}
+	if (recvBytes == 0)
+	{
+		this->_live = false;
+		return ;
+	}
 	std::cout << "read: " << dataBuf.buf << std::endl;
-	this->_buff._input.writeSome(dataBuf.buf, dataBuf.len);
+	this->_buff._input.writeSome(dataBuf.buf, recvBytes);
 }
 
 void	    WinTCPSocketClient::writeToSock()
@@ -112,7 +116,7 @@ void	    WinTCPSocketClient::writeToSock()
 	{
 		std::cerr << "WSASend() failed with error: " << err << std::endl;
 		this->_live = false;
-		return;
+		return ;
 	}
 	std::cout << "write: " << dataBuf.buf << std::endl;
 }

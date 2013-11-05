@@ -2,7 +2,7 @@
 
 #include "Socket.h"
 
-class AUDPSocketClient : public ASocket
+class AUDPSocketClient : public ISocket
 {
 public:
 	virtual ~AUDPSocketClient() {}
