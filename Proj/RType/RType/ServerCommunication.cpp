@@ -182,17 +182,18 @@ Packet*	ServerCommunication::TCPsendStartLoading() const
 	return (packet);
 }
 
-Packet*	ServerCommunication::TCPsendStartGame() const
+Packet*	ServerCommunication::TCPsendStartGame(unsigned short port) const
 {
 	s_tcp_header block;
-	char* buff = new char[TCPHEADSIZE];
+	char* buff = new char[TCPHEADSIZE + sizeof(unsigned short)];
 	Packet* packet = new Packet();
 
 	block.opcode = 0x06;
-	block.datasize = 0;
+	block.datasize = sizeof(unsigned short);
 
 	memcpy(buff, &block, TCPHEADSIZE);
-	if (!packet->set(buff, TCPHEADSIZE))
+	memcpy(&buff[TCPHEADSIZE], &port, sizeof(unsigned short));
+	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
 	{
 		delete buff;
 		delete packet;

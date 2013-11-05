@@ -190,7 +190,7 @@ RFC ....              RTYPE network specification          October 2013
 
       start game
       : opcode = 0x06
-      : No_Data
+      : [UDP port]
 
    2.3.2.  Client Side
 

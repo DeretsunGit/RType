@@ -16,7 +16,7 @@ ClientCommunication::ClientCommunication()
 	_commandMap[0x03] = &ClientCommunication::TCPgetFileList;
 	_commandMap[0x04] = &ClientCommunication::TCPgetFile;
 	_commandMap[0x05] = &ClientCommunication::TCPgetStartLoading;
-	_commandMap[0x06] = &ClientCommunication::TCPgetStartGame;
+	//_commandMap[0x06] = &ClientCommunication::TCPgetStartGame;
 	_commandMap[0x10] = &ClientCommunication::UDPgetGameElements;
 }
 
@@ -68,13 +68,17 @@ void	ClientCommunication::TCPgetStartLoading(const char* data) const
 	return /*pas bien!*/;
 }
 
-void	ClientCommunication::TCPgetStartGame(const char* data) const
+unsigned short	ClientCommunication::TCPgetStartGame(const char* data) const
 {
 	s_tcp_header block;
+	unsigned short port;
 	memcpy(&block, data, TCPHEADSIZE);
-	if (block.opcode == 0x06)
-		return /*bien !*/;
-	return /*pas bien!*/;
+	if (block.opcode == 0x06 && block.datasize == sizeof(unsigned short))
+	{
+		memcpy(&port, &data[TCPHEADSIZE], sizeof(unsigned short));
+		return port;	
+	}
+	return 0;
 }
 
 void	ClientCommunication::UDPgetGameElements(const char* data) const
@@ -94,7 +98,8 @@ void	ClientCommunication::UDPgetGameElements(const char* data) const
 		elements.push_back(newElement);
 		++i;
 	}
-
+	
+	i = 100;
 	while (i < 104 && strlen(&data[i*sizeof(s_player)]) >= sizeof(s_player))
 	{
 		s_player newPlayer;
@@ -250,7 +255,7 @@ Packet*	ClientCommunication::TCPuploadMap(const std::string& filename, const cha
 	return (new Packet());
 }
 
-Packet*	ClientCommunication::UDPsendInputs(s_inputs& inputs) const
+Packet*	ClientCommunication::UDPsendInputs(const s_inputs& inputs) const
 {
 	Packet* packet = new Packet();
 	char* buff = new char[sizeof(s_inputs) + 1];

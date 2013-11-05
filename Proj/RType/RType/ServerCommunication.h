@@ -76,6 +76,6 @@ public:
 	Packet* TCPaskClientForFiles(const std::list<std::string>& filenames) const;
 	Packet* TCPsendFile(const std::string& filename, const char* fileContent) const;
 	Packet* TCPsendStartLoading() const;
-	Packet* TCPsendStartGame() const;
+	Packet* TCPsendStartGame(unsigned short port) const;
 	Packet* UDPsendGameElements(const std::list<Element*>& elements, const std::vector<Player*>& players) const;
 };

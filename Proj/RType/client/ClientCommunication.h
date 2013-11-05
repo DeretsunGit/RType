@@ -56,14 +56,15 @@ private:
 	void	TCPgetFileList(const char *data) const;
 	void	TCPgetFile(const char *data) const;
 	void	TCPgetStartLoading(const char *data) const;
-	void	TCPgetStartGame(const char *data) const;
-	void	UDPgetGameElements(const char *data) const;
+
 
 public:
 	ClientCommunication();
 	~ClientCommunication();
 
 	void	interpretCommand(const char* command) const;
+	unsigned short	TCPgetStartGame(const char *data) const;
+	void	UDPgetGameElements(const char *data) const;
 
 	Packet*	TCProomChoice(const std::string& nickname, char roomId) const;
 	Packet*	TCPupdateNickname(const std::string& nickname) const;
@@ -73,5 +74,5 @@ public:
 	Packet*	TCPsendReady() const;
 	Packet*	TCPsendMapRequest() const;
 	Packet*	TCPuploadMap(const std::string& filename, const char* filedata) const;
-	Packet*	UDPsendInputs(s_inputs& inputs) const;
+	Packet*	UDPsendInputs(const s_inputs& inputs) const;
 };
