@@ -10,6 +10,7 @@ class Element
 	t_coord					_spritePos;
 	t_coord					_center;
 
+	short int				_speed;
 	bool					_bulletProof;
 	bool					_shipProof;
 	char					_faction; // 0 murs ; 1 joueur ; 2 ennemis
@@ -29,6 +30,8 @@ public:
 	void					setFaction(char);
 	void					setSendPriority(char);
 	void					setPos(t_coord);
+	void					setSpeed(short int);
+	void					setHitboxSize(t_coord);
 
 	t_coord					getPos() const;
 	t_coord					getHitboxSize() const;
@@ -40,6 +43,7 @@ public:
 	bool					getBulletProof()const;
 	char					getFaction() const;
 	char					getSendPriority() const;
+	short int				getSpeed() const;
 
 	void					move();
 	int						isCollision(std::list<Element*>);

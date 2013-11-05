@@ -5,9 +5,9 @@ Game::Game()
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	// on récupère Script en argument
-	// on récupère de Script la map et les waves
-	// on instancie les waves, les ennemis, et plein de bullets
-	//
+	this->mapGeneration();
+	this->genPool();
+	this->gameLoop();
 }
 
 void	Game::mapGeneration()
@@ -71,15 +71,13 @@ void	Game::gameLoop()
 	while (this->_endGame != true)
 	{
 		loopTimer.initialise();
-		// check évènements des joueurs + déplacements DONE
 		this->getInputs();
 		// déplacement de Waves en fonction du script
-		// déplacement bullets
+		this->moveBullets();
+		this->moveWall();
 		this->collision();
 		// (pop de Wave)
-		// send au client DONE
 		this->sendPriority();
-		// timer pour égaliser le temps de boucle DONE
 		this->_endGame = !this->isPlayerAlive();
 		execTime = loopTimer.getTimeBySec();
 		Sleep(16 - execTime);
@@ -109,6 +107,7 @@ void	Game::collision()
 					(*it_player)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX]);
 			}
 		}
+	//ajouter ennemis
 }
 
 void	Game::sendPriority()
@@ -124,11 +123,16 @@ void	Game::sendPriority()
 				if ((*it_wall)->getSendPriority() > maxPriority)
 					maxPriority = (*it_wall)->getSendPriority();
 				if (elemToSend.size() < 100)
-					elemToSend.push_back(*it_wall);
+					{
+						elemToSend.push_back(*it_wall);
+						(*it_wall)->setSendPriority(2);
+					}
 				else
 					(*it_wall)->setSendPriority((*it_wall)->getSendPriority() + 1);
 			}
 		}
+	// ajouter les ennemis et les bullets
+
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
 	 //UDPsendGameElements(elemToSend, _players);
 
@@ -141,6 +145,20 @@ void	Game::getInputs()
 
 }
 
+void	Game::moveBullets()
+{
+	std::list<Bullet*>::iterator		it_bullet;
+	short int						y = 0;
+
+	for (it_bullet = (this->_bulletPool).begin(); it_bullet != (this->_bulletPool).end(); it_bullet++)
+		{
+			if ((*it_bullet)->getHP() != 0)
+			{
+				// on check le mouvement de la bullet et on fait la translation correspondante
+			}
+		}
+}
+
 void Game::playerShoot(Player *currentPlayer)
 {
 	std::list<Bullet*>::iterator		it_bullet;
@@ -149,28 +167,11 @@ void Game::playerShoot(Player *currentPlayer)
 	{
 		if ((*it_bullet)->getHP() == 0)
 		{
-			(*it_bullet)->setPos(currentPlayer->getPos());
+			(*it_bullet)->setPos(currentPlayer->getPos()); // faux car tir en haut a gauche
 			(*it_bullet)->setHP(1);
+			(*it_bullet)->setFaction(PLAYER);
 		}
 	}
-		// shoot
-//	std::vector<Player*>::iterator	it_player;
-//	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
-//		{
-//			if ((*it_player)->getHP() != 0)
-//			{
-//				if ((*it_player)->getIsShooting() == false)
-//				{
-//					(*it_player)->setIsShooting(true);
-//					(*it_player)->Shoot();
-//				}
-//				if ((*it_player)->getIsShooting() == false)
-//				{
-//					(*it_player)->setIsShooting(true);
-//					(*it_player)->loadShoot();
-//				}
-//			}
-//		}
 }
 
 void	Game::playerReset()
@@ -191,7 +192,7 @@ bool	Game::isPlayerAlive()
 	return (false);
 }
 
-void	Game::MoveWall()
+void	Game::moveWall()
 {
 	bool							decal = false;
 	t_coord							temp;
@@ -200,10 +201,9 @@ void	Game::MoveWall()
 
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 		{
-			// on move tous les murs actifs
 			if ((*it_wall)->getHP() != 0)
 			{
-				temp._posX = (*it_wall)->getPos()._posX - 3;
+				temp._posX = (*it_wall)->getPos()._posX - 3 * (*it_wall)->getSpeed();
 				temp._posY = (*it_wall)->getPos()._posY;
 				(*it_wall)->setPos(temp);
 			}

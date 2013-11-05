@@ -5,7 +5,7 @@ Ennemy::Ennemy(void)
 {
 	this->setBulletProof(false);
 	this->setShipProof(false);
-	this->setFaction(2);
+	this->setFaction(ENNEMY);
 	this->setSendPriority(1);
 }
 

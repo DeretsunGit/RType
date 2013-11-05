@@ -2,7 +2,13 @@
 
 Player::Player()
 {
-	this->setFaction(1);
+	t_coord	temp;
+
+	temp._posX = 50;
+	temp._posY = 30;
+	this->setFaction(PLAYER);
+	this->setHitboxSize(temp);
+
 }
 
 bool	Player::getIsShooting() const

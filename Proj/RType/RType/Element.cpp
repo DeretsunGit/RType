@@ -2,10 +2,11 @@
 
 Element::Element()
 {
-	this->_shipProof	 = false;
-	this->_bulletProof = false;
-	this->_hp			= 1;
-	this->_sendPriority = 1;
+	this->_shipProof	 =		false;
+	this->_bulletProof =		false;
+	this->_hp =				1;
+	this->_sendPriority =	1;
+	this->_speed =			1;
 }
 
 Element::~Element()
@@ -52,11 +53,20 @@ void	Element::cleanCurrentCell()
 	this->_currentCells.clear();
 }
 
+void	Element::setSpeed(short int newSpeed)
+{
+	this->_speed = newSpeed;
+}
+
 void	Element::setHP(int hp)
 {
 	this->_hp = hp;
 }
 
+void	Element::setHitboxSize(t_coord newHitbox)
+{
+	this->_hitboxSize = newHitbox;
+}
 
 void	Element::setFaction(char faction)
 {
@@ -133,3 +143,7 @@ char	Element::getSendPriority() const
 	return (this->_sendPriority);
 }
 
+short int	Element::getSpeed() const
+{
+	return(this->_speed);
+}
