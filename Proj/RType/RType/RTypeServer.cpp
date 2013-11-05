@@ -1,6 +1,5 @@
 #include "RTypeServer.h"
 
-
 RTypeServer::RTypeServer(int port, int maxRoom, std::string blPath) : _port(port), _maxRoom(maxRoom)
 {
 	// convertir le blPath en ofstream
@@ -9,8 +8,10 @@ RTypeServer::RTypeServer(int port, int maxRoom, std::string blPath) : _port(port
 bool	RTypeServer::start()
 {
 	// création du prompt
-	// gestion socket
 	// load des librairies dynamiques
+
+
+	// gestion socket
 	// boucle acceptation client
 	// attente de commandes
 	// création de rooms
@@ -26,3 +27,4 @@ RTypeServer::~RTypeServer()
 {
 	// quitter tous les clients proprement
 }
+

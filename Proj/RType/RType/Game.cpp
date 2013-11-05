@@ -68,6 +68,7 @@ void	Game::genPool()
 
 void	Game::startGame()
 {
+	unsigned short i = 1;
 	// On gère l'attente des players
 	// Lorsqu'on recoit des packets TCP, on les traite ici
 	Packet* tmp = NULL; // tmp sera remplacé par le vrai packet recu
@@ -78,7 +79,7 @@ void	Game::startGame()
 		;// la méthode retourne false, le joueur a envoyé un packet eronné
 
 	// si tous les joueurs sont prêts
-	Packet* pack = _com.TCPsendStartGame();
+	Packet* pack = _com.TCPsendStartGame(i);
 	if (pack != NULL)
 		;// envoi pack à chaque joueur puis passe en UDP via gameLoop()
 	else
@@ -104,7 +105,6 @@ void	Game::gameLoop()
 		execTime = loopTimer.getTimeBySec();
 		Sleep((unsigned long)(16 - execTime));
 	}
-	// on dit aux clients de lancer l'ecran de fin (win ou lose)
 }
 
 void	Game::collision()

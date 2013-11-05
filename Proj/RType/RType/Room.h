@@ -3,14 +3,15 @@
 #include <vector>
 #include "Client.h"
 #include "Player.h"
+#include "Game.h"
 
 class Room
 {
 private:
-	char	_nbPlayer;
 	char	_id;
 	// Thread	_th;
 	std::vector<Player*> _party;
+	char	_nbReady;
 
 public:
 	Room();
@@ -21,4 +22,5 @@ public:
 	bool	removePlayer(int id);
 	char	getId() const;
 	char	getNbPlayer() const;
+	void	roomLoop();
 };

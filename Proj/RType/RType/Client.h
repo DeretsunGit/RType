@@ -2,12 +2,12 @@
 
 #include <string>
 #include "rtype_common.h"
+#include "TCPSocketServer.h"
 
 class Client
 {
-	std::string	_name;
-	t_coord		resolution; // par defaut, le jeu sera en 1600 / 900
-	// TCPSocket _tcpSocket;
+//	std::string	_name;
+//	TCPSocketServer _tcpSocket;
 public:
 	Client();
 	~Client();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ostream>
+#include "TCPSocketServer.h"
 
 class RTypeServer
 {
