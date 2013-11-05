@@ -163,11 +163,11 @@ RFC ....              RTYPE network specification          October 2013
 
       send room list
       : opcode = 0x01
-      : [room_name_1]:[nb_player]:[nb_player_max];[room_name_2]:...
+      : [room_id_1][nb_player][room_id_2]:...
 
       send player list
       : opcode = 0x02
-      : [room_name]:[player_1]:[player_2]:...
+      : [room_id][player_1][player_2]:...
 
       ask if file is owned by client
       : opcode = 0x03
@@ -196,7 +196,7 @@ RFC ....              RTYPE network specification          October 2013
 
       choose a room
       : opcode = 0x07
-      : [player_nickname]:[room_name]
+      : [player_nickname][room_id]
 
       update nickname info
       : opcode = 0x08

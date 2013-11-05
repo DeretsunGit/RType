@@ -57,7 +57,7 @@ void	Game::genPool()
 {
 	int i = 0;
 
-	while (i <= 50)
+	while (i <= 100)
 	{
 		this->_wallPool.push_back(new Wall);
 		this->_bulletPool.push_back(new Bullet);
@@ -70,14 +70,14 @@ void	Game::gameLoop()
 	while (this->_endGame != true)
 	{
 		// check évènements des joueurs + déplacements
-		// UDPinterpretCommand(const char *data);
+		this->getInputs();
+		// interpretCommand(const char *data);
 		// déplacement de Waves en fonction du script
 		// déplacement bullets
 		this->collision();
 		// (pop de Wave)
 		// send au client
-		// UDPsendGameElements(const std::list<&Element>, const std::vector<&Player>);
-
+		this->sendPriority();
 		// timer pour égaliser le temps de boucle
 	}
 	// on dit aux clients de lancer l'ecran de fin (win ou lose)
@@ -107,6 +107,23 @@ void	Game::collision()
 					(*it_player)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX]);
 			}
 		}
+}
+
+void	Game::sendPriority()
+{
+	std::list<Element *>	elemToSend;
+	std::list<Wall*>::iterator		it_wall;
+
+	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
+		{
+			if ((*it_wall)->getHP() != 0)
+			{
+				elemToSend.push_back(*it_wall);
+			}
+		}
+	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
+	// UDPsendGameElements(elemToSend, _players);
+
 }
 
 void	Game::playerReset()

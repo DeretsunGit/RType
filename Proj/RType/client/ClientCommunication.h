@@ -12,11 +12,13 @@
 #include <map>
 #include "Packet.hpp"
 
-struct s_blocks
+#define TCPHEADSIZE 3
+#define OPCODESIZE 1
+
+struct s_tcp_header
 {
 	char opcode;
 	short datasize;
-	char *data;
 };
 
 struct s_inputs
@@ -63,13 +65,13 @@ public:
 
 	void	interpretCommand(const char* command) const;
 
-	Packet*	TCProomChoice(const std::string& nickname, int roomId);
-	Packet*	TCPupdateNickname(const std::string& nickname);
-	Packet*	TCPupdateResolution(const std::string& resolution);
-	Packet*	TCPsendOwnedFiles(const std::list<std::string>& filenames, const std::list<std::string>& versions);
-	Packet*	TCPconfirmFileReception(const std::string& filename, const std::string& version);
-	Packet*	TCPsendReady();
-	Packet*	TCPsendMapRequest();
-	Packet*	TCPuploadMap(const std::string& filename, const char* filedata);
+	Packet*	TCProomChoice(const std::string& nickname, char roomId) const;
+	Packet*	TCPupdateNickname(const std::string& nickname) const;
+	Packet*	TCPupdateResolution(const std::string& resolution) const;
+	Packet*	TCPsendOwnedFiles(const std::list<std::string>& filenames, const std::list<std::string>& versions) const;
+	Packet*	TCPconfirmFileReception(const std::string& filename, const std::string& version) const;
+	Packet*	TCPsendReady() const;
+	Packet*	TCPsendMapRequest() const;
+	Packet*	TCPuploadMap(const std::string& filename, const char* filedata) const;
 	Packet*	UDPsendInputs(s_inputs& inputs) const;
 };

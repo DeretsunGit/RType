@@ -35,4 +35,6 @@ public:
 	void	mapGeneration();
 	void	playerReset();
 	void	collision();
+	void	sendPriority();
+	void	getInputs();
 };
