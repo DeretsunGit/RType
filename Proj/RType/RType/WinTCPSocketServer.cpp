@@ -7,12 +7,12 @@
 # include "WinTCPSocketServer.h"
 # include "SocketPool.h"
 
-WinTCPSocketServer::WinTCPSocketServer(unsigned short port, bool localHost)
+WinTCPSocketServer::WinTCPSocketServer(unsigned short port)
 	: _port(port)
 {
 	if (!this->createSocket())
 		throw std::exception();
-	if (!this->configSocket(localHost))
+	if (!this->configSocket())
 		throw std::exception();
 	this->_live = true;
 	SocketPool::getInstance().watchSocket(this);
@@ -37,7 +37,7 @@ bool		WinTCPSocketServer::createSocket()
 	return (true);
 }
 
-bool		WinTCPSocketServer::configSocket(bool localHost)
+bool		WinTCPSocketServer::configSocket()
 {
 	sockaddr_in	service;
 	hostent*	thisHost;
@@ -45,7 +45,7 @@ bool		WinTCPSocketServer::configSocket(bool localHost)
 
 	service.sin_family = AF_INET;
 	WSAHtons(this->_sock, this->_port, &service.sin_port);
-	localHost ? strcpy_s(hostName, "localhost") : gethostname(hostName, 255);
+	gethostname(hostName, 255);
 	std::cout << "hostName:" << hostName << std::endl;
 	thisHost = gethostbyname(hostName);
 	this->_ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);

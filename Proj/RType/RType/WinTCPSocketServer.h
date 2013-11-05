@@ -7,9 +7,6 @@
 # include "Socket.h"
 # include "WinTCPSocketClient.h"
 
-# define LOCALHOST	1
-# define LOCAL		2
-
 class WinTCPSocketServer : public ISocket
 {
 private:
@@ -20,14 +17,14 @@ private:
 	std::queue<WinTCPSocketClient*> _winTCPSocketClient;
 	Mutex						_lock;
 public:
-	WinTCPSocketServer(unsigned short, bool = false);
+	WinTCPSocketServer(unsigned short);
 	virtual ~WinTCPSocketServer();
 	SocketId	getId() const;
 	bool		wantToWrite() const;
 	void	    readFromSock();
 	void	    writeToSock();
 	bool		createSocket();
-	bool		configSocket(bool);
+	bool		configSocket();
 	WinTCPSocketClient*		accept();
 	bool		isLive() const;
 };
