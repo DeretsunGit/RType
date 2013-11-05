@@ -19,7 +19,9 @@ class Game
 	// maps
 	// Script				_script;
 	bool					_endGame;
+	short int				_firstColumn;
 	std::list<Element*>		_map[18][17];
+	short int				_globalPos;
 	char					_globalMapTop[256];
 	char					_globalMapBot[256];
 
@@ -40,4 +42,5 @@ public:
 	void	sendPriority();
 	void	getInputs();
 	bool	isPlayerAlive();
+	void	MoveWall();
 };

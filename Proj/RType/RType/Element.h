@@ -27,6 +27,8 @@ public:
 	void					setBulletProof(bool);
 	void					setShipProof(bool);
 	void					setFaction(char);
+	void					setSendPriority(char);
+	void					setPos(t_coord);
 
 	t_coord					getPos() const;
 	t_coord					getHitboxSize() const;
@@ -37,6 +39,7 @@ public:
 	bool					getShipProof()const;
 	bool					getBulletProof()const;
 	char					getFaction() const;
+	char					getSendPriority() const;
 
 	void					move();
 	int						isCollision(std::list<Element*>);

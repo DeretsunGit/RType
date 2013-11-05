@@ -3,6 +3,7 @@
 Game::Game()
 {
 	this->_endGame = false;
+	this->_firstColumn = 0;
 	// on récupère Script en argument
 	// on récupère de Script la map et les waves
 	// on instancie les waves, les ennemis, et plein de bullets
@@ -25,7 +26,6 @@ void	Game::mapGeneration()
 		i++;
 	}
 	// on génère maintenant visibleMap
-	i = 0;
 	while (y < 18)
 	{
 		x = 0;
@@ -39,8 +39,8 @@ void	Game::mapGeneration()
 					{
 						this->_map[y][x].push_back(*it);
 						(*it)->setHP(1);
-						coord._posX = x;
-						coord._posY = y;
+						coord._posX = x * 100;
+						coord._posY = y * 50;
 						(*it)->addToCurrentCell(coord);
 					}
 				}
@@ -149,6 +149,58 @@ bool	Game::isPlayerAlive()
 			}
 		}
 	return (false);
+}
+
+void	Game::MoveWall()
+{
+	bool							decal = false;
+	t_coord							temp;
+	std::list<Wall*>::iterator		it_wall;
+	short int						y = 0;
+
+	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
+		{
+			// on move tous les murs actifs
+			if ((*it_wall)->getHP() != 0)
+			{
+				temp._posX = (*it_wall)->getPos()._posX - 3;
+				temp._posY = (*it_wall)->getPos()._posY;
+				(*it_wall)->setPos(temp);
+			}
+			// on supprime les murs inactifs et on set les nouveaux murs
+			if ((*it_wall)->getPos()._posX == -100)
+			{
+				decal = true;
+				(*it_wall)->setHP(0);
+
+			}
+		}
+	if (decal == true)
+	{
+		while (y < 18)
+		{
+				if (this->_globalMapTop[this->_globalPos] >= y || this->_globalMapBot[this->_globalPos] >= 18 - y)
+				{
+					for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
+					{
+						if ((*it_wall)->getHP() == 0)
+						{
+							this->_map[y][_firstColumn].push_back(*it_wall);
+							(*it_wall)->setHP(1);
+							temp._posX = 1600;
+							temp._posY = y * 50;
+							(*it_wall)->addToCurrentCell(temp);
+						}
+					}
+			}
+			y++;
+		}
+		this->_globalPos ++;
+		if (this->_firstColumn <= 16)
+			this->_firstColumn++;
+		else
+			this->_firstColumn = 0;
+	}
 }
 
 Game::~Game()
