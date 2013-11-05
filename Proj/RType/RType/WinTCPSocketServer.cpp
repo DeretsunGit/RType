@@ -8,11 +8,10 @@
 # include "SocketPool.h"
 
 WinTCPSocketServer::WinTCPSocketServer(unsigned short port)
-	: _port(port)
 {
 	if (!this->createSocket())
 		throw std::exception();
-	if (!this->configSocket())
+	if (!this->configSocket(port))
 		throw std::exception();
 	this->_live = true;
 	SocketPool::getInstance().watchSocket(this);
@@ -20,6 +19,11 @@ WinTCPSocketServer::WinTCPSocketServer(unsigned short port)
 
 WinTCPSocketServer::~WinTCPSocketServer()
 {
+	while (!this->_winTCPSocketClient.empty())
+	{
+		delete this->_winTCPSocketClient.front();
+		this->_winTCPSocketClient.pop();
+	}
 	if (closesocket(this->_sock) == SOCKET_ERROR)
 	{
 		std::cerr << "closesocket() function failed with error: " << WSAGetLastError() << std::endl;
@@ -37,20 +41,21 @@ bool		WinTCPSocketServer::createSocket()
 	return (true);
 }
 
-bool		WinTCPSocketServer::configSocket()
+bool		WinTCPSocketServer::configSocket(unsigned short port)
 {
 	sockaddr_in	service;
 	hostent*	thisHost;
 	char		hostName[255];
+	char*			ip;
 
 	service.sin_family = AF_INET;
-	WSAHtons(this->_sock, this->_port, &service.sin_port);
+	WSAHtons(this->_sock, port, &service.sin_port);
 	gethostname(hostName, 255);
 	std::cout << "hostName:" << hostName << std::endl;
 	thisHost = gethostbyname(hostName);
-	this->_ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
-	std::cout << "ip: " << this->_ip << " port: " << this->_port << std::endl;
-	service.sin_addr.s_addr = inet_addr(this->_ip);
+	ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
+	std::cout << "ip: " << ip << " port: " << port << std::endl;
+	service.sin_addr.s_addr = inet_addr(ip);
 
 	if (bind(this->_sock, (SOCKADDR*) &service, sizeof(SOCKADDR)) == SOCKET_ERROR)
 	{

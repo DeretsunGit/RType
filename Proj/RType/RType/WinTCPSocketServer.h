@@ -12,8 +12,6 @@ class WinTCPSocketServer : public ISocket
 private:
 	bool			_live;
 	SocketId		_sock;
-	unsigned short	_port;
-	char*			_ip;
 	std::queue<WinTCPSocketClient*> _winTCPSocketClient;
 	Mutex						_lock;
 public:
@@ -24,7 +22,7 @@ public:
 	void	    readFromSock();
 	void	    writeToSock();
 	bool		createSocket();
-	bool		configSocket();
+	bool		configSocket(unsigned short);
 	WinTCPSocketClient*		accept();
 	bool		isLive() const;
 };
