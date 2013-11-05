@@ -2,6 +2,7 @@
 
 #ifdef _WIN32
 
+# include "Mutex.h"
 # include "ITCPSocketClient.h"
 # include "IOBuff.h"
 
@@ -13,7 +14,7 @@ private:
 	SocketId		_sock;
 	bool			_live;
 	IOBuff<>		_buff;
-
+	Mutex			_lock;
 public:
 	WinTCPSocketClient(const char *, unsigned short);
 	WinTCPSocketClient(SocketId);

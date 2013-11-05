@@ -49,12 +49,19 @@ WinTCPSocketClient::~WinTCPSocketClient()
 
 void WinTCPSocketClient::send(char *buff, unsigned int size)
 {
+	this->_lock.lock();
 	this->_buff._output.writeSome(buff, size);
+	this->_lock.unlock();
 }
 
 unsigned int WinTCPSocketClient::recv(char *buff, unsigned int size)
 {
-	return (this->_buff._input.readSome(buff, size));
+	unsigned int rc = 0;
+
+	this->_lock.lock();
+	rc = this->_buff._input.readSome(buff, size);
+	this->_lock.unlock();
+	return (rc);
 }
 
 WinTCPSocketClient::SocketId  WinTCPSocketClient::getId() const
