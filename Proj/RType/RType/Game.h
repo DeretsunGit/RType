@@ -13,8 +13,10 @@
 
 class Game
 {
+private:
 	std::vector<Player*>	_players;
 	std::list<Wave>			_livingThings;
+	ServerCommunication		_com;
 
 	// maps
 	// Script				_script;
@@ -34,6 +36,7 @@ public:
 	~Game();
 
 	void	genPool();
+	void	startGame();
 	void	gameLoop();
 	void	waveGeneration();
 	void	mapGeneration();

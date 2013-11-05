@@ -15,10 +15,10 @@ ServerCommunication::ServerCommunication()
 	_commandMap[0x09] = &ServerCommunication::TCPupdateResolution;
 	_commandMap[0x0a] = &ServerCommunication::TCPgetOwnedFiles;
 	_commandMap[0x0b] = &ServerCommunication::TCPfileTransferConfirmation;
-	_commandMap[0x0c] = &ServerCommunication::TCPgetReady;
+	//_commandMap[0x0c] = &ServerCommunication::TCPgetReady;
 	_commandMap[0x0d] = &ServerCommunication::TCPsendMap;
 	_commandMap[0x0e] = &ServerCommunication::TCPgetMap;
-	_commandMap[0x12] = &ServerCommunication::UDPinterpretInputs;
+	//_commandMap[0x12] = &ServerCommunication::UDPinterpretInputs;
 }
 
 ServerCommunication::~ServerCommunication()
@@ -78,13 +78,13 @@ void	ServerCommunication::TCPfileTransferConfirmation(const char* data) const
     // Need real separator between filename and version
 }
 
-void	ServerCommunication::TCPgetReady(const char* data) const
+bool	ServerCommunication::TCPgetReady(const char* data) const
 {
 	s_tcp_header block;
 	memcpy(&block, data, TCPHEADSIZE);
 	if (block.opcode == 0x0c)
-		return /*confirmation*/;
-	return /*erreur*/;
+		return true;
+	return false;
 }
 
 void	ServerCommunication::TCPsendMap(const char* data) const
@@ -97,13 +97,11 @@ void	ServerCommunication::TCPgetMap(const char* data) const
 	(void)data;
 }
 
-void	ServerCommunication::UDPinterpretInputs(const char* data) const
+void	ServerCommunication::UDPinterpretInputs(s_inputs& inputs, const char* data) const
 {
-	s_inputs inputs;
-
 	if (data != NULL)
 		memcpy(&inputs, &data[1], sizeof(s_inputs));
-	// the inputs struct is filled from here
+	return ;
 }
 
 void	ServerCommunication::interpretCommand(const char* command) const

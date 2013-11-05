@@ -7,6 +7,9 @@ Game::Game()
 	// on récupère Script en argument
 	this->mapGeneration();
 	this->genPool();
+	// startGame() va attendre que les clients soient ready via TCP
+	// puis envoi aux client le start game via TCP
+	this->startGame();
 	this->gameLoop();
 }
 
@@ -63,6 +66,25 @@ void	Game::genPool()
 	}
 }
 
+void	Game::startGame()
+{
+	// On gère l'attente des players
+	// Lorsqu'on recoit des packets TCP, on les traite ici
+	Packet* tmp = NULL; // tmp sera remplacé par le vrai packet recu
+
+	if (_com.TCPgetReady(tmp->getBuffer()))
+		;// la méthode retourne vrai, le joueur a donc envoyé ready
+	else
+		;// la méthode retourne false, le joueur a envoyé un packet eronné
+
+	// si tous les joueurs sont prêts
+	Packet* pack = _com.TCPsendStartGame();
+	if (pack != NULL)
+		;// envoi pack à chaque joueur puis passe en UDP via gameLoop()
+	else
+		;// GROS PROBLEME
+}
+
 void	Game::gameLoop()
 {
 	Clock	loopTimer;
@@ -80,7 +102,7 @@ void	Game::gameLoop()
 		this->sendPriority();
 		this->_endGame = !this->isPlayerAlive();
 		execTime = loopTimer.getTimeBySec();
-		Sleep(16 - execTime);
+		Sleep((DWORD)(16 - execTime));
 	}
 	// on dit aux clients de lancer l'ecran de fin (win ou lose)
 }
@@ -134,15 +156,25 @@ void	Game::sendPriority()
 	// ajouter les ennemis et les bullets
 
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
-	 //UDPsendGameElements(elemToSend, _players);
+	// on déclare un Packet qui va etre alloué dans la méthode
+	Packet *pack;
+	pack = _com.UDPsendGameElements(elemToSend, this->_players);
 
+	// ici, pack contient les données sérialisées à écrire sur la socket.
 }
 
 void	Game::getInputs()
 {
-	// interpretCommand(const char *data);
+	//  !! ceci fonctionne pour 1 joueur !!
+	s_inputs inputs;
+	char *buff = NULL;
+	// recuperer les packets sur la socket
+	// passer en paramètre de la fonction le buffer du packet
+	// remplacé ici par un buffer vide
+	_com.UDPinterpretInputs(inputs, buff);
 
-
+	// ici la struct inputs contient les inputs utilisateur
+	// comme définie dans la RFC.
 }
 
 void	Game::moveBullets()

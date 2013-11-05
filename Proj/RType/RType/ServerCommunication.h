@@ -60,16 +60,16 @@ private:
 	void TCPupdateResolution(const char *data) const;
 	void TCPgetOwnedFiles(const char *data) const;
 	void TCPfileTransferConfirmation(const char *data) const;
-	void TCPgetReady(const char *data) const;
 	void TCPsendMap(const char *data) const;
 	void TCPgetMap(const char *data) const;
-	void UDPinterpretInputs(const char *data) const;
 
 public:
 	ServerCommunication();
 	~ServerCommunication();
 
 	void interpretCommand(const char* command) const;
+	void UDPinterpretInputs(s_inputs& inputs, const char *data) const;
+	bool TCPgetReady(const char *data) const;
 
 	Packet* TCPsendRoomList(const std::list<Room>& rooms) const; 
 	Packet* TCPsendPlayerList(int roomId, const std::vector<Player*>& players) const;
