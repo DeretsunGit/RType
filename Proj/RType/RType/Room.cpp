@@ -1,15 +1,25 @@
 #include <algorithm>
+#include <cstring>
 #include "Room.h"
 
 
 Room::Room()
 {
 //	this->_id;
-//	this->_nbReady = 0;
+	this->_nbReady = 0;
 }
 
 Room::~Room(void)
 {
+}
+
+bool	Room::addClient(Client* newClient)
+{
+	Player newPlayer;
+	
+	if (this->addPlayer(&newPlayer) == false)
+		return (false);
+	newPlayer.setClient(newClient);
 }
 
 bool	Room::addPlayer(Player* player)

@@ -9,8 +9,22 @@ Game::Game()
 	this->genPool();
 	// startGame() va attendre que les clients soient ready via TCP
 	// puis envoi aux client le start game via TCP
+	
+	// on set l'UDP chez les player
+
+	this->setUDP();
 	this->startGame();
 	this->gameLoop();
+}
+
+void	Game::setUDP()
+{
+/*	std::vector<Player*>::iterator	it_player;
+	
+	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
+		{
+			(*it_player)->setUDPsocket();
+	}*/	
 }
 
 void	Game::mapGeneration()
@@ -66,7 +80,7 @@ void	Game::genPool()
 	}
 }
 
-void	Game::startGame()
+bool	Game::startGame()
 {
 	unsigned short i = 1;
 	// On gère l'attente des players
@@ -84,6 +98,7 @@ void	Game::startGame()
 		;// envoi pack à chaque joueur puis passe en UDP via gameLoop()
 	else
 		;// GROS PROBLEME
+	return (true);
 }
 
 void	Game::gameLoop()

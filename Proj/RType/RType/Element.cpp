@@ -40,7 +40,7 @@ int Element::isCollision(std::list<Element*> cell)
 		}
 		it ++;
 	}
-	return (NULL);
+	return (-1);
 }
 
 void	Element::addToCurrentCell(t_coord coord)

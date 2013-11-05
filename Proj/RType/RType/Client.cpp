@@ -1,9 +1,9 @@
 #include "Client.h"
 
 
-Client::Client(void)
+Client::Client(ITCPSocketClient* newSocket)
 {
-
+	this->_tcpSocket = newSocket;
 }
 
 

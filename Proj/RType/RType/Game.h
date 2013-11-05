@@ -3,7 +3,7 @@
 #include <vector>
 #include <list>
 #include <iterator>
-#include "rtype_common.h"
+//#include "rtype_common.h"
 #include "Wave.h"
 #include "Wall.h"
 #include "Bullet.h"
@@ -35,7 +35,7 @@ public:
 	~Game();
 
 	void	genPool();
-	void	startGame();
+	bool	startGame();
 	void	gameLoop();
 	void	waveGeneration();
 	void	mapGeneration();
@@ -47,4 +47,6 @@ public:
 	void	moveWall();
 	void	playerShoot(Player *);
 	void	moveBullets();
+
+	void	setUDP();
 };

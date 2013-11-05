@@ -1,4 +1,7 @@
+#pragma message ("KUKU")
 #include "Player.h"
+#pragma message ("KOUKOU")
+#include "rtype_common.h"
 
 Player::Player()
 {
@@ -55,6 +58,18 @@ void	Player::setReady(bool ready)
 void	Player::setIsShooting(bool shooting)
 {
 	this->_isShooting = shooting;
+}
+
+void	Player::setClient(Client *newClient)
+{
+	this->_client = newClient;
+}
+
+void	Player::setUDPsocket()
+{
+//	this->_udpSock
+	//	UTCPSocketServer(port = 0)
+	//methode getport qui retourne le port reelement utilisé
 }
 
 Player::~Player()

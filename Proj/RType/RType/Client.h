@@ -1,15 +1,15 @@
 #pragma once
 
 #include <string>
-#include "rtype_common.h"
-#include "TCPSocketServer.h"
+#include "TCPSocketClient.h"
 
 class Client
 {
 //	std::string	_name;
-//	TCPSocketServer _tcpSocket;
+	ITCPSocketClient* _tcpSocket;
 public:
 	Client();
+	Client(ITCPSocketClient*);
 	~Client();
 };
 

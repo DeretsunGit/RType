@@ -1,7 +1,10 @@
 #pragma once
 
 #include <string>
+//#include "UDPSocketServer.h"
 #include "Element.h"
+#include "Client.h"
+
 
 class Player : public Element
 {
@@ -12,8 +15,8 @@ class Player : public Element
 	bool			_alive;
 	bool			_shield;
 	bool			_isShooting;
-	// TCPSocket		_tcpSock;
-	// UDPSocket		_udpSock;
+	Client *		_client;
+//	UDPSocketServer*	_udpSock;
 public:
 	// Player(std::string, TCPSocket);
 	Player();
@@ -28,6 +31,8 @@ public:
 	bool	isDefeated() const;
 	bool	getShield() const;
 
+	void	setClient(Client *);
+	void	setUDPsocket();
 	void	setIsShooting(bool);
 	void	setId(int);
 	void	setScore(int);
