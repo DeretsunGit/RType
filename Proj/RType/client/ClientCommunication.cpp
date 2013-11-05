@@ -6,6 +6,7 @@
 //
 
 #include <cstring>
+#include <vector>
 #include "ClientCommunication.h"
 
 ClientCommunication::ClientCommunication()
@@ -26,12 +27,26 @@ ClientCommunication::~ClientCommunication()
 
 void	ClientCommunication::TCPgetRoomList(const char* data) const
 {
-	(void)data;
+	s_tcp_header block;
+	std::vector<char> rooms;
+	std::vector<char> playerNb;
+	memcpy(&block, data, TCPHEADSIZE);
+	int i = TCPHEADSIZE, limit = TCPHEADSIZE+block.datasize;
+
+	while (i < limit)
+	{
+		rooms.push_back(data[i]);
+		playerNb.push_back(data[i+1]);
+		i += 2;
+	}
+
+	//the two lists are filled and ready.
+	
 }
 
 void	ClientCommunication::TCPgetPlayerList(const char* data) const
 {
-	(void)data;
+	(void)data;	
 }
 
 void	ClientCommunication::TCPgetFileList(const char* data) const
@@ -46,17 +61,26 @@ void	ClientCommunication::TCPgetFile(const char* data) const
 
 void	ClientCommunication::TCPgetStartLoading(const char* data) const
 {
-	(void)data;
+	s_tcp_header block;
+	memcpy(&block, data, TCPHEADSIZE);
+	if (block.opcode == 0x05)
+		return /*bien !*/;
+	return /*pas bien!*/;
 }
 
 void	ClientCommunication::TCPgetStartGame(const char* data) const
 {
-	(void)data;
+	s_tcp_header block;
+	memcpy(&block, data, TCPHEADSIZE);
+	if (block.opcode == 0x06)
+		return /*bien !*/;
+	return /*pas bien!*/;
 }
 
 void	ClientCommunication::UDPgetGameElements(const char* data) const
 {
 	int i = 0;
+	data = &data[1];
 	std::list<s_element> elements;
 	std::list<s_player> players;
 
@@ -87,51 +111,112 @@ void	ClientCommunication::interpretCommand(const char* command) const
 	std::map<char, void (ClientCommunication::*)(const char*) const>::const_iterator ite;
 
 	if (command != NULL && ((ite = _commandMap.find(command[0])) != _commandMap.end()))
-		(this->*(ite->second))(&command[1]);
+		(this->*(ite->second))(command);
 }
 
-Packet*	ClientCommunication::TCProomChoice(const std::string& nickname, int roomId)
+Packet*	ClientCommunication::TCProomChoice(const std::string& nickname, char roomId) const
 {
-	(void)nickname; (void)roomId;
-	return (new Packet());
+	s_tcp_header block;
+	Packet* packet = new Packet();
+	block.opcode = 0x07;
+	block.datasize = (short)nickname.size() + 1;
+	char* buff = new char[TCPHEADSIZE + block.datasize];
+
+	memcpy(buff, &block, TCPHEADSIZE);
+	memcpy(&buff[TCPHEADSIZE], nickname.c_str(), nickname.size());
+	memcpy(&buff[TCPHEADSIZE+nickname.size()], &roomId, 1);
+
+	if (!packet->set(buff, TCPHEADSIZE+block.datasize))
+	{
+		delete buff;
+		delete packet;
+		return (NULL);
+	}
+
+	return (packet);
 }
 
-Packet*	ClientCommunication::TCPupdateNickname(const std::string& nickname)
+Packet*	ClientCommunication::TCPupdateNickname(const std::string& nickname) const
 {
-	(void)nickname;
-	return (new Packet());
+	s_tcp_header block;
+	Packet* packet = new Packet();
+	block.opcode = 0x08;
+	block.datasize = (short)nickname.size();
+	char* buff = new char[TCPHEADSIZE + block.datasize];
+
+	memcpy(buff, &block, TCPHEADSIZE);
+	memcpy(&buff[TCPHEADSIZE], nickname.c_str(), nickname.size());
+
+	if (!packet->set(buff, TCPHEADSIZE+block.datasize))
+	{
+		delete buff;
+		delete packet;
+		return (NULL);
+	}
+
+	return (packet);
 }
 
-Packet*	ClientCommunication::TCPupdateResolution(const std::string& resolution)
+Packet*	ClientCommunication::TCPupdateResolution(const std::string& resolution) const
 {
-	(void)resolution;
-	return (new Packet());
+	s_tcp_header block;
+	Packet* packet = new Packet();
+	block.opcode = 0x09;
+	block.datasize = (short)resolution.size();
+	char* buff = new char[TCPHEADSIZE + block.datasize];
+
+	memcpy(buff, &block, TCPHEADSIZE);
+	memcpy(&buff[TCPHEADSIZE], resolution.c_str(), resolution.size());
+
+	if (!packet->set(buff, TCPHEADSIZE+block.datasize))
+	{
+		delete buff;
+		delete packet;
+		return (NULL);
+	}
+
+	return (packet);
 }
 
-Packet*	ClientCommunication::TCPsendOwnedFiles(const std::list<std::string>& filenames, const std::list<std::string>& versions)
+Packet*	ClientCommunication::TCPsendOwnedFiles(const std::list<std::string>& filenames, const std::list<std::string>& versions) const
 {
 	(void)filenames; (void)versions;
 	return (new Packet());
 }
 
-Packet*	ClientCommunication::TCPconfirmFileReception(const std::string& filename, const std::string& version)
+Packet*	ClientCommunication::TCPconfirmFileReception(const std::string& filename, const std::string& version) const
 {
-	(void)filename; (void)version;
-	return (new Packet());
+	s_tcp_header block;
+	Packet* packet = new Packet();
+	block.opcode = 0x0b;
+	block.datasize = (short)(filename.size() + version.size());
+	char* buff = new char[TCPHEADSIZE + block.datasize];
+
+	memcpy(buff, &block, TCPHEADSIZE);
+	memcpy(&buff[TCPHEADSIZE], filename.c_str(), filename.size());
+	memcpy(&buff[TCPHEADSIZE+filename.size()], version.c_str(), version.size());
+
+	if (!packet->set(buff, TCPHEADSIZE+block.datasize))
+	{
+		delete buff;
+		delete packet;
+		return (NULL);
+	}
+
+	return (packet);
 }
 
-Packet*	ClientCommunication::TCPsendReady()
+Packet*	ClientCommunication::TCPsendReady() const
 {
-	s_blocks block;
+	s_tcp_header block;
 	Packet* packet = new Packet();
-	char* buff = new char[3];
+	char* buff = new char[TCPHEADSIZE];
 
 	block.opcode = 0x0c;
 	block.datasize = 0;
-	block.data = NULL;
 
-	memcpy(buff, &block, 3);
-	if (!packet->set(buff, 3))
+	memcpy(buff, &block, TCPHEADSIZE);
+	if (!packet->set(buff, TCPHEADSIZE))
 	{
 		delete buff;
 		delete packet;
@@ -140,18 +225,17 @@ Packet*	ClientCommunication::TCPsendReady()
 	return (packet);
 }
 
-Packet*	ClientCommunication::TCPsendMapRequest()
+Packet*	ClientCommunication::TCPsendMapRequest() const
 {
-	s_blocks block;
+	s_tcp_header block;
 	Packet* packet = new Packet();
-	char* buff = new char[3];
+	char* buff = new char[TCPHEADSIZE];
 
 	block.opcode = 0x0d;
 	block.datasize = 0;
-	block.data = NULL;
 
-	memcpy(buff, &block, 3);
-	if (!packet->set(buff, 3))
+	memcpy(buff, &block, TCPHEADSIZE);
+	if (!packet->set(buff, TCPHEADSIZE))
 	{
 		delete buff;
 		delete packet;
@@ -160,7 +244,7 @@ Packet*	ClientCommunication::TCPsendMapRequest()
 	return (packet);
 }
 
-Packet*	ClientCommunication::TCPuploadMap(const std::string& filename, const char* filedata)
+Packet*	ClientCommunication::TCPuploadMap(const std::string& filename, const char* filedata) const
 {
 	(void)filename; (void)filedata;
 	return (new Packet());

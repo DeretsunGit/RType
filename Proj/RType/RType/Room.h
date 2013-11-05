@@ -1,17 +1,24 @@
 #pragma once
 
+#include <vector>
 #include "Client.h"
+#include "Player.h"
 
 class Room
 {
+private:
+	char	_nbPlayer;
+	char	_id;
 	// Thread	_th;
-	// Player[4]	party;
+	std::vector<Player*> _party;
 
 public:
 	Room();
 	~Room();
 
-	bool	addPlayer(Client);
+	bool	addPlayer(Player*);
 	bool	startGame();
-	bool	removePlayer();
+	bool	removePlayer(int id);
+	char	getId() const;
+	char	getNbPlayer() const;
 };

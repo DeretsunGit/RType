@@ -13,16 +13,17 @@
 #include "Packet.hpp"
 #include "Player.h"
 #include "Element.h"
+#include "Room.h"
 
 #define UDPBLOCKS 517
 #define UDPDATASIZE 516
+#define TCPHEADSIZE 3
 #define OPCODESIZE 1
 
-struct s_blocks
+struct s_tcp_header
 {
 	char opcode;
 	short datasize;
-	char *data;
 };
 
 struct s_inputs
@@ -70,11 +71,11 @@ public:
 
 	void interpretCommand(const char* command) const;
 
-	Packet* TCPsendRoomList(const std::list<int>& roomIds, const std::list<int>& playersInRoom, const std::list<int>& maxPlayersNb); 
-	Packet* TCPsendPlayerList(int roomId, const std::list<std::string>& players);
-	Packet* TCPaskClientForFiles(const std::list<std::string>& filenames);
-	Packet* TCPsendFile(const std::string& filename, const char* fileContent);
-	Packet* TCPsendStartLoading();
-	Packet* TCPsendStartGame();
-	Packet* UDPsendGameElements(const std::list<Element>& elements, const std::list<Player>& players);
+	Packet* TCPsendRoomList(const std::list<Room>& rooms) const; 
+	Packet* TCPsendPlayerList(int roomId, const std::vector<Player*>& players) const;
+	Packet* TCPaskClientForFiles(const std::list<std::string>& filenames) const;
+	Packet* TCPsendFile(const std::string& filename, const char* fileContent) const;
+	Packet* TCPsendStartLoading() const;
+	Packet* TCPsendStartGame() const;
+	Packet* UDPsendGameElements(const std::list<Element*>& elements, const std::vector<Player*>& players) const;
 };
