@@ -3,9 +3,9 @@
 #ifndef	_WIN32
 
 # include	"IOBuff.h"
-# include	"ATCPSocketClient.h"
+# include	"ITCPSocketClient.h"
 
-class	UnixTCPSocketClient: public ATCPSocketClient
+class	UnixTCPSocketClient: public ITCPSocketClient
 {
 private:
   SocketId	_sock;

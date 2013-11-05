@@ -59,7 +59,7 @@ add_executable (Server
 	WinTCPSocketServer.h
 	Wall.cpp
 	Wall.h
-	ATCPSocketClient.h
+	ITCPSocketClient.h
 	UnixTCPSocketClient.h
 	UnixTCPSocketClient.cpp
 	WinUDPSocketServer.h
@@ -67,7 +67,7 @@ add_executable (Server
 	WinUDPSocketClient.cpp
 	WinUDPSocketServer.cpp
 	AUDPSocketClient.h
-        ATCPSocketServer.h
+        ITCPSocketServer.h
         TCPSocketServer.h
         UnixTCPSocketServer.cpp
         UnixTCPSocketServer.h
