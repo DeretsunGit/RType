@@ -2,12 +2,12 @@
 
 #ifdef _WIN32
 
-# include "IUDPSocketClient.h"
+# include "IUDPSocket.h"
 # include "IOBuff.h"
 
 #define DATA_BUFSIZE	1024
 
-class WinUDPSocketClient : public IUDPSocketClient
+class WinUDPSocketClient : public IUDPSocket
 {
 private:
 	SocketId		_sock;

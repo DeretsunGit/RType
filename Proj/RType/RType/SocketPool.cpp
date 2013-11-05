@@ -1,10 +1,3 @@
-#ifdef _WIN32
-
-# include <WinSock2.h>
-# include <Windows.h>
-
-#endif // _WIN32
-
 #include <algorithm>
 #include <iostream>
 #include "SocketPool.h"
@@ -113,8 +106,7 @@ void			SocketPool::watcher()
       select(static_cast<int>(max + 1), &rfds, &wfds, NULL, &to);
       this->_list.remove_if(e);
       this->_m.unlock();
-	  std::cout << to.tv_sec * 1000 + to.tv_usec / 1000 << std::endl;
-     // Sleep(to.tv_sec * 1000 + to.tv_usec / 1000);
+      Sleep(to.tv_sec * 1000 + to.tv_usec / 1000);
     }
   }
 }

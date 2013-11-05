@@ -2,7 +2,7 @@
 
 #ifdef	_WIN32
 
-# include	<Winsock2.h>
+# include	<Inaddr.h>
 
 #else
 
