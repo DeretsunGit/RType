@@ -83,7 +83,6 @@ bool	WinTCPSocketClient::isLive() const
 
 bool		WinTCPSocketClient::wantToWrite() const
 {
-	std::cout << "size:" << this->_buff._output.readableSize() << std::endl;
 	if (!this->_live)
 		return (false);
 	return (this->_buff._output.readableSize() > 0 ? true : false);
@@ -104,7 +103,6 @@ void	    WinTCPSocketClient::readFromSock()
 	rc = WSARecv(this->_sock, &dataBuf, 1, &recvBytes, &flags, NULL, NULL);
 	if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
 	{
-		std::cerr << "WSARecv() failed with error: " << err << std::endl;
 		this->_live = false;
 		return ;
 	}
@@ -113,7 +111,6 @@ void	    WinTCPSocketClient::readFromSock()
 		this->_live = false;
 		return ;
 	}
-	std::cout << "read: " << dataBuf.buf << std::endl;
 	this->_lock.lock();
 	this->_buff._input.writeSome(dataBuf.buf, recvBytes);
 	this->_lock.unlock();
@@ -136,11 +133,9 @@ void	    WinTCPSocketClient::writeToSock()
 	rc = WSASend(this->_sock, &dataBuf, 1, &sendBytes, 0, NULL, NULL);
 	if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
 	{
-		std::cerr << "WSASend() failed with error: " << err << std::endl;
 		this->_live = false;
 		return ;
 	}
-	std::cout << "write: " << dataBuf.buf << std::endl;
 }
 
 #endif // _WIN32

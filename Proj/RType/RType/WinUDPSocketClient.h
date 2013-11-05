@@ -2,30 +2,30 @@
 
 #ifdef _WIN32
 
-# include "IUDPSocket.h"
+# include "IUDPSocketClient.h"
 # include "IOBuff.h"
 # include "Mutex.h"
 
-class WinUDPSocketClient : public IUDPSocket
+class WinUDPSocketClient : public IUDPSocketClient
 {
 private:
 	SocketId	 _sock;
 	bool	  	 _live;
-	BuffMap		 _map;
+	UDPBuff<>	 _buff;
 	Mutex		 _m;
 	unsigned short	_port;
+	IN_ADDR		_host;
 
 	WinUDPSocketClient();
 	WinUDPSocketClient(const WinUDPSocketClient&);
 	WinUDPSocketClient& operator=(const WinUDPSocketClient&);
 
 public:
-	WinUDPSocketClient(unsigned short);
+	WinUDPSocketClient(const char* hostname, unsigned short port);
 	virtual	      ~WinUDPSocketClient();
-	unsigned int  readableFor(const in_addr& from) const;
-	unsigned int  readFrom(char* buff, unsigned int size, const in_addr& from);
-	unsigned int  recvFrom(char* buff, unsigned int size, in_addr& from);
-	void	      sendTo(const char* buff, unsigned int size, const in_addr& to);
+	unsigned int  readable() const;
+	unsigned int  recv(char* buff, unsigned int size);
+	void	      send(const char* buff, unsigned int size);
 	SocketId      getId() const;
 	bool	      wantToWrite() const;
 	void	      readFromSock();

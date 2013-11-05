@@ -20,7 +20,8 @@
 #include "Vector2.hpp"
 #include "TCPSocketClient.h"
 #include "TCPSocketServer.h"
-#include "IUDPSocket.h"
+#include "UDPSocketServer.h"
+#include "UDPSocketClient.h"
 
 #ifndef	_WIN32
 
@@ -68,31 +69,22 @@ void	watch_count(long id)
   g_m.unlock();
 }
 */
-int	main()
+int		  main()
 {
-	// WinTCPSocketServer	winTCPSocketServer(1234, false);
-	//  WinTCPSocketClient	*winTCPSocketClient;
-	//  while (!(winTCPSocketClient = winTCPSocketServer.accept())){}
+  UDPSocketClient c("localhost", 1234);
+  char		  buff[255];
+  int		  ret;
 
-	//  std::cin.get();
-	//  delete winTCPSocketClient;
-
-  TCPSocketServer	socket(1234);
-  ITCPSocketClient*	c[2];
-  bool			tmp(false);
-
-  c[0] = NULL;
-  c[1] = NULL;
-  while (socket.isLive())
+  c.send("Coucou les amis!\n", sizeof("Coucou les amis!\n"));
+  while (c.isLive())
+  {
+    if ((ret = c.recv(buff, sizeof(buff))) > 0)
     {
-      if ((c[tmp] = socket.accept()))
-	{
-	  c[tmp]->send("Coucou!\n", sizeof("Coucou!\n"));
-	  tmp = !tmp;
-	  delete c[tmp];
-	  c[tmp] = NULL;
-	}
+      buff[ret] = 0;
+      std::cout << "Received " << buff << std::flush;
+      c.send(buff, ret);
     }
-  std::cout << "End" << std::endl;
+  }
+  std::cin.get();
   return (0);
 }

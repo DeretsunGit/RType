@@ -2,30 +2,36 @@
 
 #ifdef _WIN32
 
-# include <map>
+# include "IUDPSocketServer.h"
+# include "IOBuff.h"
 # include "Mutex.h"
-# include "Socket.h"
-# include "WinUDPSocketClient.h"
 
-class WinUDPSocketServer : public ISocket
+class WinUDPSocketServer : public IUDPSocketServer
 {
 private:
-	bool			_live;
-	SocketId		_sock;
+	SocketId	 _sock;
+	bool	  	 _live;
+	BuffMap		 _map;
+	Mutex		 _m;
 	unsigned short	_port;
-	char*			_ip;
-	std::map<struct sockaddr_in, IOBuff<>> _host;
-	Mutex						_lock;
+
+	WinUDPSocketServer();
+	WinUDPSocketServer(const WinUDPSocketServer&);
+	WinUDPSocketServer& operator=(const WinUDPSocketServer&);
+
 public:
 	WinUDPSocketServer(unsigned short);
-	virtual ~WinUDPSocketServer();
-	SocketId	getId() const;
-	bool		wantToWrite() const;
-	void	    readFromSock();
-	void	    writeToSock();
-	bool		createSocket();
-	bool		configSocket(unsigned short);
-	bool		isLive() const;
+	virtual	      ~WinUDPSocketServer();
+	unsigned short	getPort() const;
+	unsigned int  readableFor(const in_addr& from) const;
+	unsigned int  readFrom(char* buff, unsigned int size, const in_addr& from);
+	unsigned int  recvFrom(char* buff, unsigned int size, in_addr& from);
+	void	      sendTo(const char* buff, unsigned int size, const in_addr& to);
+	SocketId      getId() const;
+	bool	      wantToWrite() const;
+	void	      readFromSock();
+	void	      writeToSock();
+	bool	      isLive() const;
 };
 
 #endif // _WIN32

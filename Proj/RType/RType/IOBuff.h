@@ -8,3 +8,9 @@ struct IOBuff
   CircularBuffer<Type, size>  _input;
   CircularBuffer<Type, size>  _output;
 };
+
+template<unsigned int size = 500>
+struct UDPBuff: public IOBuff<char, size>
+{
+  unsigned short  _port;
+};

@@ -50,11 +50,9 @@ bool		WinTCPSocketServer::configSocket(unsigned short port)
 	service.sin_family = AF_INET;
 	WSAHtons(this->_sock, port, &service.sin_port);
 	gethostname(hostName, 255);
-	std::cout << "hostName:" << hostName << std::endl;
 	thisHost = gethostbyname(hostName);
 	ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
-	std::cout << "ip: " << ip << " port: " << port << std::endl;
-	if ((service.sin_addr.s_addr = inet_addr(ip)) == INADDR_NONE)
+	if ((service.sin_addr.s_addr = INADDR_ANY) == INADDR_NONE)
 	{
 		std::cerr << "The target ip address entered must be a legal IPv4 address" << std::endl;
 		return (false);
@@ -73,7 +71,6 @@ bool		WinTCPSocketServer::configSocket(unsigned short port)
 		closesocket(this->_sock);
 		return (false);
 	}
-	std::cout << "Listening..." << std::endl;
 
 	return (true);
 }
@@ -90,11 +87,7 @@ WinTCPSocketClient*		WinTCPSocketServer::accept()
 		this->_lock.unlock();
 	}
 	if (winTCPSocketClient)
-	{
-		std::cout << "Watch!" << std::endl;
 		SocketPool::getInstance().watchSocket(winTCPSocketClient);
-		std::cout << "End Watch!" << std::endl;
-	}
 	return (winTCPSocketClient);
 }
 
@@ -120,20 +113,16 @@ void	    WinTCPSocketServer::readFromSock()
 	int					clientSize = sizeof(client);
 	WinTCPSocketClient	*winTCPSocketClient = NULL;
 
-	std::cout << "Called" << std::endl;
 	if (!this->_live)
 		return ;
-	std::cout << "accept !!!" << std::endl;
 	if ((sockAccept = WSAAccept(this->_sock, (SOCKADDR*) &client, &clientSize, NULL, NULL)) == INVALID_SOCKET)
 	{
-		std::cerr << "WSAAccept() function failed with error: " << WSAGetLastError() << std::endl;
 		closesocket(this->_sock);
 		delete winTCPSocketClient;
 		this->_live = false;
 		this->_lock.unlock();
 		return ;
 	}
-	std::cout << "End accept" << std::endl;
 	winTCPSocketClient = new WinTCPSocketClient(sockAccept);
 	this->_lock.lock();
 	this->_winTCPSocketClient.push(winTCPSocketClient);

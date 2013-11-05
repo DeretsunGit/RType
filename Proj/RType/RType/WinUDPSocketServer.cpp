@@ -1,120 +1,157 @@
 #ifdef _WIN32
 
-# include <WinSock2.h>
-# include <Windows.h>
-# include <iostream>
+#include <stdexcept>
+#include <winsock2.h>
+#include "WinUDPSocketServer.h"
 
-# include "WinUDPSocketServer.h"
-# include "SocketPool.h"
-
+#define READ_SIZE 500
+#include<iostream>
 WinUDPSocketServer::WinUDPSocketServer(unsigned short port)
+  : _sock(WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0)), _live(true)
 {
-	if (!this->createSocket())
-		throw std::exception();
-	if (!this->configSocket(port))
-		throw std::exception();
-	this->_live = true;
-	SocketPool::getInstance().watchSocket(this);
+  struct sockaddr_in	sin;
+  int			len;
+
+  if (_sock == INVALID_SOCKET)
+    throw std::runtime_error("UDPSocketServer: failed to create socket");
+  ZeroMemory(&sin, sizeof(sin));
+  sin.sin_addr.S_un.S_addr = INADDR_ANY;
+  sin.sin_family = AF_INET;
+  sin.sin_port = htons(port);
+  if (bind(this->_sock, reinterpret_cast<const sockaddr*>(&sin), sizeof(sin)) == SOCKET_ERROR)
+  {
+    std::cerr << "Kiki " << WSAGetLastError() << std::endl;
+    throw std::runtime_error("UDPSocketServer: failed to create socket");
+  }
+  len = sizeof(sin);
+  if (getsockname(this->_sock, reinterpret_cast<sockaddr*>(&sin), &len) == SOCKET_ERROR)
+  {
+    std::cerr << "Prout " << WSAGetLastError() << std::endl;
+    throw std::runtime_error("UDPSocketServer: failed to create socket");
+  }
+  this->_port = ntohs(sin.sin_port);
 }
 
 WinUDPSocketServer::~WinUDPSocketServer()
 {
-	//while (!this->_winUDPSocketClient.empty())
-	//{
-	//	delete this->_winUDPSocketClient.front();
-	//	this->_winUDPSocketClient.pop();
-	//}
-	if (closesocket(this->_sock) == SOCKET_ERROR)
-	{
-		std::cerr << "closesocket() function failed with error: " << WSAGetLastError() << std::endl;
-		throw std::exception();
-	}
+  closesocket(this->_sock);
 }
 
-bool		WinUDPSocketServer::createSocket()
+unsigned int		  WinUDPSocketServer::readableFor(const in_addr& from) const
 {
-	if ((this->_sock = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, NULL)) == INVALID_SOCKET)
-	{
-		std::cerr << "WSASocket() function failed with error: " << WSAGetLastError() << std::endl;
-		return (false);
-	}
-	return (true);
+  unsigned int		  sent(0);
+  BuffMap::const_iterator it(this->_map.find(from.S_un.S_addr));
+
+  if (it != this->_map.end())
+    sent = it->second._input.readableSize();
+  return (sent);
 }
 
-bool		WinUDPSocketServer::configSocket(unsigned short port)
+unsigned int		  WinUDPSocketServer::readFrom(char* buff, unsigned int size, const in_addr& from)
 {
-	sockaddr_in	service;
-	hostent*	thisHost;
-	char		hostName[255];
-	char*			ip;
+  ScopedLock	    lock(this->_m);
+  unsigned int	    sent(0);
+  BuffMap::iterator it(this->_map.find(from.S_un.S_addr));
 
-	service.sin_family = AF_INET;
-	WSAHtons(this->_sock, port, &service.sin_port);
-	gethostname(hostName, 255);
-	std::cout << "hostName:" << hostName << std::endl;
-	thisHost = gethostbyname(hostName);
-	ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
-	std::cout << "ip: " << ip << " port: " << port << std::endl;
-	if ((service.sin_addr.s_addr = inet_addr(ip)) == INADDR_NONE)
-	{
-		std::cerr << "The target ip address entered must be a legal IPv4 address" << std::endl;
-		return (false);
-	}
-
-	if (bind(this->_sock, (SOCKADDR*) &service, sizeof(SOCKADDR)) == SOCKET_ERROR)
-	{
-		std::cerr << "bind() failed with error: " << WSAGetLastError() << std::endl;
-		closesocket(this->_sock);
-		return (false);
-	}
-	std::cout << "Ready..." << std::endl;
-
-	return (true);
+  if (it != this->_map.end())
+    sent = it->second._input.readSome(buff, size);
+  return (sent);
 }
 
-WinUDPSocketServer::SocketId  WinUDPSocketServer::getId() const
+unsigned int  WinUDPSocketServer::recvFrom(char* buff, unsigned int size, in_addr& from)
 {
-	return (this->_sock);
+  ScopedLock	    lock(this->_m);
+  unsigned int	sent(0);
+  BuffMap::iterator it(this->_map.begin());
+
+  if (it != this->_map.end())
+  {
+    from.S_un.S_addr = it->first;
+    sent = it->second._input.readSome(buff, size);
+  }
+  return (sent);
 }
 
-bool	WinUDPSocketServer::isLive() const
+void  WinUDPSocketServer::sendTo(const char* buff, unsigned int size, const in_addr& to)
 {
-	return (this->_live);
+  ScopedLock	    lock(this->_m);
+  this->_map[to.S_un.S_addr]._output.writeSome(buff, size);
 }
 
-bool		WinUDPSocketServer::wantToWrite() const
+ISocket::SocketId WinUDPSocketServer::getId() const
 {
-	return (false);
+  return (this->_sock);
 }
 
-void	    WinUDPSocketServer::readFromSock()
+bool			  WinUDPSocketServer::wantToWrite() const
 {
-	//SocketId			sockAccept;
-	//struct sockaddr_in	client;
-	//int					clientSize = sizeof(client);
-	//WinUDPSocketClient	*winUDPSocketClient = NULL;
+  bool			  sent(false);
+  BuffMap::const_iterator it(this->_map.begin());
+  BuffMap::const_iterator end(this->_map.end());
 
-	//if (!this->_live)
-	//	return;
-	//this->_lock.lock();
-	//std::cout << "accept !!!" << std::endl;
-	//if ((sockAccept = WSAAccept(this->_sock, (SOCKADDR*) &client, &clientSize, NULL, NULL)) == INVALID_SOCKET)
-	//{
-	//	std::cerr << "WSAAccept() function failed with error: " << WSAGetLastError() << std::endl;
-	//	closesocket(this->_sock);
-	//	delete winUDPSocketClient;
-	//	this->_live = false;
-	//	this->_lock.unlock();
-	//	return;
-	//}
-	//winUDPSocketClient = new WinUDPSocketClient(sockAccept);
-	//this->_winUDPSocketClient.push(winUDPSocketClient);
-	//this->_lock.unlock();
+  while (!sent && it != end)
+  {
+    sent = !!it->second._output.readableSize();
+    ++it;
+  }
+  return (sent);
 }
 
-void	    WinUDPSocketServer::writeToSock()
+void		      WinUDPSocketServer::readFromSock()
 {
+  WSABUF	      buff;
+  char		      buf[READ_SIZE];
+  struct sockaddr_in  sin;
+  DWORD		      red;
+  DWORD		      opt(0);
+  INT		      size(sizeof(sin));
 
+  buff.buf = buf;
+  buff.len = READ_SIZE;
+  if (WSARecvFrom(this->_sock, &buff, 1, &red, &opt, reinterpret_cast<struct sockaddr*>(&sin), &size, NULL, NULL) == SOCKET_ERROR)
+    this->_live = false;
+  else
+  {
+    this->_m.lock();
+    this->_map[sin.sin_addr.S_un.S_addr]._input.writeSome(buff.buf, red);
+    this->_map[sin.sin_addr.S_un.S_addr]._port = sin.sin_port;
+    this->_m.unlock();
+  }
+}
+
+void	WinUDPSocketServer::writeToSock()
+{
+  BuffMap::iterator   it(this->_map.begin());
+  BuffMap::iterator   end(this->_map.end());
+  WSABUF	      buff;
+  char		      buf[READ_SIZE];
+  struct sockaddr_in  sin;
+
+  buff.buf = buf;
+  while (it != end && !it->second._output.readableSize())
+    ++it;
+  if (it != end)
+  {
+    ZeroMemory(&sin, sizeof(sin));
+    sin.sin_addr.S_un.S_addr = it->first;
+    sin.sin_family = AF_INET;
+    this->_m.lock();
+    sin.sin_port = it->second._port;
+    buff.len = it->second._output.readSome(buf, READ_SIZE);
+    this->_m.unlock();
+    if (WSASendTo(this->_sock, &buff, 1, &buff.len, 0, reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin), NULL, NULL) == SOCKET_ERROR)
+      this->_live = false;
+  }
+}
+
+unsigned short WinUDPSocketServer::getPort() const
+{
+  return (this->_port);
+}
+
+bool  WinUDPSocketServer::isLive() const
+{
+  return (this->_live);
 }
 
 #endif // _WIN32
