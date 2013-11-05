@@ -102,7 +102,7 @@ void	Game::gameLoop()
 		this->sendPriority();
 		this->_endGame = !this->isPlayerAlive();
 		execTime = loopTimer.getTimeBySec();
-		Sleep((DWORD)(16 - execTime));
+		Sleep((unsigned long)(16 - execTime));
 	}
 	// on dit aux clients de lancer l'ecran de fin (win ou lose)
 }
