@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Mon Nov  4 19:16:18 2013 julien edmond
-// Last update Mon Nov  4 19:17:28 2013 julien edmond
+// Last update Tue Nov  5 00:56:46 2013 julien edmond
 //
 
 #include	"SocketPool.h"

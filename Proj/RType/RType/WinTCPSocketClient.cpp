@@ -3,14 +3,11 @@
 # include <WinSock2.h>
 # include <Windows.h>
 # include <iostream>
-
 # include "WinTCPSocketClient.h"
-# include "SocketPool.h"
 
 WinTCPSocketClient::WinTCPSocketClient(SocketId sock)
 	: _sock(sock), _live(true)
 {
-	SocketPool::getInstance().watchSocket(this);
 }
 
 WinTCPSocketClient::WinTCPSocketClient(const char *hostName, unsigned short port)

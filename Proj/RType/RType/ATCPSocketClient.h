@@ -5,14 +5,14 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Mon Nov  4 23:34:56 2013 julien edmond
-// Last update Mon Nov  4 23:37:00 2013 julien edmond
+// Last update Tue Nov  5 01:41:28 2013 julien edmond
 //
 
 #pragma once
 
 #include "Socket.h"
 
-class ATCPSocketClient: public ASocket
+class ATCPSocketClient: public ISocket
 {
 public:
   virtual ~ATCPSocketClient() {}

@@ -12,7 +12,7 @@
 SocketPool::SocketPool()
   : _alive(true), _watcher(*this, &SocketPool::watcher)
 {
-	this->_watcher.start();
+  this->_watcher.start();
 }
 
 SocketPool::~SocketPool()
@@ -22,7 +22,7 @@ SocketPool::~SocketPool()
   this->_watcher.join();
 }
 
-void  SocketPool::watchSocket(ASocket* s)
+void  SocketPool::watchSocket(ISocket* s)
 {
   this->_m.lock();
   this->_list.push_back(s);
@@ -30,21 +30,21 @@ void  SocketPool::watchSocket(ASocket* s)
   this->_m.unlock();
 }
 
-void  SocketPool::releaseSocket(ASocket* s)
+void  SocketPool::releaseSocket(ISocket* s)
 {
   this->_m.lock();
   this->_list.remove(s);
   this->_m.unlock();
 }
 
-SocketPool::Setter::Setter(fd_set& rfds, fd_set& wfds, ASocket::SocketId& max)
+SocketPool::Setter::Setter(fd_set& rfds, fd_set& wfds, ISocket::SocketId& max)
   : _rfds(rfds), _wfds(wfds), _max(max)
 {}
 
 SocketPool::Setter::~Setter()
 {}
 
-void  SocketPool::Setter::operator()(ASocket *s)
+void  SocketPool::Setter::operator()(ISocket *s)
 {
   FD_SET(s->getId(), &this->_rfds);
   if (s->wantToWrite())
@@ -71,7 +71,7 @@ SocketPool::Executer::Executer(const Executer& e)
 SocketPool::Executer::~Executer()
 {}
 
-bool  SocketPool::Executer::operator()(ASocket *s)
+bool  SocketPool::Executer::operator()(ISocket *s)
 {
   if (FD_ISSET(s->getId(), &this->_rfds))
     s->readFromSock();
@@ -82,7 +82,7 @@ bool  SocketPool::Executer::operator()(ASocket *s)
 
 void			SocketPool::watcher()
 {
-  ASocket::SocketId	max;
+  ISocket::SocketId	max;
   fd_set		rfds;
   fd_set		wfds;
   SocketPool::Setter    s(rfds, wfds, max);
@@ -91,17 +91,16 @@ void			SocketPool::watcher()
 
   while (this->_alive)
   {
-    /*if (!this->_list.size())
-      this->_c.wait(this->_m);*/
     if (this->_list.size())
     {
-      this->_m.lock();
+      max = -1;
       s.reset();
       to.tv_sec = SPTOSEC;
       to.tv_usec = SPTOUSEC;
-      std::for_each<std::list<ASocket*>::iterator, SocketPool::Setter&>(this->_list.begin(), this->_list.end(), s);
-      select(static_cast<int>(max), &rfds, &wfds, NULL, &to);
-      std::remove_if(this->_list.begin(), this->_list.end(), e);
+      this->_m.lock();
+      std::for_each<std::list<ISocket*>::iterator, SocketPool::Setter&>(this->_list.begin(), this->_list.end(), s);
+      select(static_cast<int>(max + 1), &rfds, &wfds, NULL, &to);
+      this->_list.remove_if(e);
       this->_m.unlock();
     }
   }

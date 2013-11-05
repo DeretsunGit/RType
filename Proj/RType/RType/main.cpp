@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Thu Oct 24 14:57:20 2013 julien edmond
-// Last update Mon Nov  4 23:37:57 2013 julien edmond
+// Last update Tue Nov  5 01:30:19 2013 julien edmond
 //
 
 #include <cstdlib>
@@ -18,7 +18,7 @@
 #include "CondVar.h"
 #include "IOBuff.h"
 #include "Vector2.hpp"
-#include "WinTCPSocketServer.h"
+#include "TCPSocketClient.h"
 
 #ifndef	_WIN32
 
@@ -74,5 +74,21 @@ int	main()
 
 	//  std::cin.get();
 	//  delete winTCPSocketClient;
-	return (0);
+
+  UnixTCPSocketClient	socket("localhost", 1234);
+  char			buff[255];
+  int			ret;
+
+  while (socket.isLive())
+    {
+      socket.readFromSock();
+      if ((ret = socket.recv(buff, sizeof(buff))) > 0)
+	{
+	  buff[ret] = 0;
+	  std::cout << buff << std::flush;
+	}
+      // Sleep(1000);
+    }
+  std::cout << "End" << std::endl;
+  return (0);
 }

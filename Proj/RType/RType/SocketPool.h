@@ -22,18 +22,18 @@ public:
   SocketPool();
   ~SocketPool();
 
-  void	watchSocket(ASocket* sock);
-  void	releaseSocket(ASocket* sock);
+  void	watchSocket(ISocket* sock);
+  void	releaseSocket(ISocket* sock);
 
 private:
 
   class Setter
   {
   public:
-    Setter(fd_set& rfds, fd_set& wfds, ASocket::SocketId& max);
+    Setter(fd_set& rfds, fd_set& wfds, ISocket::SocketId& max);
     ~Setter();
 
-    void  operator()(ASocket* sock);
+    void  operator()(ISocket* sock);
     void  reset();
 
   private:
@@ -43,7 +43,7 @@ private:
 
     fd_set&	  _rfds;
     fd_set&	  _wfds;
-    ASocket::SocketId& _max;
+    ISocket::SocketId& _max;
   };
 
   class Executer
@@ -53,7 +53,7 @@ private:
     Executer(const Executer&);
     ~Executer();
 
-    bool  operator()(ASocket* sock);
+    bool  operator()(ISocket* sock);
 
   private:
     Executer();
@@ -66,7 +66,7 @@ private:
   void watcher();
 
   bool		      _alive;
-  std::list<ASocket*> _list;
+  std::list<ISocket*> _list;
   CondVar	      _c;
   Mutex		      _m;
   Thread	      _watcher;

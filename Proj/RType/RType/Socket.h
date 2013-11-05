@@ -1,6 +1,6 @@
 #pragma once
 
-class ASocket
+class ISocket
 {
 public:
 #ifdef _WIN32
@@ -15,8 +15,8 @@ public:
 
 #endif // _WIN32
 
-  ASocket();
-  virtual ~ASocket();
+  ISocket() {}
+  virtual ~ISocket() {}
   virtual SocketId  getId() const = 0;
   virtual bool	    wantToWrite() const = 0;
   virtual void	    readFromSock() = 0;
@@ -24,6 +24,6 @@ public:
   virtual bool		isLive() const = 0;
 
 private:
-  ASocket(const ASocket&);
-  ASocket&  operator=(const ASocket&);
+  ISocket(const ISocket&);
+  ISocket&  operator=(const ISocket&);
 };

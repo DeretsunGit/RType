@@ -18,7 +18,7 @@ public:
 
   static Type&	getInstance()
   {
-	  return (Singleton<Type>::_instance);
+    return (Singleton<Type>::_instance);
   }
 
 private:
