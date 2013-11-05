@@ -17,6 +17,7 @@ class Element
 	int						_id;
 	char					_spriteId;
 	std::vector<t_coord>	_currentCells;
+	char					_sendPriority;
 
 public:
 	Element();

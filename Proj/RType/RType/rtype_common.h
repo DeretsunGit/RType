@@ -2,7 +2,12 @@
 
 #include <list>
 #include <iterator>
+
+#ifdef _WIN32
+
 #include <Windows.h>
+
+#endif
 
 #ifndef	_WIN32
 

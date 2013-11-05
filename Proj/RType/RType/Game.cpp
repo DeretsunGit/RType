@@ -92,8 +92,6 @@ void	Game::collision()
 	std::list<Wall*>::iterator		it_wall;
 	std::vector<t_coord>::iterator	it_coord;
 	std::vector<Player*>::iterator	it_player;
-	short int						x = 0;
-	short int						y = 0;
 
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 		{

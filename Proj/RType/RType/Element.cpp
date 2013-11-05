@@ -5,6 +5,7 @@ Element::Element()
 	this->_shipProof	 = false;
 	this->_bulletProof = false;
 	this->_hp			= 1;
+	this->_sendPriority = 1;
 }
 
 Element::~Element()
