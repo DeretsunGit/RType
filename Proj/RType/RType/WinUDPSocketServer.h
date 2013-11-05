@@ -17,7 +17,7 @@ private:
 	std::map<struct sockaddr_in, IOBuff<>> _host;
 	Mutex						_lock;
 public:
-	WinUDPSocketServer(unsigned short, bool);
+	WinUDPSocketServer(unsigned short);
 	virtual ~WinUDPSocketServer();
 	SocketId	getId() const;
 	bool		wantToWrite() const;
