@@ -7,8 +7,34 @@
 # include "WinTCPSocketClient.h"
 # include "SocketPool.h"
 
-WinTCPSocketClient::WinTCPSocketClient()
+WinTCPSocketClient::WinTCPSocketClient(SocketId sock)
+	: _sock(sock), _live(true)
 {
+	SocketPool::getInstance().watchSocket(this);
+}
+
+WinTCPSocketClient::WinTCPSocketClient(const char *hostName, unsigned short port)
+{
+	sockaddr_in clientService;
+
+	if ((this->_sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, NULL)) == INVALID_SOCKET)
+	{
+		std::cerr << "WSASocket() function failed with error: " << WSAGetLastError() << std::endl;
+		throw std::exception();
+	}
+
+	clientService.sin_family = AF_INET;
+	clientService.sin_addr.s_addr = inet_addr(hostName);
+	WSAHtons(this->_sock, port, &clientService.sin_port);;
+
+	if (WSAConnect(this->_sock, (SOCKADDR *) & clientService, sizeof (clientService), NULL, NULL, NULL, NULL) == SOCKET_ERROR)
+	{
+		std::cerr << "connect() function failed with error: " << WSAGetLastError() << std::endl;
+		if (closesocket(this->_sock) == SOCKET_ERROR)
+			std::cerr << "closesocket() function failed with error: " << WSAGetLastError() << std::endl;
+		throw std::exception();
+	}
+	this->_live = true;
 	SocketPool::getInstance().watchSocket(this);
 }
 
@@ -17,11 +43,8 @@ WinTCPSocketClient::~WinTCPSocketClient()
 	if (closesocket(this->_sock) == SOCKET_ERROR)
 	{
 		std::cerr << "closesocket() function failed with error: " << WSAGetLastError() << std::endl;
-		WSACleanup();
-		throw new std::exception();
+		throw std::exception();
 	}
-
-	WSACleanup();
 }
 
 void WinTCPSocketClient::send(char *buff, unsigned int size)
@@ -37,12 +60,6 @@ unsigned int WinTCPSocketClient::recv(char *buff, unsigned int size)
 WinTCPSocketClient::SocketId  WinTCPSocketClient::getId() const
 {
 	return (this->_sock);
-}
-
-void  WinTCPSocketClient::setId(SocketId sock)
-{
-	this->_sock = sock;
-	this->_live = true;
 }
 
 bool	WinTCPSocketClient::isLive() const

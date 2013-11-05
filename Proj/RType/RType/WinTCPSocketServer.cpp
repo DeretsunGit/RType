@@ -123,7 +123,6 @@ void	    WinTCPSocketServer::readFromSock()
 	if (!this->_live)
 		return ;
 	this->_lock.lock();
-	winTCPSocketClient = new WinTCPSocketClient;
 	std::cout << "accept !!!" << std::endl;
 	if ((sockAccept = WSAAccept(this->_sock, (SOCKADDR*) &client, &clientSize, NULL, NULL)) == INVALID_SOCKET)
 	{
@@ -134,7 +133,7 @@ void	    WinTCPSocketServer::readFromSock()
 		this->_lock.unlock();
 		return;
 	}
-	winTCPSocketClient->setId(sockAccept);
+	winTCPSocketClient = new WinTCPSocketClient(sockAccept);
 	this->_winTCPSocketClient.push(winTCPSocketClient);
 	this->_lock.unlock();
 }
