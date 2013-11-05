@@ -60,6 +60,7 @@ add_executable (Server
 	Wall.cpp
 	Wall.h
 	ITCPSocketClient.h
+	ITCPSocketServer.h
 	UnixTCPSocketClient.h
 	UnixTCPSocketClient.cpp
 	WinUDPSocketServer.h
