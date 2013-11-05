@@ -11,7 +11,7 @@ public:
   CircularBuffer(const CircularBuffer& o)
     : _start(o._start), _end(o._end)
   {
-    unsigned long off(this._start);
+    unsigned long off(this->_start);
 
     while (off != this->_end)
     {

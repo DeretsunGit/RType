@@ -12,14 +12,18 @@
 
 #endif	// !_WIN32
 
+#include <map>
 #include "Socket.h"
+#include "IOBuff.h"
 
 class IUDPSocket : public ISocket
 {
 public:
+  typedef std::map<u_long, IOBuff<> > BuffMap;
+
   virtual ~IUDPSocket() {}
 
-  virtual unsigned int	readableFor(const in_addr& from) = 0;
+  virtual unsigned int	readableFor(const in_addr& from) const = 0;
   virtual unsigned int	readFrom(char* buff, unsigned int size,
 				 const in_addr& from) = 0;
   virtual unsigned int	recvFrom(char* buff, unsigned int size,
