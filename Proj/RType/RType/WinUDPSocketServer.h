@@ -24,7 +24,7 @@ public:
 	void	    readFromSock();
 	void	    writeToSock();
 	bool		createSocket();
-	bool		configSocket(bool);
+	bool		configSocket(unsigned short);
 	bool		isLive() const;
 };
 

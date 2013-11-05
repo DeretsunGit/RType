@@ -21,7 +21,11 @@ WinTCPSocketClient::WinTCPSocketClient(const char *hostName, unsigned short port
 	}
 
 	clientService.sin_family = AF_INET;
-	clientService.sin_addr.s_addr = inet_addr(hostName);
+	if ((clientService.sin_addr.s_addr = inet_addr(hostName)) == INADDR_NONE)
+	{
+		std::cerr << "The target ip address entered must be a legal IPv4 address" << std::endl;
+		throw std::exception();
+	}
 	WSAHtons(this->_sock, port, &clientService.sin_port);
 
 	if (WSAConnect(this->_sock, (SOCKADDR *) & clientService, sizeof (clientService), NULL, NULL, NULL, NULL) == SOCKET_ERROR)

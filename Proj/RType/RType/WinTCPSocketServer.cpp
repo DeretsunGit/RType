@@ -55,7 +55,11 @@ bool		WinTCPSocketServer::configSocket(unsigned short port)
 	thisHost = gethostbyname(hostName);
 	ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
 	std::cout << "ip: " << ip << " port: " << port << std::endl;
-	service.sin_addr.s_addr = inet_addr(ip);
+	if ((service.sin_addr.s_addr = inet_addr(ip)) == INADDR_NONE)
+	{
+		std::cerr << "The target ip address entered must be a legal IPv4 address" << std::endl;
+		return (false);
+	}
 
 	if (bind(this->_sock, (SOCKADDR*) &service, sizeof(SOCKADDR)) == SOCKET_ERROR)
 	{
@@ -63,14 +67,7 @@ bool		WinTCPSocketServer::configSocket(unsigned short port)
 		closesocket(this->_sock);
 		return (false);
 	}
-
-	if (listen(this->_sock, 1) == SOCKET_ERROR)
-	{
-		std::cerr << "listen() failed with error: " << WSAGetLastError() << std::endl;
-		closesocket(this->_sock);
-		return (false);
-	}
-	std::cout << "Listening..." << std::endl;
+	std::cout << "Ready..." << std::endl;
 
 	return (true);
 }
