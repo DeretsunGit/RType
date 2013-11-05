@@ -3,8 +3,6 @@
 Game::Game()
 {
 	this->_endGame = false;
-	// on push back les player dans _collisionnableElem
-
 	// on récupère Script en argument
 	// on récupère de Script la map et les waves
 	// on instancie les waves, les ennemis, et plein de bullets
@@ -67,18 +65,24 @@ void	Game::genPool()
 
 void	Game::gameLoop()
 {
+	Clock	loopTimer;
+	float	execTime;
+
 	while (this->_endGame != true)
 	{
-		// check évènements des joueurs + déplacements
+		loopTimer.initialise();
+		// check évènements des joueurs + déplacements DONE
 		this->getInputs();
-		// interpretCommand(const char *data);
 		// déplacement de Waves en fonction du script
 		// déplacement bullets
 		this->collision();
 		// (pop de Wave)
-		// send au client
+		// send au client DONE
 		this->sendPriority();
-		// timer pour égaliser le temps de boucle
+		// timer pour égaliser le temps de boucle DONE
+		this->_endGame = !this->isPlayerAlive();
+		execTime = loopTimer.getTimeBySec();
+		Sleep(16 - execTime);
 	}
 	// on dit aux clients de lancer l'ecran de fin (win ou lose)
 }
@@ -122,12 +126,31 @@ void	Game::sendPriority()
 			}
 		}
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
-	// UDPsendGameElements(elemToSend, _players);
+	 //UDPsendGameElements(elemToSend, _players);
 
+}
+
+void	Game::getInputs()
+{
+		// interpretCommand(const char *data);
 }
 
 void	Game::playerReset()
 {
+}
+
+bool	Game::isPlayerAlive()
+{
+	std::vector<Player*>::iterator	it_player;
+
+	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
+		{
+			if ((*it_player)->getHP() != 0)
+			{
+				return (true);
+			}
+		}
+	return (false);
 }
 
 Game::~Game()

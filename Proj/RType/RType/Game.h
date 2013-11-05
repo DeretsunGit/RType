@@ -3,10 +3,13 @@
 #include <vector>
 #include <list>
 #include <iterator>
+#include "rtype_common.h"
 #include "Player.h"
 #include "Wave.h"
 #include "Wall.h"
 #include "Bullet.h"
+#include "ServerCommunication.h"
+#include "Clock.h"
 
 class Game
 {
@@ -25,7 +28,6 @@ class Game
 	std::list<Bullet*>		_bulletPool;
 
 public:
-	// Game(Player players[4]);
 	Game();
 	~Game();
 
@@ -37,4 +39,5 @@ public:
 	void	collision();
 	void	sendPriority();
 	void	getInputs();
+	bool	isPlayerAlive();
 };
