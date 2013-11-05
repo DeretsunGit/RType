@@ -2,33 +2,29 @@
 
 #ifdef _WIN32
 
-# include <queue>
+# include <map>
 # include "Mutex.h"
 # include "Socket.h"
-# include "WinTCPSocketClient.h"
+# include "WinUDPSocketClient.h"
 
-# define LOCALHOST	1
-# define LOCAL		2
-
-class WinTCPSocketServer : public ASocket
+class WinUDPSocketServer : public ASocket
 {
 private:
 	bool			_live;
 	SocketId		_sock;
 	unsigned short	_port;
 	char*			_ip;
-	std::queue<WinTCPSocketClient*> _winTCPSocketClient;
+	std::map<struct sockaddr_in, IOBuff<>> _host;
 	Mutex						_lock;
 public:
-	WinTCPSocketServer(unsigned short, bool = false);
-	virtual ~WinTCPSocketServer();
+	WinUDPSocketServer(unsigned short, bool);
+	virtual ~WinUDPSocketServer();
 	SocketId	getId() const;
 	bool		wantToWrite() const;
 	void	    readFromSock();
 	void	    writeToSock();
 	bool		createSocket();
 	bool		configSocket(bool);
-	WinTCPSocketClient*		accept();
 	bool		isLive() const;
 };
 

@@ -62,6 +62,11 @@ add_executable (Server
 	ATCPSocketClient.h
 	UnixTCPSocketClient.h
 	UnixTCPSocketClient.cpp
+	WinUDPSocketServer.h
+	WinUDPSocketClient.h
+	WinUDPSocketClient.cpp
+	WinUDPSocketServer.cpp
+	AUDPSocketClient.h
 	)
 
 add_executable (Client
