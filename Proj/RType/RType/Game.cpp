@@ -70,12 +70,14 @@ void	Game::gameLoop()
 	while (this->_endGame != true)
 	{
 		// check évènements des joueurs + déplacements
+		// UDPinterpretCommand(const char *data);
 		// déplacement de Waves en fonction du script
 		// déplacement bullets
-		// check colisions
 		this->collision();
 		// (pop de Wave)
 		// send au client
+		// UDPsendGameElements(const std::list<&Element>, const std::vector<&Player>);
+
 		// timer pour égaliser le temps de boucle
 	}
 	// on dit aux clients de lancer l'ecran de fin (win ou lose)
