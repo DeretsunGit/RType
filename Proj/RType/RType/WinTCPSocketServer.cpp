@@ -8,12 +8,12 @@
 # include "SocketPool.h"
 
 WinTCPSocketServer::WinTCPSocketServer(unsigned short port, bool localHost)
-: _port(port)
+	: _port(port)
 {
 	if (!this->createSocket())
-		throw new std::exception();
+		throw std::exception();
 	if (!this->configSocket(localHost))
-		throw new std::exception();
+		throw std::exception();
 	this->_live = true;
 	SocketPool::getInstance().watchSocket(this);
 }
@@ -23,8 +23,7 @@ WinTCPSocketServer::~WinTCPSocketServer()
 	if (closesocket(this->_sock) == SOCKET_ERROR)
 	{
 		std::cerr << "closesocket() function failed with error: " << WSAGetLastError() << std::endl;
-		WSACleanup();
-		throw new std::exception();
+		throw std::exception();
 	}
 
 	WSACleanup();
@@ -43,7 +42,6 @@ bool		WinTCPSocketServer::createSocket()
 	if ((this->_sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, NULL)) == INVALID_SOCKET)
 	{
 		std::cerr << "WSASocket() function failed with error: " << WSAGetLastError() << std::endl;
-		WSACleanup();
 		return (false);
 	}
 	return (true);
@@ -68,7 +66,6 @@ bool		WinTCPSocketServer::configSocket(bool localHost)
 	{
 		std::cerr << "bind() failed with error: " << WSAGetLastError() << std::endl;
 		closesocket(this->_sock);
-		WSACleanup();
 		return (false);
 	}
 
@@ -76,7 +73,6 @@ bool		WinTCPSocketServer::configSocket(bool localHost)
 	{
 		std::cerr << "listen() failed with error: " << WSAGetLastError() << std::endl;
 		closesocket(this->_sock);
-		WSACleanup();
 		return (false);
 	}
 	std::cout << "Listening..." << std::endl;
@@ -131,7 +127,7 @@ void	    WinTCPSocketServer::readFromSock()
 		delete winTCPSocketClient;
 		this->_live = false;
 		this->_lock.unlock();
-		return;
+		return ;
 	}
 	winTCPSocketClient = new WinTCPSocketClient(sockAccept);
 	this->_winTCPSocketClient.push(winTCPSocketClient);
