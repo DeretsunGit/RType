@@ -2,7 +2,7 @@
 
 Element::Element()
 {
-	this->_shipProof	= false;
+	this->_shipProof	 = false;
 	this->_bulletProof = false;
 	this->_hp			= 1;
 }
@@ -22,23 +22,33 @@ int Element::isCollision(std::list<Element*> cell)
 	{
 		if ((this->getFaction() != (*it)->getFaction()))
 		{
-		if ((this->_pos._posX < ((*it)->getPos())._posX &&
-			this->_pos._posX + this->_hitboxSize._posX > ((*it)->getPos())._posX) ||
-			(this->_pos._posX < ((*it)->getPos())._posX + ((*it)->getHitboxSize())._posX &&
-			this->_pos._posX + this->_hitboxSize._posX > ((*it)->getPos())._posX  + ((*it)->getHitboxSize())._posX))
-		{
-				if ((this->_pos._posY < ((*it)->getPos())._posY &&
-				this->_pos._posY + this->_hitboxSize._posY > ((*it)->getPos())._posY) ||
-				(this->_pos._posY < ((*it)->getPos())._posY + ((*it)->getHitboxSize())._posY &&
-				this->_pos._posY + this->_hitboxSize._posY > ((*it)->getPos())._posY  + ((*it)->getHitboxSize())._posY))
-				{
-					return ((*it)->getId());
-				}
-		}
+			if ((this->_pos._posX < ((*it)->getPos())._posX &&
+				this->_pos._posX + this->_hitboxSize._posX > ((*it)->getPos())._posX) ||
+				(this->_pos._posX < ((*it)->getPos())._posX + ((*it)->getHitboxSize())._posX &&
+				this->_pos._posX + this->_hitboxSize._posX > ((*it)->getPos())._posX  + ((*it)->getHitboxSize())._posX))
+			{
+					if ((this->_pos._posY < ((*it)->getPos())._posY &&
+					this->_pos._posY + this->_hitboxSize._posY > ((*it)->getPos())._posY) ||
+					(this->_pos._posY < ((*it)->getPos())._posY + ((*it)->getHitboxSize())._posY &&
+					this->_pos._posY + this->_hitboxSize._posY > ((*it)->getPos())._posY  + ((*it)->getHitboxSize())._posY))
+					{
+						return ((*it)->getId());
+					}
+			}
 		}
 		it ++;
 	}
 	return (NULL);
+}
+
+void	Element::addToCurrentCell(t_coord coord)
+{
+	this->_currentCells.push_back(coord);
+}
+
+void	Element::cleanCurrentCell()
+{
+	this->_currentCells.clear();
 }
 
 void	Element::setHP(int hp)
@@ -100,5 +110,10 @@ return (this->_shipProof);
 char	Element::getFaction() const
 {
 return (this->_faction);
+}
+
+std::vector<t_coord>	Element::getCurrentCell() const
+{
+	return (this->_currentCells);
 }
 

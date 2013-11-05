@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <list>
 #include <iterator>
 #include "Player.h"
@@ -9,20 +10,19 @@
 
 class Game
 {
-	Player				_players[4];
-	short int			_nbPlayers;
-	std::list<Wave>		_livingThings;
+	std::vector<Player*>	_players;
+	std::list<Wave>			_livingThings;
 
 	// maps
-	// Script			_script;
-	bool				_endGame;
-	std::list<Element*>	_map[18][17];
-	char				_globalMapTop[256];
-	char				_globalMapBot[256];
+	// Script				_script;
+	bool					_endGame;
+	std::list<Element*>		_map[18][17];
+	char					_globalMapTop[256];
+	char					_globalMapBot[256];
 
 	// pools
-	std::list<Wall*>	_wallPool;
-	std::list<Bullet*>	_bulletPool;
+	std::list<Wall*>		_wallPool;
+	std::list<Bullet*>		_bulletPool;
 
 public:
 	// Game(Player players[4]);

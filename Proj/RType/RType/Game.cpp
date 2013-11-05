@@ -14,9 +14,10 @@ Game::Game()
 void	Game::mapGeneration()
 {
 	// grâce au script et à un fichier qui décrit les patterns, on recompose la map globale
-	short int i = 0;
-	short int x = 0;
-	short int y = 0;
+	short int					i = 0;
+	short int					x = 0;
+	short int					y = 0;
+	t_coord						coord;
 	std::list<Wall*>::iterator	it;
 
 	while (i < 256)
@@ -40,7 +41,9 @@ void	Game::mapGeneration()
 					{
 						this->_map[y][x].push_back(*it);
 						(*it)->setHP(1);
-					//	this->_collisionableElem.push_back(*it);
+						coord._posX = x;
+						coord._posY = y;
+						(*it)->addToCurrentCell(coord);
 					}
 				}
 			}
@@ -80,30 +83,32 @@ void	Game::gameLoop()
 
 void	Game::collision()
 {
-	std::list<Element*>::iterator	it;
-	short int x = 0;
-	short int y = 0;
+	std::list<Wall*>::iterator		it_wall;
+	std::vector<t_coord>::iterator	it_coord;
+	std::vector<Player*>::iterator	it_player;
+	short int						x = 0;
+	short int						y = 0;
 
-//	for (it = (this->_collisionableElem).begin(); it != (this->_collisionableElem).end(); it++)
-//	{
-//		if ((*it)->getHP() != 0)
-//		{
-//			(*it)->isCollision();
-//		}
-//	}
-// on check les colisions des joueurs, des murs et des objets enemis destructibles avec des projectiles
-
+	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
+		{
+			if ((*it_wall)->getHP() != 0)
+			{
+				for (it_coord = ((*it_wall)->getCurrentCell()).begin(); it_coord != ((*it_wall)->getCurrentCell()).end(); it_coord++)
+					(*it_wall)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX]);
+			}
+		}
+	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
+		{
+			if ((*it_player)->getHP() != 0)
+			{
+				for (it_coord = ((*it_player)->getCurrentCell()).begin(); it_coord != ((*it_player)->getCurrentCell()).end(); it_coord++)
+					(*it_player)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX]);
+			}
+		}
 }
 
 void	Game::playerReset()
 {
-	int i = 0;
-
-	while (i < this->_nbPlayers)
-	{
-		this->_players[i].setReady(1);
-		i++;
-	}
 }
 
 Game::~Game()

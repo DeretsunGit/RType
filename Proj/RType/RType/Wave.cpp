@@ -1,11 +1,11 @@
 #include "Wave.h"
 
 
-Wave::Wave(void)
+Wave::Wave()
 {
 }
 
 
-Wave::~Wave(void)
+Wave::~Wave()
 {
 }
