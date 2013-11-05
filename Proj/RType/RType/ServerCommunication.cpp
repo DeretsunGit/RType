@@ -111,7 +111,7 @@ void	ServerCommunication::interpretCommand(const char* command) const
 	if (command != NULL && ((ite = _commandMap.find(command[0])) != _commandMap.end()))
 		(this->*(ite->second))(command);
 }
-
+/*
 Packet*	ServerCommunication::TCPsendRoomList(const std::list<Room>& rooms) const
 {
 	if (!rooms.size())
@@ -143,7 +143,7 @@ Packet*	ServerCommunication::TCPsendRoomList(const std::list<Room>& rooms) const
 	}
 	
 	return (packet);
-}
+}*/
 
 Packet*	ServerCommunication::TCPsendPlayerList(int roomId, const std::vector<Player*>& players) const
 {

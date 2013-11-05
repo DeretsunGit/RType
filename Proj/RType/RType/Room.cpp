@@ -67,3 +67,36 @@ char	Room::getNbPlayer() const
 {
 	return (_party.size());
 }
+
+Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const
+{
+	if (!rooms.size())
+		return (NULL);
+
+	s_tcp_header block;
+	Packet* packet = new Packet();
+	std::list<Room>::const_iterator ite = rooms.begin();
+	int i = 3;
+
+	block.opcode = 0x01;
+	block.datasize = ((short)rooms.size() * 2);
+	char* buff = new char[TCPHEADSIZE + block.datasize];
+
+	memcpy(buff, &block, TCPHEADSIZE);
+
+	while (i < rooms.size() + TCPHEADSIZE)
+	{
+		buff[i] = ite->getId();
+		buff[i+1] = ite->getNbPlayer();
+		i += 2;
+	}
+	
+	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
+	{
+		delete buff;
+		delete packet;
+		return NULL;
+	}
+	
+	return (packet);
+}

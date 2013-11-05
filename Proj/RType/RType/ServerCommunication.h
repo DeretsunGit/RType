@@ -12,8 +12,6 @@
 #include <map>
 #include "Packet.hpp"
 #include "Player.h"
-#include "Element.h"
-#include "Room.h"
 
 #define UDPBLOCKS 517
 #define UDPDATASIZE 516
@@ -71,7 +69,7 @@ public:
 	void UDPinterpretInputs(s_inputs& inputs, const char *data) const;
 	bool TCPgetReady(const char *data) const;
 
-	Packet* TCPsendRoomList(const std::list<Room>& rooms) const; 
+//	Packet* TCPsendRoomList(const std::list<Room>& rooms) const; 
 	Packet* TCPsendPlayerList(int roomId, const std::vector<Player*>& players) const;
 	Packet* TCPaskClientForFiles(const std::list<std::string>& filenames) const;
 	Packet* TCPsendFile(const std::string& filename, const char* fileContent) const;

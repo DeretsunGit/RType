@@ -4,7 +4,6 @@
 #include <list>
 #include <iterator>
 #include "rtype_common.h"
-#include "Player.h"
 #include "Wave.h"
 #include "Wall.h"
 #include "Bullet.h"

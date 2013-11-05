@@ -23,4 +23,5 @@ public:
 	char	getId() const;
 	char	getNbPlayer() const;
 	void	roomLoop();
+	Packet* TCPsendRoomList(const std::list<Room>& rooms) const; 
 };
