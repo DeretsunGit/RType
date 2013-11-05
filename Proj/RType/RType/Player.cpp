@@ -5,6 +5,11 @@ Player::Player()
 	this->setFaction(1);
 }
 
+bool	Player::getIsShooting() const
+{
+	return(this->_isShooting);
+}
+
 bool	Player::getReady() const
 { return this->_ready; }
 
@@ -37,6 +42,11 @@ bool	Player::getShield() const
 void	Player::setReady(bool ready)
 {
 	this->_ready = ready;
+}
+
+void	Player::setIsShooting(bool shooting)
+{
+	this->_isShooting = shooting;
 }
 
 Player::~Player()

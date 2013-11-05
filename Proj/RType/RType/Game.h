@@ -43,4 +43,5 @@ public:
 	void	getInputs();
 	bool	isPlayerAlive();
 	void	MoveWall();
+	void	playerShoot(Player *);
 };

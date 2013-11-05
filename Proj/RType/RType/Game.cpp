@@ -136,7 +136,41 @@ void	Game::sendPriority()
 
 void	Game::getInputs()
 {
-		// interpretCommand(const char *data);
+	// interpretCommand(const char *data);
+
+
+}
+
+void Game::playerShoot(Player *currentPlayer)
+{
+	std::list<Bullet*>::iterator		it_bullet;
+
+	for (it_bullet = (this->_bulletPool).begin(); it_bullet != (this->_bulletPool).end(); it_bullet++)
+	{
+		if ((*it_bullet)->getHP() == 0)
+		{
+			(*it_bullet)->setPos(currentPlayer->getPos());
+			(*it_bullet)->setHP(1);
+		}
+	}
+		// shoot
+//	std::vector<Player*>::iterator	it_player;
+//	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
+//		{
+//			if ((*it_player)->getHP() != 0)
+//			{
+//				if ((*it_player)->getIsShooting() == false)
+//				{
+//					(*it_player)->setIsShooting(true);
+//					(*it_player)->Shoot();
+//				}
+//				if ((*it_player)->getIsShooting() == false)
+//				{
+//					(*it_player)->setIsShooting(true);
+//					(*it_player)->loadShoot();
+//				}
+//			}
+//		}
 }
 
 void	Game::playerReset()
