@@ -5,6 +5,7 @@ Bullet::Bullet(void)
 {
 	this->setBulletProof(true);
 	this->setShipProof(false);
+	this->setSendPriority(0);
 }
 
 

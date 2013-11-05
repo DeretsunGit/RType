@@ -73,6 +73,16 @@ void	Element::setShipProof(bool b)
 	this->_shipProof = b;
 }
 
+void	Element::setSendPriority(char newPriority)
+{
+	this->_sendPriority = newPriority;
+}
+
+void	Element::setPos(t_coord newCoord)
+{
+	this->_pos = newCoord;
+}
+
 t_coord	Element::getPos() const
 {
 	return (this->_pos);
@@ -116,5 +126,10 @@ return (this->_faction);
 std::vector<t_coord>	Element::getCurrentCell() const
 {
 	return (this->_currentCells);
+}
+
+char	Element::getSendPriority() const
+{
+	return (this->_sendPriority);
 }
 
