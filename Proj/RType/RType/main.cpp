@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Thu Oct 24 14:57:20 2013 julien edmond
-// Last update Tue Nov  5 04:20:09 2013 julien edmond
+// Last update Tue Nov  5 05:14:11 2013 julien edmond
 //
 
 #include <cstdlib>
@@ -20,6 +20,7 @@
 #include "Vector2.hpp"
 #include "TCPSocketClient.h"
 #include "TCPSocketServer.h"
+#include "IUDPSocket.h"
 
 #ifndef	_WIN32
 

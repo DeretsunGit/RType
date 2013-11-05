@@ -13,7 +13,7 @@ private:
 	bool			_live;
 	SocketId		_sock;
 	std::queue<WinTCPSocketClient*> _winTCPSocketClient;
-	Mutex						_lock;
+	Mutex			_lock;
 public:
 	WinTCPSocketServer(unsigned short);
 	virtual ~WinTCPSocketServer();

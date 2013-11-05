@@ -4,6 +4,7 @@
 # include <Windows.h>
 # include <iostream>
 # include "WinTCPSocketClient.h"
+# include "SocketPool.h"
 
 WinTCPSocketClient::WinTCPSocketClient(SocketId sock)
 	: _sock(sock), _live(true)
@@ -45,9 +46,10 @@ WinTCPSocketClient::~WinTCPSocketClient()
 		std::cerr << "closesocket() function failed with error: " << WSAGetLastError() << std::endl;
 		throw std::exception();
 	}
+	SocketPool::getInstance().releaseSocket(this);
 }
 
-void WinTCPSocketClient::send(char *buff, unsigned int size)
+void WinTCPSocketClient::send(const char *buff, unsigned int size)
 {
 	this->_lock.lock();
 	this->_buff._output.writeSome(buff, size);
@@ -76,7 +78,7 @@ bool	WinTCPSocketClient::isLive() const
 
 bool		WinTCPSocketClient::wantToWrite() const
 {
-	//std::cout << "size:" << this->_buff._output.readableSize() << std::endl;
+	std::cout << "size:" << this->_buff._output.readableSize() << std::endl;
 	if (!this->_live)
 		return (false);
 	return (this->_buff._output.readableSize() > 0 ? true : false);
@@ -107,7 +109,9 @@ void	    WinTCPSocketClient::readFromSock()
 		return ;
 	}
 	std::cout << "read: " << dataBuf.buf << std::endl;
+	this->_lock.lock();
 	this->_buff._input.writeSome(dataBuf.buf, recvBytes);
+	this->_lock.unlock();
 }
 
 void	    WinTCPSocketClient::writeToSock()
@@ -119,7 +123,9 @@ void	    WinTCPSocketClient::writeToSock()
 
 	if (!this->_live)
 		return ;
+	this->_lock.lock();
 	this->_buff._output.readSome(buffer, DATA_BUFSIZE);
+	this->_lock.unlock();
 	dataBuf.buf = buffer;
 	dataBuf.len = sizeof(dataBuf.buf);
 	rc = WSASend(this->_sock, &dataBuf, 1, &sendBytes, 0, NULL, NULL);

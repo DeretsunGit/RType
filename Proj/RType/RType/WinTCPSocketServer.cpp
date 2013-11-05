@@ -14,7 +14,6 @@ WinTCPSocketServer::WinTCPSocketServer(unsigned short port)
 	if (!this->configSocket(port))
 		throw std::exception();
 	this->_live = true;
-	SocketPool::getInstance().watchSocket(this);
 }
 
 WinTCPSocketServer::~WinTCPSocketServer()
@@ -83,13 +82,19 @@ WinTCPSocketClient*		WinTCPSocketServer::accept()
 {
 	WinTCPSocketClient	*winTCPSocketClient = NULL;
 
-	this->_lock.lock();
 	if (!this->_winTCPSocketClient.empty())
 	{
+		this->_lock.lock();
 		winTCPSocketClient = this->_winTCPSocketClient.front();
 		this->_winTCPSocketClient.pop();
+		this->_lock.unlock();
 	}
-	this->_lock.unlock();
+	if (winTCPSocketClient)
+	{
+		std::cout << "Watch!" << std::endl;
+		SocketPool::getInstance().watchSocket(winTCPSocketClient);
+		std::cout << "End Watch!" << std::endl;
+	}
 	return (winTCPSocketClient);
 }
 
@@ -115,9 +120,9 @@ void	    WinTCPSocketServer::readFromSock()
 	int					clientSize = sizeof(client);
 	WinTCPSocketClient	*winTCPSocketClient = NULL;
 
+	std::cout << "Called" << std::endl;
 	if (!this->_live)
 		return ;
-	this->_lock.lock();
 	std::cout << "accept !!!" << std::endl;
 	if ((sockAccept = WSAAccept(this->_sock, (SOCKADDR*) &client, &clientSize, NULL, NULL)) == INVALID_SOCKET)
 	{
@@ -128,7 +133,9 @@ void	    WinTCPSocketServer::readFromSock()
 		this->_lock.unlock();
 		return ;
 	}
+	std::cout << "End accept" << std::endl;
 	winTCPSocketClient = new WinTCPSocketClient(sockAccept);
+	this->_lock.lock();
 	this->_winTCPSocketClient.push(winTCPSocketClient);
 	this->_lock.unlock();
 }
