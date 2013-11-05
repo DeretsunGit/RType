@@ -19,6 +19,9 @@ class IUDPSocket : public ISocket
 public:
   virtual ~IUDPSocket() {}
 
+  virtual unsigned int	readableFor(const in_addr& from) = 0;
+  virtual unsigned int	readFrom(char* buff, unsigned int size,
+				 const in_addr& from) = 0;
   virtual unsigned int	recvFrom(char* buff, unsigned int size,
 				 in_addr& from) = 0;
   virtual void		sendTo(const char* buff, unsigned int size,
