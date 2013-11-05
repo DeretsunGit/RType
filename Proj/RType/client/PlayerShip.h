@@ -1,10 +1,10 @@
 #pragma once
-#include "drawable.h"
+#include "Drawable.h"
 class PlayerShip :
 	public Drawable
 {
 private:
-	
+
 public:
 	PlayerShip(sf::Sprite);
 	~PlayerShip(void);

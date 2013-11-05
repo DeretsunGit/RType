@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 project(RType)
+
+if(WIN32)
+	include_directories(../client/SFML-2.1/include)
+else(WIN32)
+	include_directories(../client/SFML-2.1-Unix/include)
+	link_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-Unix/lib)
+endif(WIN32)
+
 add_executable (Server
 	Bullet.cpp
 	IMutex.h
@@ -109,4 +117,6 @@ target_link_libraries (Server
 
 if(WIN32)
 	target_link_libraries(Server Ws2_32.lib)
+else(WIN32)
+	target_link_libraries(Client sfml-graphics sfml-system sfml-window GLEW)
 endif(WIN32)

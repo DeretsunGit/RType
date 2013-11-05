@@ -1,6 +1,6 @@
 #include <vector>
 #include <algorithm>
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 #pragma once
 #define NB_SPRITES	(31)
