@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Mon Nov  4 23:34:56 2013 julien edmond
-// Last update Tue Nov  5 03:08:43 2013 julien edmond
+// Last update Tue Nov  5 03:40:27 2013 julien edmond
 //
 
 #pragma once
@@ -18,5 +18,5 @@ public:
   virtual ~ITCPSocketClient() {}
 
   virtual unsigned int	recv(char* buff, unsigned int size) = 0;
-  virtual void		send(char* buff, unsigned int size) = 0;
+  virtual void		send(const char* buff, unsigned int size) = 0;
 };

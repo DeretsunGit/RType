@@ -5,15 +5,13 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Tue Nov  5 03:01:53 2013 julien edmond
-// Last update Tue Nov  5 03:10:52 2013 julien edmond
+// Last update Tue Nov  5 03:13:34 2013 julien edmond
 //
 
 #pragma once
 
 #ifndef	_WIN32
 
-# include	<queue>
-# include	"Mutex.h"
 # include	"ITCPSocketClient.h"
 
 class	ITCPSocketServer: public ISocket

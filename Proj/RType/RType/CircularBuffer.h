@@ -59,7 +59,7 @@ public:
     return (sent);
   }
 
-  void		  writeSome(Type* buff, unsigned long s)
+  void		  writeSome(const Type* buff, unsigned long s)
   {
     unsigned long i(0);
 

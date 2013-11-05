@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Thu Oct 24 14:57:20 2013 julien edmond
-// Last update Tue Nov  5 01:30:19 2013 julien edmond
+// Last update Tue Nov  5 04:20:09 2013 julien edmond
 //
 
 #include <cstdlib>
@@ -19,6 +19,7 @@
 #include "IOBuff.h"
 #include "Vector2.hpp"
 #include "TCPSocketClient.h"
+#include "TCPSocketServer.h"
 
 #ifndef	_WIN32
 
@@ -75,18 +76,21 @@ int	main()
 	//  std::cin.get();
 	//  delete winTCPSocketClient;
 
-  TCPSocketClient	socket("10.20.86.163", 1234);
-  char			buff[255];
-  int			ret;
+  TCPSocketServer	socket(1234);
+  ITCPSocketClient*	c[2];
+  bool			tmp(false);
 
+  c[0] = NULL;
+  c[1] = NULL;
   while (socket.isLive())
     {
-      if ((ret = socket.recv(buff, sizeof(buff))) > 0)
+      if ((c[tmp] = socket.accept()))
 	{
-	  buff[ret] = 0;
-	  std::cout << buff << std::flush;
+	  c[tmp]->send("Coucou!\n", sizeof("Coucou!\n"));
+	  tmp = !tmp;
+	  delete c[tmp];
+	  c[tmp] = NULL;
 	}
-      // Sleep(1000);
     }
   std::cout << "End" << std::endl;
   return (0);

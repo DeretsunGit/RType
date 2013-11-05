@@ -2,6 +2,7 @@
 
 #ifndef	_WIN32
 
+# include	"Mutex.h"
 # include	"IOBuff.h"
 # include	"ITCPSocketClient.h"
 
@@ -11,6 +12,7 @@ private:
   SocketId	_sock;
   bool		_live;
   IOBuff<>	_buff;
+  Mutex		_m;
 
   UnixTCPSocketClient();
   UnixTCPSocketClient(const UnixTCPSocketClient&);
@@ -21,7 +23,7 @@ public:
   UnixTCPSocketClient(SocketId id);
   ~UnixTCPSocketClient();
 
-  void		send(char* buff, unsigned int size);
+  void		send(const char* buff, unsigned int size);
   unsigned int	recv(char* buff, unsigned int size);
   SocketId	getId() const;
   bool		wantToWrite() const;

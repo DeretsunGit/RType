@@ -31,6 +31,7 @@ public:
   }
 
 private:
+  TCPSocketClient();
   TCPSocketClient(const TCPSocketClient&);
   TCPSocketClient& operator=(const TCPSocketClient&);
 };

@@ -7,6 +7,7 @@
 # include	<arpa/inet.h>
 # include	<netdb.h>
 # include	"UnixTCPSocketClient.h"
+# include	"SocketPool.h"
 
 // TO REMOVE
 # include	<stdio.h>
@@ -43,16 +44,24 @@ UnixTCPSocketClient::~UnixTCPSocketClient()
 {
   if (close(this->_sock) == -1)
     std::cerr << "TCPSocketClient: cannot close socket" << std::endl;
+  SocketPool::getInstance().releaseSocket(this);
 }
 
-void	UnixTCPSocketClient::send(char* buff, unsigned int size)
+void	UnixTCPSocketClient::send(const char* buff, unsigned int size)
 {
+  this->_m.lock();
   this->_buff._output.writeSome(buff, size);
+  this->_m.unlock();
 }
 
 unsigned int	UnixTCPSocketClient::recv(char* buff, unsigned int size)
 {
-  return (this->_buff._input.readSome(buff, size));
+  unsigned int	sent;
+
+  this->_m.lock();
+  sent = this->_buff._input.readSome(buff, size);
+  this->_m.unlock();
+  return (sent);
 }
 
 ISocket::SocketId	UnixTCPSocketClient::getId() const

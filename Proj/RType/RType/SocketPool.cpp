@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iostream>
 #include "SocketPool.h"
+#include "rtype_common.h"
 
 SocketPool::SocketPool()
   : _alive(true), _watcher(*this, &SocketPool::watcher)
@@ -101,7 +102,7 @@ void			SocketPool::watcher()
 
   while (this->_alive)
   {
-    if (this->_list.size())
+    if (!this->_list.empty())
     {
       max = -1;
       s.reset();
@@ -112,6 +113,7 @@ void			SocketPool::watcher()
       select(static_cast<int>(max + 1), &rfds, &wfds, NULL, &to);
       this->_list.remove_if(e);
       this->_m.unlock();
+      Sleep(to.tv_sec * 1000 + to.tv_usec / 1000);
     }
   }
 }
