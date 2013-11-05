@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Tue Nov  5 03:01:53 2013 julien edmond
-// Last update Tue Nov  5 03:03:18 2013 julien edmond
+// Last update Tue Nov  5 03:10:52 2013 julien edmond
 //
 
 #pragma once
@@ -14,6 +14,14 @@
 
 # include	<queue>
 # include	"Mutex.h"
-# include	"ATCPSocketClient.h"
+# include	"ITCPSocketClient.h"
+
+class	ITCPSocketServer: public ISocket
+{
+public:
+  virtual ~ITCPSocketServer() {}
+
+  virtual ITCPSocketClient*	accept() = 0;
+};
 
 #endif	// !_WIN32
