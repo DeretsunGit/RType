@@ -14,6 +14,7 @@ typedef UnixUDPSocketServer  BasicUDPSocketServer;
 
 #endif // _WIN32
 
+#pragma message ("HERE?")
 #include "SocketPool.h"
 
 class UDPSocketServer: public BasicUDPSocketServer

@@ -2,7 +2,7 @@
 
 #ifdef	_WIN32
 
-# include	<Inaddr.h>
+# include	<Windows.h>
 
 #else
 
