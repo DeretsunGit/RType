@@ -8,38 +8,43 @@
 #pragma once
 
 #include <string>
+#include <cstring>
 
 class Packet
 {
 public:
 	Packet(int size, char* data)
 	{
-		set(data, size);
+		set(data, 0, size);
 	}
 
 	Packet()
 	{
 		_size = 0;
-		_buff = 0;
 	}
 
 	~Packet()
 	{
-		if (_buff != 0)
-			delete _buff;
 	}
 
-	bool set(char* data, int size)
+	/*bool set(char* data, int size)
 	{
-		if (_buff != 0)
-			delete _buff;
-		_buff = 0;
-
 		if (data == 0)
 			return (false);
 
 		_size = size;
-		_buff = data;
+		memcpy(_buff, data, size);
+
+		return (true);
+	}*/
+
+	bool set(char* data, int start, int size)
+	{
+		if (data == 0)
+			return (false);
+
+		_size += size;
+		memcpy(&_buff[start], data, size);
 
 		return (true);
 	}
@@ -58,6 +63,6 @@ public:
 
 private:
 	int _size;
-	char* _buff;
+	char _buff[1000];
 
 };

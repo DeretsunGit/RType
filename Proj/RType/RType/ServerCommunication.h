@@ -17,6 +17,7 @@
 #define UDPDATASIZE 516
 #define TCPHEADSIZE 3
 #define OPCODESIZE 1
+#define DATASIZE 1000
 
 struct s_tcp_header
 {
@@ -73,7 +74,7 @@ public:
 	Packet* TCPsendPlayerList(int roomId, const std::vector<Player*>& players) const;
 	Packet* TCPaskClientForFiles(const std::list<std::string>& filenames) const;
 	Packet* TCPsendFile(const std::string& filename, const char* fileContent) const;
-	Packet* TCPsendStartLoading(unsigned short int) const;
-	Packet* TCPsendStartGame() const;
-	Packet* UDPsendGameElements(const std::list<Element*>& elements, const std::vector<Player*>& players) const;
+	Packet* TCPsendStartLoading() const;
+	void TCPsendStartGame(Packet& packet, unsigned short int) const;
+	void UDPsendGameElements(Packet& packet, const std::list<Element*>& elements, const std::vector<Player*>& players) const;
 };
