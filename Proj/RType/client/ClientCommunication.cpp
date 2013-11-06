@@ -125,13 +125,9 @@ void	ClientCommunication::TCProomChoice(Packet& packet, const std::string& nickn
 	block.opcode = 0x07;
 	block.datasize = static_cast<short>(nickname.size() + 1);
 
-	memcpy(buff, &block, TCPHEADSIZE);
-	memcpy(&buff[TCPHEADSIZE], nickname.c_str(), nickname.size());
-	memcpy(&buff[TCPHEADSIZE+nickname.size()], &roomId, 1);
-
 	packet.set(reinterpret_cast<char*>(&block), 0, TCPHEADSIZE);
-	packet.set(nickname.c_str(), TCPHEADSIZE, nickname.size());
-	packet.set(&roomId, TCPHEADSIZE + nickname.size(), 1);
+	packet.set(nickname.c_str(), TCPHEADSIZE, static_cast<int>(nickname.size()));
+	packet.set(&roomId, TCPHEADSIZE + static_cast<int>(nickname.size()), 1);
 }
 
 void	ClientCommunication::TCPupdateNickname(Packet& packet, const std::string& nickname) const
@@ -141,17 +137,17 @@ void	ClientCommunication::TCPupdateNickname(Packet& packet, const std::string& n
 	block.datasize = static_cast<short>(nickname.size());
 
 	packet.set(reinterpret_cast<char*>(&block), 0, TCPHEADSIZE);
-	packet.set(nickname.c_str(), TCPHEADSIZE, nickname.size());
+	packet.set(nickname.c_str(), TCPHEADSIZE, static_cast<int>(nickname.size()));
 }
 
 void	ClientCommunication::TCPupdateResolution(Packet& packet, const std::string& resolution) const
 {
 	s_tcp_header block;
 	block.opcode = 0x09;
-	block.datasize = (short)resolution.size();
+	block.datasize = static_cast<short>(resolution.size());
 
 	packet.set(reinterpret_cast<char*>(&block), 0, TCPHEADSIZE);
-	packet.set(resolution.c_str(), TCPHEADSIZE, resolution.size());
+	packet.set(resolution.c_str(), TCPHEADSIZE, static_cast<int>(resolution.size()));
 }
 	
 void	ClientCommunication::TCPsendOwnedFiles(Packet& packet, const std::list<std::string>& filenames, const std::list<std::string>& versions) const
@@ -163,11 +159,11 @@ void	ClientCommunication::TCPconfirmFileReception(Packet& packet, const std::str
 {
 	s_tcp_header block;
 	block.opcode = 0x0b;
-	block.datasize = (short)(filename.size() + version.size());
+	block.datasize = static_cast<short>((filename.size() + version.size()));
 
 	packet.set(reinterpret_cast<char*>(&block), 0, TCPHEADSIZE);
-	packet.set(filename.c_str(), TCPHEADSIZE, filename.size());
-	packet.set(version.c_str(), TCPHEADSIZE + filename.size(), version.size());
+	packet.set(filename.c_str(), TCPHEADSIZE, static_cast<int>(filename.size()));
+	packet.set(version.c_str(), TCPHEADSIZE + static_cast<int>(filename.size()), static_cast<int>(version.size()));
 }
 
 void	ClientCommunication::TCPsendReady(Packet& packet) const
