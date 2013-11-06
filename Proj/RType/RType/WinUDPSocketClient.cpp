@@ -43,9 +43,9 @@ void  WinUDPSocketClient::send(const char* buff, unsigned int size)
   this->_buff._output.writeSome(buff, size);
 }
 
-void  WinUDPSocketClient::send(const Packet* p)
+void  WinUDPSocketClient::send(const Packet& p)
 {
-   this->send(p->getBuffer(), p->getSize());
+   this->send(p.getBuffer(), p.getSize());
 }
 
 ISocket::SocketId WinUDPSocketClient::getId() const

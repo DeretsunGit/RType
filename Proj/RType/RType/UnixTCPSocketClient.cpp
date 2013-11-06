@@ -8,6 +8,7 @@
 # include	<netdb.h>
 # include	"UnixTCPSocketClient.h"
 # include	"SocketPool.h"
+# include	"Packet.hpp"
 
 // TO REMOVE
 # include	<stdio.h>
@@ -54,9 +55,9 @@ void	UnixTCPSocketClient::send(const char* buff, unsigned int size)
   this->_m.unlock();
 }
 
-void	UnixTCPSocketClient::send(const Packet* p)
+void	UnixTCPSocketClient::send(const Packet& p)
 {
-  this->send(p->getBuff(), p->getSize());
+  this->send(p.getBuffer(), p.getSize());
 }
 
 unsigned int	UnixTCPSocketClient::recv(char* buff, unsigned int size)

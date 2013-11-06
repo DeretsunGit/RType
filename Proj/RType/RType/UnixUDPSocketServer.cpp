@@ -1,13 +1,12 @@
-#pragma	once
-
 #ifndef	_WIN32
 
+#include<iostream>
 #include <stdexcept>
 #include <cstring>
 #include "UnixUDPSocketServer.h"
 
 #define READ_SIZE 500
-#include<iostream>
+
 UnixUDPSocketServer::UnixUDPSocketServer(unsigned short port)
   : _sock(socket(AF_INET, SOCK_DGRAM, 0)), _live(true)
 {
@@ -76,9 +75,36 @@ void  UnixUDPSocketServer::sendTo(const char* buff, unsigned int size, const in_
   this->_map[to.s_addr]._output.writeSome(buff, size);
 }
 
-void  UnixUDPSocketServer::sendTo(const Packet* p, const in_addr& to)
+void  UnixUDPSocketServer::sendTo(const Packet& p, const in_addr& to)
 {
-  this->sendTo(p->getBuffer(), p->getSize(), to);
+  this->sendTo(p.getBuffer(), p.getSize(), to);
+}
+
+void			UnixUDPSocketServer::broadcast(const char* buff,
+						       unsigned int size)
+{
+  ScopedLock		lock(this->_m);
+  BuffMap::iterator	it(this->_map.begin());
+  BuffMap::iterator	end(this->_map.end());
+
+  while (it != end)
+    {
+      it->second._output.writeSome(buff, size);
+      ++it;
+    }
+}
+
+void			UnixUDPSocketServer::broadcast(const Packet& p)
+{
+  ScopedLock		lock(this->_m);
+  BuffMap::iterator	it(this->_map.begin());
+  BuffMap::iterator	end(this->_map.end());
+
+  while (it != end)
+    {
+      it->second._output.writeSome(p.getBuffer(), p.getSize());
+      ++it;
+    }
 }
 
 ISocket::SocketId UnixUDPSocketServer::getId() const
@@ -136,9 +162,9 @@ void	UnixUDPSocketServer::writeToSock()
     this->_m.lock();
     sin.sin_port = it->second._port;
     len = it->second._output.readSome(buff, READ_SIZE);
-    this->_m.unlock();
     if (sendto(this->_sock, buff, len, 0, reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin)) == -1)
-      this->_live = false;
+      this->_map.erase(it);
+    this->_m.unlock();
   }
 }
 

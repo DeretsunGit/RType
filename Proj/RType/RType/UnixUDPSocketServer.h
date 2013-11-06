@@ -26,8 +26,10 @@ public:
   unsigned int  readableFor(const in_addr& from) const;
   unsigned int  readFrom(char* buff, unsigned int size, const in_addr& from);
   unsigned int  recvFrom(char* buff, unsigned int size, in_addr& from);
+  void		broadcast(const char* buff, unsigned int size);
+  void		broadcast(const Packet& p);
   void	      sendTo(const char* buff, unsigned int size, const in_addr& to);
-  void	      sendTo(const Packet* p, const in_addr& to);
+  void	      sendTo(const Packet& p, const in_addr& to);
   SocketId      getId() const;
   bool	      wantToWrite() const;
   void	      readFromSock();

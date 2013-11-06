@@ -1,6 +1,4 @@
-#pragma message ("KUKU")
 #include "Player.h"
-#pragma message ("KOUKOU")
 #include "rtype_common.h"
 
 Player::Player()
