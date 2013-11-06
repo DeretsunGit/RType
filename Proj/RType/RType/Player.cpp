@@ -65,11 +65,9 @@ void	Player::setClient(Client *newClient)
 	this->_client = newClient;
 }
 
-void	Player::setUDPsocket()
+Client	*Player::getClient() const
 {
-//	this->_udpSock
-	//	UTCPSocketServer(port = 0)
-	//methode getport qui retourne le port reelement utilisé
+	return (this->_client);
 }
 
 Player::~Player()

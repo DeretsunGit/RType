@@ -5,26 +5,32 @@ Game::Game()
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	// on récupère Script en argument
+	this->setUDP();
+	this->TCPsend(this->_com.TCPsendStartLoading(this->_port));
 	this->mapGeneration();
 	this->genPool();
+	this->startGame();
 	// startGame() va attendre que les clients soient ready via TCP
 	// puis envoi aux client le start game via TCP
-	
-	// on set l'UDP chez les player
-
-	this->setUDP();
-	this->startGame();
 	this->gameLoop();
 }
 
 void	Game::setUDP()
 {
-/*	std::vector<Player*>::iterator	it_player;
+	std::vector<Player*>::iterator	it_player;
+
+	this->_udpSock = new UDPSocketServer(0);
+	this->_port = this->_udpSock->getPort();
+}
+
+void	Game::TCPsend(Packet *tosend)
+{
+	std::vector<Player*>::iterator	it_player;
 	
 	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
 		{
-			(*it_player)->setUDPsocket();
-	}*/	
+			(*it_player)->getClient()->getTCPSock()->send(tosend);
+		}
 }
 
 void	Game::mapGeneration()
@@ -93,11 +99,11 @@ bool	Game::startGame()
 		;// la méthode retourne false, le joueur a envoyé un packet eronné
 
 	// si tous les joueurs sont prêts
-	Packet* pack = _com.TCPsendStartGame(i);
+	Packet* pack = _com.TCPsendStartGame();
 	if (pack != NULL)
-		;// envoi pack à chaque joueur puis passe en UDP via gameLoop()
+		;
 	else
-		;// GROS PROBLEME
+		;
 	return (true);
 }
 
@@ -288,6 +294,11 @@ void	Game::moveWall()
 		else
 			this->_firstColumn = 0;
 	}
+}
+
+ServerCommunication	*Game::getServCom()
+{
+	return (&this->_com);
 }
 
 Game::~Game()

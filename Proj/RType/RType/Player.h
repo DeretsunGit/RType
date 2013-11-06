@@ -16,7 +16,7 @@ class Player : public Element
 	bool			_shield;
 	bool			_isShooting;
 	Client *		_client;
-//	UDPSocketServer*	_udpSock;
+	
 public:
 	// Player(std::string, TCPSocket);
 	Player();
@@ -30,9 +30,9 @@ public:
 	bool	isWinner() const;
 	bool	isDefeated() const;
 	bool	getShield() const;
+	Client	*getClient() const;
 
 	void	setClient(Client *);
-	void	setUDPsocket();
 	void	setIsShooting(bool);
 	void	setId(int);
 	void	setScore(int);

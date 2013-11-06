@@ -163,16 +163,17 @@ Packet*	ServerCommunication::TCPsendFile(const std::string& filename, const char
 	return (new Packet());
 }
 
-Packet*	ServerCommunication::TCPsendStartLoading() const
+Packet*	ServerCommunication::TCPsendStartLoading(unsigned short int	port) const
 {
 	s_tcp_header block;
-	char* buff = new char[TCPHEADSIZE];
+	char* buff = new char[TCPHEADSIZE + sizeof(unsigned short)];
 	Packet* packet = new Packet();
 
 	block.opcode = 0x05;
-	block.datasize = 0;
+	block.datasize = sizeof(unsigned short);
 
 	memcpy(buff, &block, TCPHEADSIZE);
+	memcpy(&buff[TCPHEADSIZE], &port, sizeof(unsigned short));
 	if (!packet->set(buff, TCPHEADSIZE))
 	{
 		delete buff;
@@ -182,17 +183,16 @@ Packet*	ServerCommunication::TCPsendStartLoading() const
 	return (packet);
 }
 
-Packet*	ServerCommunication::TCPsendStartGame(unsigned short port) const
+Packet*	ServerCommunication::TCPsendStartGame() const
 {
 	s_tcp_header block;
-	char* buff = new char[TCPHEADSIZE + sizeof(unsigned short)];
+	char* buff = new char[TCPHEADSIZE];
 	Packet* packet = new Packet();
 
 	block.opcode = 0x06;
-	block.datasize = sizeof(unsigned short);
+	block.datasize = 0;
 
 	memcpy(buff, &block, TCPHEADSIZE);
-	memcpy(&buff[TCPHEADSIZE], &port, sizeof(unsigned short));
 	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
 	{
 		delete buff;

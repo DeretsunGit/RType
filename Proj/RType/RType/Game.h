@@ -13,9 +13,12 @@
 class Game
 {
 private:
+	unsigned short int	_port;
+	UDPSocketServer*	_udpSock;
+	ServerCommunication		_com;
+
 	std::vector<Player*>	_players;
 	std::list<Wave>			_livingThings;
-	ServerCommunication		_com;
 
 	// maps
 	// Script				_script;
@@ -48,5 +51,9 @@ public:
 	void	playerShoot(Player *);
 	void	moveBullets();
 
+	void	TCPsend(Packet *);
 	void	setUDP();
+
+	ServerCommunication		*getServCom();
+
 };

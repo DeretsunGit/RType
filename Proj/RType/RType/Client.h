@@ -8,8 +8,9 @@ class Client
 //	std::string	_name;
 	ITCPSocketClient* _tcpSocket;
 public:
-	Client();
 	Client(ITCPSocketClient*);
+	ITCPSocketClient *getTCPSock();
+
 	~Client();
 };
 
