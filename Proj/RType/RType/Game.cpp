@@ -48,7 +48,7 @@ void	Game::TCPsend(Packet& tosend)
     while (it_player != end)
     {
       std::cout << (*it_player)->getClient() << '|' << (*it_player)->getClient()->getTCPSock() << std::endl;
-	  (*it_player)->getClient()->getTCPSock()->send(&tosend);
+	  (*it_player)->getClient()->getTCPSock()->send(tosend);
       ++it_player;
     }
   }

@@ -67,13 +67,13 @@ public:
 	unsigned short	TCPgetStartGame(const char *data) const;
 	void	UDPgetGameElements(const char *data) const;
 
-	Packet*	TCProomChoice(const std::string& nickname, char roomId) const;
-	Packet*	TCPupdateNickname(const std::string& nickname) const;
-	Packet*	TCPupdateResolution(const std::string& resolution) const;
-	Packet*	TCPsendOwnedFiles(const std::list<std::string>& filenames, const std::list<std::string>& versions) const;
-	Packet*	TCPconfirmFileReception(const std::string& filename, const std::string& version) const;
+	void	TCProomChoice(Packet& packet, const std::string& nickname, char roomId) const;
+	void	TCPupdateNickname(Packet& packet, const std::string& nickname) const;
+	void	TCPupdateResolution(Packet& packet, const std::string& resolution) const;
+	void	TCPsendOwnedFiles(Packet& packet, const std::list<std::string>& filenames, const std::list<std::string>& versions) const;
+	void	TCPconfirmFileReception(Packet& packet, const std::string& filename, const std::string& version) const;
 	void	TCPsendReady(Packet& packet) const;
-	Packet*	TCPsendMapRequest() const;
-	Packet*	TCPuploadMap(const std::string& filename, const char* filedata) const;
+	void	TCPsendMapRequest(Packet& packet) const;
+	void	TCPuploadMap(Packet& packet, const std::string& filename, const char* filedata) const;
 	void	UDPsendInputs(Packet& packet, s_inputs& inputs) const;
 };

@@ -38,7 +38,7 @@ public:
 		return (true);
 	}*/
 
-	bool set(char* data, int start, int size)
+	bool set(const char* data, int start, int size)
 	{
 		if (data == 0)
 			return (false);
