@@ -1,18 +1,28 @@
+#include <iostream>
 #include "Game.h"
 
-Game::Game()
+Game::Game(const std::vector<Player*>& p)
+  : _players(p)
 {
+  std::cout << "Size: " << this->_players.size() << std::endl;
+  std::cout << __LINE__ << std::endl;
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	// on récupère Script en argument
 	this->setUDP();
+  std::cout << __LINE__ << std::endl;
 	this->TCPsend(this->_com.TCPsendStartLoading(this->_port));
+  std::cout << __LINE__ << std::endl;
 	this->mapGeneration();
+  std::cout << __LINE__ << std::endl;
 	this->genPool();
+  std::cout << __LINE__ << std::endl;
 	this->startGame();
+  std::cout << __LINE__ << std::endl;
 	// startGame() va attendre que les clients soient ready via TCP
 	// puis envoi aux client le start game via TCP
 	this->gameLoop();
+  std::cout << __LINE__ << std::endl;
 }
 
 void	Game::setUDP()
@@ -25,12 +35,24 @@ void	Game::setUDP()
 
 void	Game::TCPsend(Packet *tosend)
 {
-	std::vector<Player*>::iterator	it_player;
+  std::cout << __LINE__ << std::endl;
+	std::vector<Player*>::const_iterator	it_player(this->_players.begin());
+  std::cout << __LINE__ << std::endl;
+	std::vector<Player*>::const_iterator	end(this->_players.end());
+  std::cout << __LINE__ << std::endl;
 	
-	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
-		{
-			(*it_player)->getClient()->getTCPSock()->send(tosend);
-		}
+  if (tosend)
+  {
+    while (it_player != end)
+    {
+      std::cout << (*it_player)->getClient() << '|' << (*it_player)->getClient()->getTCPSock() << std::endl;
+      (*it_player)->getClient()->getTCPSock()->send(tosend);
+      ++it_player;
+    }
+    std::cout << "Deleting" << std::endl;
+    delete tosend;
+    std::cout << "Deleted" << std::endl;
+  }
 }
 
 void	Game::mapGeneration()
@@ -93,17 +115,16 @@ bool	Game::startGame()
 	// Lorsqu'on recoit des packets TCP, on les traite ici
 	Packet* tmp = NULL; // tmp sera remplacé par le vrai packet recu
 
-	if (_com.TCPgetReady(tmp->getBuffer()))
+/*	if (_com.TCPgetReady(tmp->getBuffer()))
 		;// la méthode retourne vrai, le joueur a donc envoyé ready
 	else
 		;// la méthode retourne false, le joueur a envoyé un packet eronné
-
+		*/
 	// si tous les joueurs sont prêts
 	Packet* pack = _com.TCPsendStartGame();
 	if (pack != NULL)
-		;
-	else
-		;
+	  TCPsend(pack);
+	delete pack;
 	return (true);
 }
 
@@ -115,15 +136,23 @@ void	Game::gameLoop()
 	while (this->_endGame != true)
 	{
 		loopTimer.initialise();
+		std::cout << __LINE__ << std::endl;
 		this->getInputs();
 		// déplacement de Waves en fonction du script
+		std::cout << __LINE__ << std::endl;
 		this->moveBullets();
+		std::cout << __LINE__ << std::endl;
 		this->moveWall();
-		this->collision();
+		std::cout << __LINE__ << std::endl;
+		//this->collision();
+		std::cout << __LINE__ << std::endl;
 		// (pop de Wave)
 		this->sendPriority();
+		std::cout << __LINE__ << std::endl;
 		this->_endGame = !this->isPlayerAlive();
+		std::cout << __LINE__ << std::endl;
 		execTime = loopTimer.getTimeBySec();
+		std::cout << __LINE__ << std::endl;
 		Sleep((unsigned long)(16 - execTime));
 	}
 }
@@ -131,8 +160,8 @@ void	Game::gameLoop()
 void	Game::collision()
 {
 	std::list<Wall*>::iterator		it_wall;
-	std::vector<t_coord>::iterator	it_coord;
-	std::vector<Player*>::iterator	it_player;
+	std::vector<t_coord>::const_iterator	it_coord;
+	std::vector<Player*>::const_iterator	it_player;
 
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 		{
@@ -233,7 +262,7 @@ void	Game::playerReset()
 
 bool	Game::isPlayerAlive()
 {
-	std::vector<Player*>::iterator	it_player;
+	std::vector<Player*>::const_iterator	it_player;
 
 	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
 		{

@@ -4,6 +4,21 @@
 #include "rtype_common.h"
 
 Player::Player()
+  : _client(NULL)
+{
+	t_coord	temp;
+
+	temp._posX = 50;
+	temp._posY = 30;
+	this->setFaction(PLAYER);
+	this->setHitboxSize(temp);
+	temp._posX = 100;
+	temp._posY = 450;
+	this->setPos(temp);
+}
+
+Player::Player(Client* c)
+  : _client(c)
 {
 	t_coord	temp;
 

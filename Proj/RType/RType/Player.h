@@ -20,6 +20,7 @@ class Player : public Element
 public:
 	// Player(std::string, TCPSocket);
 	Player();
+	Player(Client* c);
 	~Player();
 	bool	getIsShooting() const;
 	bool	getFile(std::string) const;

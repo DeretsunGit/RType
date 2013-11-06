@@ -1,25 +1,32 @@
 #include <algorithm>
 #include <cstring>
 #include "Room.h"
-
+#include "rtype_common.h"
 
 Room::Room()
+  : _th(new Thread(*this, &Room::roomLoop))
 {
 //	this->_id;
 	this->_nbReady = 0;
+	this->_th->start();
 }
 
 Room::~Room(void)
 {
 }
-
+#include <iostream>
 bool	Room::addClient(Client* newClient)
 {
-	Player newPlayer;
-	
-	if (this->addPlayer(&newPlayer) == false)
-		return (false);
-	newPlayer.setClient(newClient);
+  this->_m.lock();
+  if (_party.size() < 2)
+  {
+    std::cout << "PUSH BACK" <<  std::endl;
+    _party.push_back(new Player(newClient));
+    this->_m.unlock();
+    return (true);
+  }
+  this->_m.unlock();
+  return (false);
 }
 
 bool	Room::addPlayer(Player* player)
@@ -34,7 +41,16 @@ bool	Room::addPlayer(Player* player)
 
 bool	Room::startGame()
 {
-	Game newGame;
+  bool	ready(false);
+
+  while (!ready)
+  {
+    Sleep(10);
+    this->_m.lock();
+    ready = this->_party.size() >= 2;
+    this->_m.unlock();
+  }
+	Game newGame(this->_party);
 	// on instancie une game
 	return (true);
 }
@@ -65,7 +81,9 @@ void	Room::roomLoop()
 		// add les joueurs voulant join
 		//	delete les joueurs qui partent / deco
 	}*/
-	startGame();
+  while (this->_party.size() < 2)
+    Sleep(10);
+  startGame();
 }
 
 char	Room::getId() const

@@ -2,12 +2,15 @@
 
 #include <vector>
 #include "Game.h"
+#include "Thread.h"
+#include "Mutex.h"
 
 class Room
 {
 private:
 	char	_id;
-	//Thread	_th;
+	Thread*	_th;
+	Mutex	_m;
 	std::vector<Player*> _party;
 	char	_nbReady;
 

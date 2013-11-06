@@ -1,7 +1,8 @@
 #include "RTypeServer.h"
 
-RTypeServer::RTypeServer(int port, int maxRoom, std::string blPath)/* : _port(port), _maxRoom(maxRoom)
-*/{
+RTypeServer::RTypeServer(int port, int maxRoom, std::string blPath)
+  : _port(port), _maxRoom(maxRoom), _TCPsocket(port)
+{
 	// convertir le blPath en ofstream
 }
 
@@ -14,7 +15,7 @@ bool	RTypeServer::start()
 	// gestion socket
 	while (42)
 	{
-		if ((newClient = this->_TCPsocket->accept()) != NULL)
+		if ((newClient = this->_TCPsocket.accept()) != NULL)
 		{
 			this->_waitingList.push_back(new Client(newClient));
 		}
@@ -28,13 +29,13 @@ bool	RTypeServer::start()
 
 void RTypeServer::createRoom()
 {
+  Room*	newRoom = new Room();
 	//Thread* newThread;
-	Room newRoom;
-
-	newRoom.addClient(_waitingList.front());
-	newRoom.addClient(_waitingList.back());
-	_waitingList.empty();
-	newRoom.roomLoop();
+  _rooms.push_back(newRoom);
+  newRoom->addClient(_waitingList.front());
+  newRoom->addClient(_waitingList.back());
+  _waitingList.clear(); 
+//	newRoom.roomLoop();
 }
 
 bool	RTypeServer::loadDynEnnemy(std::string filename)

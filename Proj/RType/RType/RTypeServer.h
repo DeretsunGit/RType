@@ -12,7 +12,8 @@ class RTypeServer
 	int	_maxRoom;
 
 	std::list<Client *>		_waitingList;
-	TCPSocketServer*		_TCPsocket;
+	TCPSocketServer			_TCPsocket;
+	std::list<Room*>		_rooms;
 	// std::ofstream _blFile;
 
 public:

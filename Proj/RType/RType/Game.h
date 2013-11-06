@@ -17,7 +17,7 @@ private:
 	UDPSocketServer*	_udpSock;
 	ServerCommunication		_com;
 
-	std::vector<Player*>	_players;
+	const std::vector<Player*>&	_players;
 	std::list<Wave>			_livingThings;
 
 	// maps
@@ -34,7 +34,7 @@ private:
 	std::list<Bullet*>		_bulletPool;
 
 public:
-	Game();
+	Game(const std::vector<Player*>& p);
 	~Game();
 
 	void	genPool();
