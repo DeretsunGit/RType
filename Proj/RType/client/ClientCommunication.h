@@ -14,6 +14,7 @@
 
 #define TCPHEADSIZE 3
 #define OPCODESIZE 1
+#define DATASIZE 1000
 
 struct s_tcp_header
 {
@@ -71,8 +72,8 @@ public:
 	Packet*	TCPupdateResolution(const std::string& resolution) const;
 	Packet*	TCPsendOwnedFiles(const std::list<std::string>& filenames, const std::list<std::string>& versions) const;
 	Packet*	TCPconfirmFileReception(const std::string& filename, const std::string& version) const;
-	Packet*	TCPsendReady() const;
+	void	TCPsendReady(Packet& packet) const;
 	Packet*	TCPsendMapRequest() const;
 	Packet*	TCPuploadMap(const std::string& filename, const char* filedata) const;
-	Packet*	UDPsendInputs(const s_inputs& inputs) const;
+	void	UDPsendInputs(Packet& packet, s_inputs& inputs) const;
 };

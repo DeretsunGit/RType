@@ -131,12 +131,12 @@ Packet*	ClientCommunication::TCProomChoice(const std::string& nickname, char roo
 	memcpy(&buff[TCPHEADSIZE], nickname.c_str(), nickname.size());
 	memcpy(&buff[TCPHEADSIZE+nickname.size()], &roomId, 1);
 
-	if (!packet->set(buff, TCPHEADSIZE+block.datasize))
+/*	if (!packet->set(buff, TCPHEADSIZE+block.datasize))
 	{
 		delete buff;
 		delete packet;
 		return (NULL);
-	}
+	}*/
 
 	return (packet);
 }
@@ -152,12 +152,12 @@ Packet*	ClientCommunication::TCPupdateNickname(const std::string& nickname) cons
 	memcpy(buff, &block, TCPHEADSIZE);
 	memcpy(&buff[TCPHEADSIZE], nickname.c_str(), nickname.size());
 
-	if (!packet->set(buff, TCPHEADSIZE+block.datasize))
+	/*if (!packet->set(buff, TCPHEADSIZE+block.datasize))
 	{
 		delete buff;
 		delete packet;
 		return (NULL);
-	}
+	}*/
 
 	return (packet);
 }
@@ -173,12 +173,12 @@ Packet*	ClientCommunication::TCPupdateResolution(const std::string& resolution) 
 	memcpy(buff, &block, TCPHEADSIZE);
 	memcpy(&buff[TCPHEADSIZE], resolution.c_str(), resolution.size());
 
-	if (!packet->set(buff, TCPHEADSIZE+block.datasize))
+	/*if (!packet->set(buff, TCPHEADSIZE+block.datasize))
 	{
 		delete buff;
 		delete packet;
 		return (NULL);
-	}
+	}*/
 
 	return (packet);
 }
@@ -201,33 +201,24 @@ Packet*	ClientCommunication::TCPconfirmFileReception(const std::string& filename
 	memcpy(&buff[TCPHEADSIZE], filename.c_str(), filename.size());
 	memcpy(&buff[TCPHEADSIZE+filename.size()], version.c_str(), version.size());
 
-	if (!packet->set(buff, TCPHEADSIZE+block.datasize))
+	/*if (!packet->set(buff, TCPHEADSIZE+block.datasize))
 	{
 		delete buff;
 		delete packet;
 		return (NULL);
-	}
+	}*/
 
 	return (packet);
 }
 
-Packet*	ClientCommunication::TCPsendReady() const
+void	ClientCommunication::TCPsendReady(Packet& packet) const
 {
 	s_tcp_header block;
-	Packet* packet = new Packet();
-	char* buff = new char[TCPHEADSIZE];
 
 	block.opcode = 0x0c;
 	block.datasize = 0;
 
-	memcpy(buff, &block, TCPHEADSIZE);
-	if (!packet->set(buff, TCPHEADSIZE))
-	{
-		delete buff;
-		delete packet;
-		return (NULL);
-	}
-	return (packet);
+	packet.set(reinterpret_cast<char*>(&block), 0, TCPHEADSIZE);
 }
 
 Packet*	ClientCommunication::TCPsendMapRequest() const
@@ -240,12 +231,12 @@ Packet*	ClientCommunication::TCPsendMapRequest() const
 	block.datasize = 0;
 
 	memcpy(buff, &block, TCPHEADSIZE);
-	if (!packet->set(buff, TCPHEADSIZE))
+	/*if (!packet->set(buff, TCPHEADSIZE))
 	{
 		delete buff;
 		delete packet;
 		return (NULL);
-	}
+	}*/
 	return (packet);
 }
 
@@ -255,19 +246,9 @@ Packet*	ClientCommunication::TCPuploadMap(const std::string& filename, const cha
 	return (new Packet());
 }
 
-Packet*	ClientCommunication::UDPsendInputs(const s_inputs& inputs) const
+void	ClientCommunication::UDPsendInputs(Packet& packet, s_inputs& inputs) const
 {
-	Packet* packet = new Packet();
-	char* buff = new char[sizeof(s_inputs) + 1];
-
-	buff[0] = 0x12;
-	memcpy(&buff[1], &inputs, sizeof(s_inputs));
-
-	if (!packet->set(buff, sizeof(s_inputs) + 1))
-	{
-		delete buff;
-		delete packet;
-		return (NULL);
-	}
-	return (packet);
+	char opcode = 0x12;
+	packet.set(&opcode, 0, 1);
+	packet.set(reinterpret_cast<char*>(&inputs), 1, sizeof(s_inputs));
 }

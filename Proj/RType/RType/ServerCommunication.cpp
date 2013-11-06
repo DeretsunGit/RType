@@ -163,62 +163,50 @@ Packet*	ServerCommunication::TCPsendFile(const std::string& filename, const char
 	return (new Packet());
 }
 
-Packet*	ServerCommunication::TCPsendStartLoading(unsigned short int	port) const
-{
-	s_tcp_header block;
-	char* buff = new char[TCPHEADSIZE + sizeof(unsigned short)];
-	Packet* packet = new Packet();
-
-	block.opcode = 0x05;
-	block.datasize = sizeof(unsigned short);
-
-	memcpy(buff, &block, TCPHEADSIZE);
-	memcpy(&buff[TCPHEADSIZE], &port, sizeof(unsigned short));
-	if (!packet->set(buff, TCPHEADSIZE))
-	{
-		delete buff;
-		delete packet;
-		return (NULL);
-	}
-	return (packet);
-}
-
-Packet*	ServerCommunication::TCPsendStartGame() const
+Packet*	ServerCommunication::TCPsendStartLoading() const
 {
 	s_tcp_header block;
 	char* buff = new char[TCPHEADSIZE];
 	Packet* packet = new Packet();
 
-	block.opcode = 0x06;
+	block.opcode = 0x05;
 	block.datasize = 0;
 
 	memcpy(buff, &block, TCPHEADSIZE);
-	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
+	/*if (!packet->set(buff, TCPHEADSIZE + block.datasize))
 	{
 		delete buff;
 		delete packet;
 		return (NULL);
-	}
+	}*/
 	return (packet);
 }
 
-Packet*	ServerCommunication::UDPsendGameElements(const std::list<Element*>& elements, const std::vector<Player*>& players) const
+void	ServerCommunication::TCPsendStartGame(Packet& packet, unsigned short port) const
+{
+	
+	s_tcp_header block;
+
+	block.opcode = 0x06;
+	block.datasize = sizeof(unsigned short);
+
+	packet.set(reinterpret_cast<char*>(&block), 0, TCPHEADSIZE);
+	packet.set(reinterpret_cast<char*>(&port), TCPHEADSIZE, sizeof(short));
+}
+
+void	ServerCommunication::UDPsendGameElements(Packet& packet, const std::list<Element*>& elements, const std::vector<Player*>& players) const
 {
 	int i = 0;
-	Packet* packet = new Packet();
 	std::list<Element*>::const_iterator elem_ite = elements.begin();
 	std::vector<Player*>::const_iterator play_ite = players.begin();
 
 	if (!elements.size() || !players.size())
 	{
-		delete packet;
-		return NULL;
+		return ;
 	}
 
-	char* buffer = new char[UDPBLOCKS];
-	char* ctmp;
-
-	buffer[0] = 0x10;
+	char opcode = 0x10;
+	packet.set(&opcode, 0, 1);
 
 	while (elem_ite != elements.end() && i < 100)
 	{
@@ -226,12 +214,11 @@ Packet*	ServerCommunication::UDPsendGameElements(const std::list<Element*>& elem
 		newElement.posX = (*elem_ite)->getPos()._posX;
 		newElement.posY = (*elem_ite)->getPos()._posY;
 		newElement.spriteId = (*elem_ite)->getSpriteId();
-		memcpy(&buffer[(i*sizeof(s_element))+1], &newElement, sizeof(s_element));
+		packet.set(reinterpret_cast<char*>(&newElement), (i*sizeof(s_element))+1, sizeof(s_element));
 		++i;
 		++elem_ite;
 	}
 
-	ctmp = &buffer[501];
 	i = 0;
 	while (play_ite != players.end() && i < 4)
 	{
@@ -240,16 +227,8 @@ Packet*	ServerCommunication::UDPsendGameElements(const std::list<Element*>& elem
 		newPlayer.win = (*play_ite)->isWinner();
 		newPlayer.defeat = (*play_ite)->isDefeated();
 		newPlayer.shield = (*play_ite)->getShield();
-		memcpy(&buffer[i*sizeof(s_player)], &newPlayer, sizeof(s_player));
+		packet.set(reinterpret_cast<char*>(&newPlayer), (i*sizeof(s_player))+501, sizeof(s_player));
 		++i;
 		++play_ite;
 	}
-
-	if (!packet->set(buffer, UDPBLOCKS))
-	{
-		delete buffer;
-		delete packet;
-		return NULL;
-	}
-	return (packet);
 }

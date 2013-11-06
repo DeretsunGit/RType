@@ -51,6 +51,7 @@ add_executable (Server
 	Event.cpp
 	Singleton.h
 	WinThread.h
+	Packet.hpp
 	Event.h
 	Socket.h
 	main.cpp
