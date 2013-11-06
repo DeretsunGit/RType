@@ -49,6 +49,11 @@ WinTCPSocketClient::~WinTCPSocketClient()
 	SocketPool::getInstance().releaseSocket(this);
 }
 
+void  WinTCPSocketClient::send(const Packet* p)
+{
+  this->send(p->getBuffer(), p->getSize());
+}
+
 void WinTCPSocketClient::send(const char *buff, unsigned int size)
 {
 	this->_lock.lock();

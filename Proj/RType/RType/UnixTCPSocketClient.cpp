@@ -54,6 +54,11 @@ void	UnixTCPSocketClient::send(const char* buff, unsigned int size)
   this->_m.unlock();
 }
 
+void	UnixTCPSocketClient::send(const Packet* p)
+{
+  this->send(p->getBuff(), p->getSize());
+}
+
 unsigned int	UnixTCPSocketClient::recv(char* buff, unsigned int size)
 {
   unsigned int	sent;
