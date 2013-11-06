@@ -21,8 +21,8 @@ void	MenuManager::displayMenu(const Menu *menu)
 		}
 		else
 			buttons[i] = this->_spritemgr.getSpritebyId(menu->getSpriteId(i));
-		buttons[i].setPosition(SIZEX / 2 - buttons[i].getTextureRect().width,
-			250 + i * ((SIZEY - 250)/ menu->getSize()));
+		buttons[i].setPosition(static_cast<float>(SIZEX / 2) - buttons[i].getTextureRect().width,
+			250 + static_cast<float>(i) * ((SIZEY - 250)/ static_cast<float>(menu->getSize())));
 		this->_window->draw(buttons[i]);
 	}
 }
@@ -63,7 +63,7 @@ int		MenuManager::menuLoop(void)
 {
 	sf::Sprite	logo;
 	logo = this->_spritemgr.getSpritebyId(GAME_LOGO);
-	logo.setPosition(1400 / 2 - logo.getTextureRect().width / 2, 100);
+	logo.setPosition(1400 / 2 - static_cast<float>(logo.getTextureRect().width) / 2, 100);
 	
 	while (this->_window->isOpen())
 	{
