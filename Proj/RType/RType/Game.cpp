@@ -4,21 +4,23 @@
 Game::Game(const std::vector<Player*>& p)
   : _players(p)
 {
-  std::cout << "Size: " << this->_players.size() << std::endl;
-  std::cout << __LINE__ << std::endl;
+	Packet packet;
+	std::cout << "Size: " << this->_players.size() << std::endl;
+	std::cout << __LINE__ << std::endl;
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	// on récupère Script en argument
 	this->setUDP();
-  std::cout << __LINE__ << std::endl;
-	this->TCPsend(this->_com.TCPsendStartLoading(this->_port));
-  std::cout << __LINE__ << std::endl;
+	std::cout << __LINE__ << std::endl;
+	this->_com.TCPsendStartGame(packet, this->_port);
+	this->TCPsend(packet);
+	std::cout << __LINE__ << std::endl;
 	this->mapGeneration();
-  std::cout << __LINE__ << std::endl;
+	std::cout << __LINE__ << std::endl;
 	this->genPool();
-  std::cout << __LINE__ << std::endl;
+	std::cout << __LINE__ << std::endl;
 	this->startGame();
-  std::cout << __LINE__ << std::endl;
+	std::cout << __LINE__ << std::endl;
 	// startGame() va attendre que les clients soient ready via TCP
 	// puis envoi aux client le start game via TCP
 	this->gameLoop();
@@ -33,7 +35,7 @@ void	Game::setUDP()
 	this->_port = this->_udpSock->getPort();
 }
 
-void	Game::TCPsend(Packet *tosend)
+void	Game::TCPsend(Packet& tosend)
 {
   std::cout << __LINE__ << std::endl;
 	std::vector<Player*>::const_iterator	it_player(this->_players.begin());
@@ -41,17 +43,14 @@ void	Game::TCPsend(Packet *tosend)
 	std::vector<Player*>::const_iterator	end(this->_players.end());
   std::cout << __LINE__ << std::endl;
 	
-  if (tosend)
+  if (tosend.getSize())
   {
     while (it_player != end)
     {
       std::cout << (*it_player)->getClient() << '|' << (*it_player)->getClient()->getTCPSock() << std::endl;
-      (*it_player)->getClient()->getTCPSock()->send(tosend);
+	  (*it_player)->getClient()->getTCPSock()->send(&tosend);
       ++it_player;
     }
-    std::cout << "Deleting" << std::endl;
-    delete tosend;
-    std::cout << "Deleted" << std::endl;
   }
 }
 
@@ -110,7 +109,7 @@ void	Game::genPool()
 
 bool	Game::startGame()
 {
-	unsigned short i = 1;
+	/*unsigned short i = 1;
 	// On gère l'attente des players
 	// Lorsqu'on recoit des packets TCP, on les traite ici
 	Packet* tmp = NULL; // tmp sera remplacé par le vrai packet recu
@@ -119,12 +118,11 @@ bool	Game::startGame()
 		;// la méthode retourne vrai, le joueur a donc envoyé ready
 	else
 		;// la méthode retourne false, le joueur a envoyé un packet eronné
-		*/
 	// si tous les joueurs sont prêts
 	Packet* pack = _com.TCPsendStartGame();
 	if (pack != NULL)
 	  TCPsend(pack);
-	delete pack;
+	delete pack;*/
 	return (true);
 }
 
@@ -207,8 +205,8 @@ void	Game::sendPriority()
 
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
 	// on déclare un Packet qui va etre alloué dans la méthode
-	Packet *pack;
-	pack = _com.UDPsendGameElements(elemToSend, this->_players);
+	Packet pack;
+	_com.UDPsendGameElements(pack, elemToSend, this->_players);
 
 	// ici, pack contient les données sérialisées à écrire sur la socket.
 }

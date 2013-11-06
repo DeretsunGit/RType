@@ -51,7 +51,7 @@ public:
 	void	playerShoot(Player *);
 	void	moveBullets();
 
-	void	TCPsend(Packet *);
+	void	TCPsend(Packet&);
 	void	setUDP();
 
 	ServerCommunication		*getServCom();

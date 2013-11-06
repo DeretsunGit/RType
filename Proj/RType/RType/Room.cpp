@@ -93,7 +93,7 @@ char	Room::getId() const
 
 char	Room::getNbPlayer() const
 {
-	return (_party.size());
+	return (static_cast<char>(_party.size()));
 }
 
 Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const
@@ -119,12 +119,12 @@ Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const
 		i += 2;
 	}
 	
-	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
+	/*if (!packet->set(buff, TCPHEADSIZE + block.datasize))
 	{
 		delete buff;
 		delete packet;
 		return NULL;
-	}
+	}*/
 	
 	return (packet);
 }
