@@ -27,6 +27,7 @@ public:
   unsigned int  readFrom(char* buff, unsigned int size, const in_addr& from);
   unsigned int  recvFrom(char* buff, unsigned int size, in_addr& from);
   void	      sendTo(const char* buff, unsigned int size, const in_addr& to);
+  void	      sendTo(const Packet* p, const in_addr& to);
   SocketId      getId() const;
   bool	      wantToWrite() const;
   void	      readFromSock();

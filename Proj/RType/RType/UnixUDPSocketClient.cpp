@@ -49,6 +49,11 @@ void  UnixUDPSocketClient::send(const char* buff, unsigned int size)
   this->_buff._output.writeSome(buff, size);
 }
 
+void  UnixUDPSocketClient::send(const Packet* p)
+{
+  this->send(p->getBuffer(), p->getSize());
+}
+
 ISocket::SocketId UnixUDPSocketClient::getId() const
 {
   return (this->_sock);

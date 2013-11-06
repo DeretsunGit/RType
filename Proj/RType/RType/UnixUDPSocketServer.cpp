@@ -76,6 +76,11 @@ void  UnixUDPSocketServer::sendTo(const char* buff, unsigned int size, const in_
   this->_map[to.s_addr]._output.writeSome(buff, size);
 }
 
+void  UnixUDPSocketServer::sendTo(const Packet* p, const in_addr& to)
+{
+  this->sendTo(p->getBuffer(), p->getSize(), to);
+}
+
 ISocket::SocketId UnixUDPSocketServer::getId() const
 {
   return (this->_sock);

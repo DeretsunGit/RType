@@ -78,6 +78,11 @@ void  WinUDPSocketServer::sendTo(const char* buff, unsigned int size, const in_a
   this->_map[to.S_un.S_addr]._output.writeSome(buff, size);
 }
 
+void  WinUDPSocketServer::sendTo(const Packet* p, const in_addr& to)
+{
+  this->sendTo(p->getBuffer(), p->getSize(), to);
+}
+
 ISocket::SocketId WinUDPSocketServer::getId() const
 {
   return (this->_sock);

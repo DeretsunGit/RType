@@ -15,6 +15,7 @@
 #include <map>
 #include "Socket.h"
 #include "IOBuff.h"
+#include "Packet.hpp"
 
 class IUDPSocketServer : public ISocket
 {
@@ -31,4 +32,5 @@ public:
 				   in_addr& from) = 0;
   virtual void		  sendTo(const char* buff, unsigned int size,
 			         const in_addr& to) = 0;
+  virtual void		  sendTo(const Packet* p, const in_addr& to) = 0;
 };
