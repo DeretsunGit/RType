@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Thu Oct 24 14:57:20 2013 julien edmond
-// Last update Tue Nov  5 05:14:11 2013 julien edmond
+// Last update Wed Nov  6 02:07:22 2013 maxime miramond
 //
 
 #include <cstdlib>
@@ -71,20 +71,36 @@ void	watch_count(long id)
 */
 int		  main()
 {
-  UDPSocketClient c("localhost", 1234);
+  // UDPSocketClient c("localhost", 1234);
+  // char		  buff[255];
+  // int		  ret;
+
+  // c.send("Coucou les amis!\n", sizeof("Coucou les amis!\n"));
+  // while (c.isLive())
+  // {
+  //   if ((ret = c.recv(buff, sizeof(buff))) > 0)
+  //   {
+  //     buff[ret] = 0;
+  //     std::cout << "Received " << buff << std::flush;
+  //     c.send(buff, ret);
+  //   }
+  // }
+
+  UDPSocketServer s(1234);
   char		  buff[255];
   int		  ret;
+  in_addr	  senderAddr;
 
-  c.send("Coucou les amis!\n", sizeof("Coucou les amis!\n"));
-  while (c.isLive())
+  while (s.isLive())
   {
-    if ((ret = c.recv(buff, sizeof(buff))) > 0)
-    {
-      buff[ret] = 0;
-      std::cout << "Received " << buff << std::flush;
-      c.send(buff, ret);
-    }
+    if ((ret = s.recvFrom(buff, sizeof(buff), senderAddr)) > 0)
+      {
+	buff[ret] = 0;
+	std::cout << "Received " << buff << std::flush;
+	s.sendTo(buff, ret, senderAddr);
+      }
   }
+
   std::cin.get();
   return (0);
 }

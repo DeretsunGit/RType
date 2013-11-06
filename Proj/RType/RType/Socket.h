@@ -12,6 +12,7 @@ public:
 #else
 
   typedef int	  SocketId;
+  typedef struct in_addr IN_ADDR;
 
 #endif // _WIN32
 

@@ -80,12 +80,12 @@ add_executable (Server
 	TCPSocketServer.h
 	UnixTCPSocketServer.cpp
 	UnixTCPSocketServer.h
-	RType/UDPSocketClient.h
-	RType/UDPSocketServer.h
-	RType/UnixUDPSocketClient.cpp
-	RType/UnixUDPSocketClient.h
-	RType/UnixUDPSocketServer.cpp
-	RType/UnixUDPSocketServer.h
+	UDPSocketClient.h
+	UDPSocketServer.h
+	UnixUDPSocketClient.cpp
+	UnixUDPSocketClient.h
+	UnixUDPSocketServer.cpp
+	UnixUDPSocketServer.h
 	)
 
 add_executable (Client
