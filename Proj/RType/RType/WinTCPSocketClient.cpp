@@ -13,20 +13,26 @@ WinTCPSocketClient::WinTCPSocketClient(SocketId sock)
 
 WinTCPSocketClient::WinTCPSocketClient(const char *hostName, unsigned short port)
 {
-	sockaddr_in clientService;
+	sockaddr_in	clientService;
+	struct hostent	*ent;
 
 	if ((this->_sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, NULL)) == INVALID_SOCKET)
 	{
 		std::cerr << "WSASocket() function failed with error: " << WSAGetLastError() << std::endl;
 		throw std::exception();
 	}
-
-	clientService.sin_family = AF_INET;
-	if ((clientService.sin_addr.s_addr = inet_addr(hostName)) == INADDR_NONE)
+	if (!(ent = gethostbyname(hostName)))
 	{
-		std::cerr << "The target ip address entered must be a legal IPv4 address" << std::endl;
+		std::cerr << "WSASocket() function failed with error: " << WSAGetLastError() << std::endl;
 		throw std::exception();
 	}
+	clientService.sin_family = AF_INET;
+	clientService.sin_addr = *reinterpret_cast<struct in_addr*>(ent->h_addr);
+//	if ((clientService.sin_addr.s_addr = inet_addr(hostName)) == INADDR_NONE)
+//	{
+//		std::cerr << "The target ip address entered must be a legal IPv4 address" << std::endl;
+//		throw std::exception();
+//	}
 	WSAHtons(this->_sock, port, &clientService.sin_port);
 
 	if (WSAConnect(this->_sock, (SOCKADDR *) & clientService, sizeof (clientService), NULL, NULL, NULL, NULL) == SOCKET_ERROR)
@@ -131,10 +137,9 @@ void	    WinTCPSocketClient::writeToSock()
 	if (!this->_live)
 		return ;
 	this->_lock.lock();
-	this->_buff._output.readSome(buffer, DATA_BUFSIZE);
+	dataBuf.len = this->_buff._output.readSome(buffer, DATA_BUFSIZE);
 	this->_lock.unlock();
 	dataBuf.buf = buffer;
-	dataBuf.len = sizeof(dataBuf.buf);
 	rc = WSASend(this->_sock, &dataBuf, 1, &sendBytes, 0, NULL, NULL);
 	if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
 	{

@@ -12,6 +12,8 @@ else(WIN32)
 	include_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-Unix/include)
 endif(WIN32)
 
+include_directories(${CMAKE_SOURCE_DIR})
+
 add_library(Abstract
 	IMutex.h
 	UnixCondVar.cpp
@@ -130,6 +132,9 @@ add_executable (DebugClient
 	${CMAKE_BINARY_DIR}/client_debug/main.cpp
 	${CMAKE_BINARY_DIR}/client_debug/Debugger.h
 	${CMAKE_BINARY_DIR}/client_debug/Debugger.cpp
+	Thread.h
+	TCPSocketClient.h
+	UDPSocketClient.h
 	)
 
 find_package (Threads REQUIRED)
@@ -148,6 +153,7 @@ target_link_libraries (DebugClient
 	)
 
 if(WIN32)
+	target_link_libraries(Abstract Ws2_32.lib)
 	target_link_libraries(Server Ws2_32.lib)
 	target_link_libraries(Client sfml-graphics sfml-system sfml-window)
 	target_link_libraries(DebugClient sfml-graphics sfml-system sfml-window)
