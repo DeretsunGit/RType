@@ -3,8 +3,7 @@
 #include "Room.h"
 #include "rtype_common.h"
 
-Room::Room()
-  : _th(new Thread(*this, &Room::roomLoop))
+Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 {
 //	this->_id;
 	this->_nbReady = 0;
@@ -15,6 +14,24 @@ Room::~Room(void)
 {
 }
 #include <iostream>
+bool	Room::removeClient(int id)
+{
+	int i = 0;
+	std::vector<Player*>::iterator ite = _party.begin();
+
+	while (i < _party.size())
+	{
+		if (_party[i]->getClient()->getId() == id)
+		{
+			_party.erase(ite);
+			return (true);
+		}
+		++i;
+		++ite;
+	}
+	return (false);
+}
+
 bool	Room::addClient(Client* newClient)
 {
   this->_m.lock();
@@ -96,6 +113,23 @@ char	Room::getNbPlayer() const
 	return (static_cast<char>(_party.size()));
 }
 
+std::vector<Player*> Room::getPlayers() const
+{
+	return (this->_party);
+}
+
+std::string	Room::getName() const
+{
+	return(*this->_name);
+}
+
+bool	Room::setName(char *newName)
+{
+	std::string temp(newName);
+	*this->_name = temp.size() <= 32 ? temp : *this->_name;
+	return (temp.size() <= 32 ? true : false);
+}
+/*
 Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const
 {
 	if (!rooms.size())
@@ -119,12 +153,12 @@ Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const
 		i += 2;
 	}
 	
-	/*if (!packet->set(buff, TCPHEADSIZE + block.datasize))
+	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
 	{
 		delete buff;
 		delete packet;
 		return NULL;
-	}*/
+	}
 	
 	return (packet);
-}
+}*/
