@@ -6,6 +6,7 @@
 #include "TCPSocketServer.h"
 #include "Thread.h"
 #include "Room.h"
+#include "Client.h"
 
 class RTypeServer
 {
@@ -25,12 +26,11 @@ public:
 	~RTypeServer();
 
 	bool	start();
-
 	template<class ret, class clist>
 	ret		createValidId(ret, std::list<clist>);
 	bool	loadDynEnnemy(std::string);
 
-	bool	setRoom(Client *);
+	bool	setRoom(Client *, char*);
 	bool	selectRoom(Client *, int);
 	bool	leaveRoom(Client *);
 

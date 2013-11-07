@@ -113,6 +113,23 @@ char	Room::getNbPlayer() const
 	return (static_cast<char>(_party.size()));
 }
 
+std::vector<Player*> Room::getPlayers() const
+{
+	return (this->_party);
+}
+
+std::string	Room::getName() const
+{
+	return(*this->_name);
+}
+
+bool	Room::setName(char *newName)
+{
+	std::string temp(newName);
+	*this->_name = temp.size() <= 32 ? temp : *this->_name;
+	return (temp.size() <= 32 ? true : false);
+}
+/*
 Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const
 {
 	if (!rooms.size())
@@ -136,12 +153,12 @@ Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const
 		i += 2;
 	}
 	
-	/*if (!packet->set(buff, TCPHEADSIZE + block.datasize))
+	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
 	{
 		delete buff;
 		delete packet;
 		return NULL;
-	}*/
+	}
 	
 	return (packet);
-}
+}*/

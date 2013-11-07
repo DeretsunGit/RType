@@ -25,12 +25,6 @@ bool		RTypeServer::start()
 			this->_clientList.push_back(new Client(newClient, id));
 		}
 		// boucle pour verifier qu'il n'y a pas de client qui font des operations sur room, set resolution, etc...
-
-
-/*		if (this->_waitingList.size() == 2)
-		{
-			this->createRoom();
-		}*/
 	}
 	return (1);
 }
@@ -57,7 +51,7 @@ bool		RTypeServer::loadDynEnnemy(std::string filename)
 	return (1);
 }
 
-bool		RTypeServer::setRoom(Client *roomMaster)
+bool		RTypeServer::setRoom(Client *roomMaster, char *name)
 {
 	// recup fichiers, etc...
 	std::list<Room*>::iterator	it_room;
@@ -66,6 +60,7 @@ bool		RTypeServer::setRoom(Client *roomMaster)
 		{
 			if ((*it_room)->getNbPlayer() == 0)
 			{
+				(*it_room)->setName(name); // send d'erreur si false
 				(*it_room)->addClient(roomMaster);
 				roomMaster->setWaiting(false);
 				return (true);
@@ -80,7 +75,7 @@ bool		RTypeServer::selectRoom(Client *roomJoiner, int id)
 	
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
-			if ((*it_room)->getNbPlayer() == 0)
+			if ((*it_room)->getId() == id)
 			{
 				(*it_room)->addClient(roomJoiner);
 				roomJoiner->setWaiting(false);
@@ -96,9 +91,8 @@ bool		RTypeServer::leaveRoom(Client * roomLeaver)
 	
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
-			if ((*it_room)->getNbPlayer() == 0)
+			if ((*it_room)->removeClient(roomLeaver->getId()))
 			{
-				(*it_room)->removeClient(roomLeaver->getId());
 				roomLeaver->setWaiting(true);
 				return (true);
 			}
