@@ -3,6 +3,7 @@
 #include <list>
 #include <iterator>
 #include <ostream>
+#include "rtype_common.h"
 #include "TCPSocketServer.h"
 #include "Thread.h"
 #include "Room.h"

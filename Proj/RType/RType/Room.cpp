@@ -5,7 +5,8 @@
 
 Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 {
-//	this->_id;
+	this->_isRandom = true;
+	this->_difficulty = 1;
 	this->_nbReady = 0;
 	this->_th->start();
 }
@@ -123,11 +124,28 @@ std::string	Room::getName() const
 	return(*this->_name);
 }
 
+char	Room::getDifficulty() const
+{
+	return (this->_difficulty);
+}
+
 bool	Room::setName(char *newName)
 {
 	std::string temp(newName);
 	*this->_name = temp.size() <= 32 ? temp : *this->_name;
 	return (temp.size() <= 32 ? true : false);
+}
+
+bool	Room::setMap(char *newName)
+{
+	std::string temp(newName);
+	*this->_name = temp.size() <= 128 ? temp : *this->_name;
+	return (temp.size() <= 128 ? true : false);
+}
+
+void	Room::setDifficulty(char newDifficulty)
+{
+	this->_difficulty = newDifficulty;
 }
 /*
 Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const

@@ -22,7 +22,12 @@ bool		RTypeServer::start()
 		{
 			// on ne push que si le client dit koukou
 			id = createValidId<int, Client *>(id, this->_clientList);
-			this->_clientList.push_back(new Client(newClient, id));
+			if (this->_clientList.size() < MAXCLIENT)
+				this->_clientList.push_back(new Client(newClient, id));
+			else
+			{
+			// send error "U MAD ZER IS ALRIDI TO MUCH PLAIERS"
+			}
 		}
 		// boucle pour verifier qu'il n'y a pas de client qui font des operations sur room, set resolution, etc...
 	}
@@ -103,7 +108,7 @@ bool		RTypeServer::leaveRoom(Client * roomLeaver)
 void		RTypeServer::setMaxRoom(char newMaxRoom)
 {
 	(newMaxRoom <= 100) ?
-		this->_maxRoom = newMaxRoom : this->_maxRoom = 100;
+		this->_maxRoom = newMaxRoom : this->_maxRoom = MAXROOM;
 	this->_maxRoom = newMaxRoom;
 	(this->_roomPool.size() <= this->_maxRoom) ?
 		this->genRoomPool(this->_maxRoom - static_cast<char>(this->_roomPool.size())) :
