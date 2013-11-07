@@ -17,6 +17,7 @@ Room::~Room(void)
 #include <iostream>
 bool	Room::removeClient(int id)
 {
+	this->_m.lock();
 	int i = 0;
 	std::vector<Player*>::iterator ite = _party.begin();
 
@@ -30,6 +31,7 @@ bool	Room::removeClient(int id)
 		++i;
 		++ite;
 	}
+	this->_m.unlock();
 	return (false);
 }
 
@@ -75,6 +77,7 @@ bool	Room::startGame()
 
 bool	Room::removePlayer(int id)
 {
+	this->_m.lock();
 	int i = 0;
 	std::vector<Player*>::iterator ite = _party.begin();
 
@@ -88,6 +91,7 @@ bool	Room::removePlayer(int id)
 		++i;
 		++ite;
 	}
+	this->_m.unlock();
 	return (false);
 }
 

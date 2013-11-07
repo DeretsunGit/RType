@@ -48,7 +48,7 @@ ret			RTypeServer::createValidId(ret id, std::list<clist> checkList)
 				it = (checkList).begin();
 			}
 		}
-	return id;
+	return (id);
 }
 
 bool		RTypeServer::loadDynEnnemy(std::string filename)
