@@ -157,7 +157,8 @@ void	Game::gameLoop()
 
 void	Game::collision()
 {
-	std::list<Wall*>::iterator		it_wall;
+	int										collision_ret;
+	std::list<Wall*>::iterator				it_wall;
 	std::vector<t_coord>::const_iterator	it_coord;
 	std::vector<Player*>::const_iterator	it_player;
 
@@ -166,7 +167,12 @@ void	Game::collision()
 			if ((*it_wall)->getHP() != 0)
 			{
 				for (it_coord = ((*it_wall)->getCurrentCell()).begin(); it_coord != ((*it_wall)->getCurrentCell()).end(); it_coord++)
-					(*it_wall)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX]);
+					{
+						if ((collision_ret = (*it_wall)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX])) != -1)
+						{
+							// collision entre *it_wall et l'objet d'id collision_ret
+						}
+				}
 			}
 		}
 	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
@@ -174,7 +180,12 @@ void	Game::collision()
 			if ((*it_player)->getHP() != 0)
 			{
 				for (it_coord = ((*it_player)->getCurrentCell()).begin(); it_coord != ((*it_player)->getCurrentCell()).end(); it_coord++)
-					(*it_player)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX]);
+					{
+						if ((collision_ret = (*it_player)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX])) != -1)
+						{
+								// collision entre *it_player et l'objet d'id collision_ret
+						}
+					}
 			}
 		}
 	//ajouter ennemis
