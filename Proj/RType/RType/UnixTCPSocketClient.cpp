@@ -48,6 +48,13 @@ UnixTCPSocketClient::~UnixTCPSocketClient()
   SocketPool::getInstance().releaseSocket(this);
 }
 
+void	      UnixTCPSocketClient::putback(const char* buff, unsigned int size)
+{
+  ScopedLock  lock(this->_lock);
+
+  this->_buff._input.putBack(buff, size);
+}
+
 void	UnixTCPSocketClient::send(const char* buff, unsigned int size)
 {
   this->_m.lock();

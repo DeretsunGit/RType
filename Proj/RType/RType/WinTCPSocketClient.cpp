@@ -55,6 +55,13 @@ WinTCPSocketClient::~WinTCPSocketClient()
 	SocketPool::getInstance().releaseSocket(this);
 }
 
+void	      WinTCPSocketClient::putback(const char* buff, unsigned int size)
+{
+  ScopedLock  lock(this->_lock);
+
+  this->_buff._input.putBack(buff, size);
+}
+
 void  WinTCPSocketClient::send(const Packet& p)
 {
   this->send(p.getBuffer(), p.getSize());
