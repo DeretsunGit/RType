@@ -112,7 +112,7 @@ add_executable (Server
 add_executable (Client
 	../client/ClientCommunication.h
 	../client/ClientCommunication.cpp
-	../client/Packet.hpp
+	Packet.hpp
 	../client/main.cpp
 	../client/Background.h
 	../client/Background.cpp
