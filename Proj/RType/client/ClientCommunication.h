@@ -10,70 +10,48 @@
 #include <string>
 #include <list>
 #include <map>
-#include "Packet.hpp"
+#include "IReadableSocket.h"
+//#include "ICallable.h"
+//#include "Packet.hpp"
+#include "Player.h"
 
-#define TCPHEADSIZE 3
-#define OPCODESIZE 1
-#define DATASIZE 1000
-
-struct s_tcp_header
+// TMP
+struct s_tmp
 {
-	char opcode;
-	short datasize;
+	bool tmp;
 };
-
-struct s_inputs
+/*class IReadableSocket 
 {
-	char X;
-	char Y;
-	bool fire;
-	bool shield;
-	bool pause;
+public:
+	IReadableSocket();
+	~IReadableSocket();
+	bool readable();
+	int recv(char* buff, int);
+	void putBack();
 };
-
-struct s_element
+*/
+class ICallable
 {
-	short posX;
-	short posY;
-	char spriteId;
-	char id;
-};
-
-struct s_player
-{
-	bool alive;
-	bool win;
-	bool defeat;
-	bool shield;
+public:
+	ICallable();
+	~ICallable();
+	void call(s_tmp);
 };
 
 class ClientCommunication
 {
 private:
-	std::map<char, void (ClientCommunication::*)(const char*) const> _commandMap;
+	std::map<char, void (ClientCommunication::*)(IReadableSocket& socket) const> _commandMap;
+	std::map<char, ICallable*> _callableMap;
 
-	void	TCPgetRoomList(const char *data) const;
-	void	TCPgetPlayerList(const char *data) const;
-	void	TCPgetFileList(const char *data) const;
-	void	TCPgetFile(const char *data) const;
-	void	TCPgetStartLoading(const char *data) const;
-
+	void exempleOfDeserialisationFunction(IReadableSocket&) const;
 
 public:
 	ClientCommunication();
 	~ClientCommunication();
 
-	void	interpretCommand(const char* command) const;
-	unsigned short	TCPgetStartGame(const char *data) const;
-	void	UDPgetGameElements(const char *data) const;
+	template<typename Obj, typename Param>
+	void setCallback(char opcode, Obj& o, void (Obj::*mthd)(Param&));
 
-	void	TCProomChoice(Packet& packet, const std::string& nickname, char roomId) const;
-	void	TCPupdateNickname(Packet& packet, const std::string& nickname) const;
-	void	TCPupdateResolution(Packet& packet, const std::string& resolution) const;
-	void	TCPsendOwnedFiles(Packet& packet, const std::list<std::string>& filenames, const std::list<std::string>& versions) const;
-	void	TCPconfirmFileReception(Packet& packet, const std::string& filename, const std::string& version) const;
-	void	TCPsendReady(Packet& packet) const;
-	void	TCPsendMapRequest(Packet& packet) const;
-	void	TCPuploadMap(Packet& packet, const std::string& filename, const char* filedata) const;
-	void	UDPsendInputs(Packet& packet, s_inputs& inputs) const;
+	void interpretCommand(IReadableSocket&) const;
 };

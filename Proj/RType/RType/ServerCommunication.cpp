@@ -10,15 +10,7 @@
 
 ServerCommunication::ServerCommunication()
 {
-	_commandMap[0x07] = &ServerCommunication::TCProomAssignment;
-	_commandMap[0x08] = &ServerCommunication::TCPupdateNickname;
-	_commandMap[0x09] = &ServerCommunication::TCPupdateResolution;
-	_commandMap[0x0a] = &ServerCommunication::TCPgetOwnedFiles;
-	_commandMap[0x0b] = &ServerCommunication::TCPfileTransferConfirmation;
-	//_commandMap[0x0c] = &ServerCommunication::TCPgetReady;
-	_commandMap[0x0d] = &ServerCommunication::TCPsendMap;
-	_commandMap[0x0e] = &ServerCommunication::TCPgetMap;
-	//_commandMap[0x12] = &ServerCommunication::UDPinterpretInputs;
+	_commandMap[0x01] = &ServerCommunication::exempleOfDeserialisationFunction;
 }
 
 ServerCommunication::~ServerCommunication()
@@ -26,209 +18,48 @@ ServerCommunication::~ServerCommunication()
 	;
 }
 
-void	ServerCommunication::TCProomAssignment(const char* data) const
+template<typename Obj, typename Param>
+void ServerCommunication::setCallback(char opcode, Obj& o, void (Obj::*mthd)(Param&))
 {
-	s_tcp_header block;
-	memcpy(&block, data, TCPHEADSIZE);
-	std::string nickname;
-	char roomId;
+	std::map<char, ICallable*>::iterator ite;
 
-	nickname.assign(&data[TCPHEADSIZE], block.datasize -1);
-	roomId = data[TCPHEADSIZE + block.datasize -1];
-
-	//information filled in string nickname and char roomId
-	
+	if ((ite = _callableMap.find(opcode)) != __callableMap.end())
+		_callableMap.erase(ite);
+	map[opcode] = new MthdPtrBinder<Obj, Param>(o, mthd);
 }
 
-void	ServerCommunication::TCPupdateNickname(const char* data) const
+void	ServerCommunication::interpretCommand(IReadableSocket& socket) const
 {
-	s_tcp_header block;
-	memcpy(&block, data, TCPHEADSIZE);
-	std::string nickname;
+	std::map<char, void (ServerCommunication::*)(IReadableSocket&) const>::const_iterator ite;
+	char opcode;
 
-	nickname.assign(&data[TCPHEADSIZE], block.datasize);
-
-	//information filled in string nickname
-}
-
-void	ServerCommunication::TCPupdateResolution(const char* data) const
-{
-	s_tcp_header block;
-	memcpy(&block, data, TCPHEADSIZE);
-	std::string resolution;
-
-	resolution.assign(&data[TCPHEADSIZE], block.datasize);
-
-	//information filled in string resolution
-}
-
-void	ServerCommunication::TCPgetOwnedFiles(const char* data) const
-{
-	(void)data;
-}
-
-void	ServerCommunication::TCPfileTransferConfirmation(const char* data) const
-{
-	(void)data;
-	/*s_tcp_header block;
-	memcpy(&block, data, TCPHEADSIZE);
-	std::string filename;
-	std::string version;
-	*/
-    // Need real separator between filename and version
-}
-
-bool	ServerCommunication::TCPgetReady(const char* data) const
-{
-	s_tcp_header block;
-	memcpy(&block, data, TCPHEADSIZE);
-	if (block.opcode == 0x0c)
-		return true;
-	return false;
-}
-
-void	ServerCommunication::TCPsendMap(const char* data) const
-{
-	(void)data;
-}
-
-void	ServerCommunication::TCPgetMap(const char* data) const
-{
-	(void)data;
-}
-
-void	ServerCommunication::UDPinterpretInputs(s_inputs& inputs, const char* data) const
-{
-	if (data != NULL)
-		memcpy(&inputs, &data[1], sizeof(s_inputs));
-	return ;
-}
-
-void	ServerCommunication::interpretCommand(const char* command) const
-{
-	std::map<char, void (ServerCommunication::*)(const char*) const>::const_iterator ite;
-
-	if (command != NULL && ((ite = _commandMap.find(command[0])) != _commandMap.end()))
-		(this->*(ite->second))(command);
-}
-/*
-Packet*	ServerCommunication::TCPsendRoomList(const std::list<Room>& rooms) const
-{
-	if (!rooms.size())
-		return (NULL);
-
-	s_tcp_header block;
-	Packet* packet = new Packet();
-	std::list<Room>::const_iterator ite = rooms.begin();
-	int i = 3;
-
-	block.opcode = 0x01;
-	block.datasize = ((short)rooms.size() * 2);
-	char* buff = new char[TCPHEADSIZE + block.datasize];
-
-	memcpy(buff, &block, TCPHEADSIZE);
-
-	while (i < rooms.size() + TCPHEADSIZE)
+	if (socket.readable())
 	{
-		buff[i] = ite->getId();
-		buff[i+1] = ite->getNbPlayer();
-		i += 2;
+		socket.recv(&opcode, 1);
+		if ((ite = _commandMap.find(opcode)) != _commandMap.end())
+			(this->*(ite->second))(socket);
 	}
-	
-	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
-	{
-		delete buff;
-		delete packet;
-		return NULL;
-	}
-	
-	return (packet);
-}*/
-
-Packet*	ServerCommunication::TCPsendPlayerList(int roomId, const std::vector<Player*>& players) const
-{
-	(void)players;
-	return (new Packet());
 }
 
-Packet*	ServerCommunication::TCPaskClientForFiles(const std::list<std::string>& filenames) const
+void ServerCommunication::exempleOfDeserialisationFunction(IReadableSocket& socket) const
 {
-	(void)filenames;
-	return (new Packet());
-}
+	s_tmp tmp; // structure correspondant à chaque commande
+	char* data;
+	short datasize;
+	int readSize = 0;
 
-Packet*	ServerCommunication::TCPsendFile(const std::string& filename, const char* fileContent) const
-{
-	(void)filename; (void)fileContent;
-	return (new Packet());
-}
-
-Packet*	ServerCommunication::TCPsendStartLoading() const
-{
-	s_tcp_header block;
-	char* buff = new char[TCPHEADSIZE];
-	Packet* packet = new Packet();
-
-	block.opcode = 0x05;
-	block.datasize = 0;
-
-	memcpy(buff, &block, TCPHEADSIZE);
-	/*if (!packet->set(buff, TCPHEADSIZE + block.datasize))
+	if (socket.readable())
 	{
-		delete buff;
-		delete packet;
-		return (NULL);
-	}*/
-	return (packet);
-}
-
-void	ServerCommunication::TCPsendStartGame(Packet& packet, unsigned short port) const
-{
-	
-	s_tcp_header block;
-
-	block.opcode = 0x06;
-	block.datasize = sizeof(unsigned short);
-
-	packet.set(reinterpret_cast<char*>(&block), 0, TCPHEADSIZE);
-	packet.set(reinterpret_cast<char*>(&port), TCPHEADSIZE, sizeof(short));
-}
-
-void	ServerCommunication::UDPsendGameElements(Packet& packet, const std::list<Element*>& elements, const std::vector<Player*>& players) const
-{
-	int i = 0;
-	std::list<Element*>::const_iterator elem_ite = elements.begin();
-	std::vector<Player*>::const_iterator play_ite = players.begin();
-
-	if (!elements.size() || !players.size())
-	{
-		return ;
-	}
-
-	char opcode = 0x10;
-	packet.set(&opcode, 0, 1);
-
-	while (elem_ite != elements.end() && i < 100)
-	{
-		s_element newElement;
-		newElement.posX = (*elem_ite)->getPos()._posX;
-		newElement.posY = (*elem_ite)->getPos()._posY;
-		newElement.spriteId = (*elem_ite)->getSpriteId();
-		packet.set(reinterpret_cast<char*>(&newElement), (i*sizeof(s_element))+1, sizeof(s_element));
-		++i;
-		++elem_ite;
-	}
-
-	i = 0;
-	while (play_ite != players.end() && i < 4)
-	{
-		s_player newPlayer;
-		newPlayer.alive = (*play_ite)->isAlive();
-		newPlayer.win = (*play_ite)->isWinner();
-		newPlayer.defeat = (*play_ite)->isDefeated();
-		newPlayer.shield = (*play_ite)->getShield();
-		packet.set(reinterpret_cast<char*>(&newPlayer), (i*sizeof(s_player))+501, sizeof(s_player));
-		++i;
-		++play_ite;
+		readSize += socket.recv(reinterpret_cast<char*>(datasize), 2);
+		data = new char[datasize];
+		readSize += socket.recv(data, datasize);
+		if (readSize != datasize + 3)
+			socket.putBack();
+		else if (_callableMap.find(0x01) != _callableMap.end())
+		{
+			// déserialisation dans tmp
+			tmp.tmp = true;
+			_callableMap.at(0x01)->call(tmp);
+		}
 	}
 }

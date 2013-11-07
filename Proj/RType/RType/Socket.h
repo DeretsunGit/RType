@@ -1,11 +1,16 @@
 #pragma once
 
+#ifdef _WIN32
+
+# include <Windows.h>
+
+#endif // _WIN32
+
+
 class ISocket
 {
 public:
 #ifdef _WIN32
-
-# include <Windows.h>
 
   typedef SOCKET  SocketId;
 
