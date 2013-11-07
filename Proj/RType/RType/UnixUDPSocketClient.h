@@ -25,6 +25,7 @@ public:
   virtual	      ~UnixUDPSocketClient();
   unsigned int  readable() const;
   unsigned int  recv(char* buff, unsigned int size);
+  void	      putback(const char* buff, unsigned int size);
   void	      send(const char* buff, unsigned int size);
   void	      send(const Packet& p);
   SocketId      getId() const;

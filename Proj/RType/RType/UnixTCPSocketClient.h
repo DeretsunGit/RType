@@ -23,6 +23,7 @@ public:
   UnixTCPSocketClient(SocketId id);
   ~UnixTCPSocketClient();
 
+  void		putback(const char* buff, unsigned int size);
   void		send(const char* buff, unsigned int size);
   void		send(const Packet& p);
   unsigned int	recv(char* buff, unsigned int size);

@@ -30,6 +30,13 @@ unsigned int  WinUDPSocketClient::readable() const
   return (this->_buff._input.readableSize());
 }
 
+void	      WinUDPSocketClient::putback(const char* buff, unsigned int size)
+{
+  ScopedLock  lock(this->_m);
+
+  this->_buff._input.putBack(buff, size);
+}
+
 unsigned int  WinUDPSocketClient::recv(char* buff, unsigned int size)
 {
   ScopedLock  lock(this->_m);
