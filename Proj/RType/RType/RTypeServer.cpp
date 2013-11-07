@@ -38,8 +38,8 @@ template<class ret, class clist>
 ret			RTypeServer::createValidId(ret id, std::list<clist> checkList)
 {
 	//id = 0; // id random serait mieux
-	std::list<clist>::iterator	it;
-	
+  typename std::list<clist>::iterator	it;
+
 	for (it = (checkList).begin(); (it != (checkList).end()); it++)
 		{
 			if (id == (*it)->getId())
@@ -60,7 +60,7 @@ bool		RTypeServer::setRoom(Client *roomMaster, char *name)
 {
 	// recup fichiers, etc...
 	std::list<Room*>::iterator	it_room;
-	
+
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
 			if ((*it_room)->getNbPlayer() == 0)
@@ -77,7 +77,7 @@ bool		RTypeServer::setRoom(Client *roomMaster, char *name)
 bool		RTypeServer::selectRoom(Client *roomJoiner, int id)
 {
 	std::list<Room*>::iterator	it_room;
-	
+
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
 			if ((*it_room)->getId() == id)
@@ -93,7 +93,7 @@ bool		RTypeServer::selectRoom(Client *roomJoiner, int id)
 bool		RTypeServer::leaveRoom(Client * roomLeaver)
 {
 	std::list<Room*>::iterator	it_room;
-	
+
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
 			if ((*it_room)->removeClient(roomLeaver->getId()))
@@ -130,7 +130,7 @@ void		RTypeServer::delRoomPool(int nbRoom)
 {
 	int		i = 0;
 	std::list<Room*>::iterator	it_room;
-	
+
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end() && i < nbRoom); it_room++)
 		{
 			if ((*it_room)->getNbPlayer() == 0)

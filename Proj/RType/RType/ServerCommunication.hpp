@@ -280,7 +280,7 @@ public:
 
 	void setCallback(char opcode, void (T::*mthd)(void* data))
 	{
-		map[opcode] = mthd;
+	  this->_callableMap[opcode] = mthd;
 	}
 
 	void setDefaultCallback(void (T::*cb)(char, IReadableSocket&))
@@ -295,7 +295,7 @@ public:
 
 	void interpretCommand(IReadableSocket& socket) const
 	{
-		std::map<char, void (ServerCommunication::*)(IReadableSocket&) const>::const_iterator ite;
+	  typename std::map<char, void (ServerCommunication::*)(IReadableSocket&) const>::const_iterator ite;
 		char opcode;
 
 		if (socket.readable())

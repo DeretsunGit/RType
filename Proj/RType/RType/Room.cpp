@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cstring>
+#include "Game.h"
 #include "Room.h"
 #include "rtype_common.h"
 
@@ -174,13 +175,13 @@ Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const
 		buff[i+1] = ite->getNbPlayer();
 		i += 2;
 	}
-	
+
 	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
 	{
 		delete buff;
 		delete packet;
 		return NULL;
 	}
-	
+
 	return (packet);
 }*/
