@@ -96,9 +96,8 @@ add_executable (Server
 	Element.h
 	Room.h
 	Ennemy.cpp
-	ServerCommunication.cpp
+	ServerCommunication.hpp
 	Ennemy.h
-	ServerCommunication.h
 	Event.cpp
 	Event.h
 	main.cpp
@@ -110,8 +109,7 @@ add_executable (Server
 	)
 
 add_executable (Client
-	../client/ClientCommunication.h
-	../client/ClientCommunication.cpp
+	../client/ClientCommunication.hpp
 	Packet.hpp
 	../client/main.cpp
 	../client/Background.h
