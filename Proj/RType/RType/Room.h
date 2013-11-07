@@ -8,22 +8,30 @@
 class Room
 {
 private:
-	char	_id;
+	std::string _name; //limite 32
+	const char	_id;
 	Thread*	_th;
 	Mutex	_m;
 	std::vector<Player*> _party;
 	char	_nbReady;
 
 public:
-	Room();
+	Room(char);
 	~Room();
+
+	void	roomLoop();
+	bool	startGame();
 
 	bool	addClient(Client*);
 	bool	addPlayer(Player*);
-	bool	startGame();
-	bool	removePlayer(int id);
+	bool	removePlayer(int);
+	bool	removeClient(int);
+
 	char	getId() const;
 	char	getNbPlayer() const;
-	void	roomLoop();
+	std::string	getName() const;
+
+	void	setName(char *);
+	void	setId(char);
 	Packet* TCPsendRoomList(const std::list<Room>& rooms) const; 
 };

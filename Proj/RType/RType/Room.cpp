@@ -3,8 +3,7 @@
 #include "Room.h"
 #include "rtype_common.h"
 
-Room::Room()
-  : _th(new Thread(*this, &Room::roomLoop))
+Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 {
 //	this->_id;
 	this->_nbReady = 0;
@@ -15,6 +14,24 @@ Room::~Room(void)
 {
 }
 #include <iostream>
+bool	Room::removeClient(int id)
+{
+	int i = 0;
+	std::vector<Player*>::iterator ite = _party.begin();
+
+	while (i < _party.size())
+	{
+		if (_party[i]->getClient()->getId() == id)
+		{
+			_party.erase(ite);
+			return (true);
+		}
+		++i;
+		++ite;
+	}
+	return (false);
+}
+
 bool	Room::addClient(Client* newClient)
 {
   this->_m.lock();
