@@ -139,7 +139,7 @@ void	    WinTCPSocketClient::writeToSock()
 	this->_lock.lock();
 	dataBuf.len = this->_buff._output.readSome(buffer, DATA_BUFSIZE);
 	this->_lock.unlock();
-	dataBuf.buf = buffer;
+  	dataBuf.buf = buffer;
 	rc = WSASend(this->_sock, &dataBuf, 1, &sendBytes, 0, NULL, NULL);
 	if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
 	{

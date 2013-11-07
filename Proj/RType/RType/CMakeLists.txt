@@ -15,6 +15,8 @@ endif(WIN32)
 include_directories(${CMAKE_SOURCE_DIR})
 
 add_library(Abstract
+	Caller.hpp
+	IReadableSocket.h
 	IMutex.h
 	UnixCondVar.cpp
 	UnixCondVar.h
@@ -67,6 +69,7 @@ add_library(Abstract
 	)
 
 add_executable (Server
+	IReadableSocket.h
 	CondVar.h
 	Packet.hpp
 	Mutex.h
@@ -77,7 +80,6 @@ add_executable (Server
 	UDPSocketServer.h
 	Bullet.cpp
 	Bullet.h
-	Caller.hpp
 	Client.cpp
 	Player.cpp
 	Client.h

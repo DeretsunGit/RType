@@ -13,11 +13,11 @@
 #endif	// !_WIN32
 
 #include <map>
-#include "Socket.h"
+#include "IReadableSocket.h"
 #include "IOBuff.h"
 #include "Packet.hpp"
 
-class IUDPSocketClient : public ISocket
+class IUDPSocketClient : public IReadableSocket
 {
 public:
   typedef std::map<u_long, UDPBuff<> > BuffMap;

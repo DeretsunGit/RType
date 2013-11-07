@@ -10,10 +10,10 @@
 
 #pragma once
 
-#include "Socket.h"
+#include "IReadableSocket.h"
 #include "Packet.hpp"
 
-class ITCPSocketClient: public ISocket
+class ITCPSocketClient: public IReadableSocket
 {
 public:
   virtual ~ITCPSocketClient() {}
