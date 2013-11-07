@@ -50,7 +50,7 @@ UnixTCPSocketClient::~UnixTCPSocketClient()
 
 void	      UnixTCPSocketClient::putback(const char* buff, unsigned int size)
 {
-  ScopedLock  lock(this->_lock);
+  ScopedLock  lock(this->_m);
 
   this->_buff._input.putBack(buff, size);
 }

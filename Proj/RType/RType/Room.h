@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include "Game.h"
 #include "Thread.h"
 #include "Mutex.h"
 #include "Player.h"
@@ -42,5 +41,5 @@ public:
 	void	setId(char);
 	void	setDifficulty(char);
 
-	//Packet* TCPsendRoomList(const std::list<Room>& rooms) const; 
+	//Packet* TCPsendRoomList(const std::list<Room>& rooms) const;
 };

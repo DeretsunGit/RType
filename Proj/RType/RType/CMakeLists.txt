@@ -10,6 +10,7 @@ if(WIN32)
 	endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 else(WIN32)
 	include_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-Unix/include)
+	link_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-Unix/lib)
 endif(WIN32)
 
 include_directories(${CMAKE_SOURCE_DIR})

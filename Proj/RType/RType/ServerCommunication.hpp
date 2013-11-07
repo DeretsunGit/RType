@@ -326,7 +326,7 @@ public:
 
 	void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data)
 	{}
-	
+
 	void TCPassocSprites(Packet& packet, std::list<char>& idSprites, std::list<std::string>& filenames, std::list<t_coord>& coords)
 	{}
 
@@ -369,7 +369,7 @@ public:
 
 	bool TCPsetMap(IReadableSocket& socket)
 	{ return true; }
-	
+
 	bool TCPgetFileTrunk(IReadableSocket& socket)
 	{ return true; }
 
