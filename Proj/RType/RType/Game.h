@@ -7,7 +7,7 @@
 #include "Wave.h"
 #include "Wall.h"
 #include "Bullet.h"
-#include "ServerCommunication.h"
+#include "ServerCommunication.hpp"
 #include "Clock.h"
 
 class Game
@@ -15,7 +15,7 @@ class Game
 private:
 	unsigned short int	_port;
 	UDPSocketServer*	_udpSock;
-	ServerCommunication		_com;
+	//ServerCommunication		_com;
 
 	const std::vector<Player*>&	_players;
 	std::list<Wave>			_livingThings;
@@ -54,6 +54,6 @@ public:
 	void	TCPsend(Packet&);
 	void	setUDP();
 
-	ServerCommunication		*getServCom();
+	//ServerCommunication		*getServCom();
 
 };

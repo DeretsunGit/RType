@@ -2,11 +2,12 @@
 
 #include <string>
 #include "TCPSocketClient.h"
+#include "rtype_common.h"
 
 class Client
 {
-//	std::string	_name;
-	// t_coord resolution;
+	std::string	_name; // limite a 32
+	t_coord resolution;
 	bool _isWaiting;
 	const int		_id;
 	ITCPSocketClient*	_tcpSocket;

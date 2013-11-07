@@ -12,7 +12,7 @@ Game::Game(const std::vector<Player*>& p)
 	// on récupère Script en argument
 	this->setUDP();
 	std::cout << __LINE__ << std::endl;
-	this->_com.TCPsendStartGame(packet, this->_port);
+	//this->_com.TCPsendStartGame(packet, this->_port);
 	this->TCPsend(packet);
 	std::cout << __LINE__ << std::endl;
 	this->mapGeneration();
@@ -216,8 +216,8 @@ void	Game::sendPriority()
 
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
 	// on déclare un Packet qui va etre alloué dans la méthode
-	Packet pack;
-	_com.UDPsendGameElements(pack, elemToSend, this->_players);
+	//Packet pack;
+	//_com.UDPsendGameElements(pack, elemToSend, this->_players);
 
 	// ici, pack contient les données sérialisées à écrire sur la socket.
 }
@@ -225,12 +225,12 @@ void	Game::sendPriority()
 void	Game::getInputs()
 {
 	//  !! ceci fonctionne pour 1 joueur !!
-	s_inputs inputs;
+	//s_inputs inputs;
 	char *buff = NULL;
 	// recuperer les packets sur la socket
 	// passer en paramètre de la fonction le buffer du packet
 	// remplacé ici par un buffer vide
-	_com.UDPinterpretInputs(inputs, buff);
+	//_com.UDPinterpretInputs(inputs, buff);
 
 	// ici la struct inputs contient les inputs utilisateur
 	// comme définie dans la RFC.
@@ -333,12 +333,12 @@ void	Game::moveWall()
 			this->_firstColumn = 0;
 	}
 }
-
+/*
 ServerCommunication	*Game::getServCom()
 {
 	return (&this->_com);
 }
-
+*/
 Game::~Game()
 {
 	// ramener tous les joueurs au menu

@@ -15,6 +15,9 @@
 
 #endif
 
+#define MAXROOM		100
+#define MAXCLIENT	400
+
 #define	WALL	0
 #define PLAYER	1
 #define ENNEMY	2
