@@ -8,6 +8,7 @@
 #include "Thread.h"
 #include "Room.h"
 #include "Client.h"
+#include "ServerCommunication.hpp"
 
 class RTypeServer
 {
@@ -19,6 +20,7 @@ class RTypeServer
 	std::list<Client *>		_clientList;
 	TCPSocketServer			_TCPsocket;
 	std::list<Room*>		_roomPool;
+	ServerCommunication<RTypeServer>	_com;
 
 	// std::ofstream _blFile;
 
@@ -30,6 +32,8 @@ public:
 	template<class ret, class clist>
 	ret		createValidId(ret, std::list<clist>);
 	bool	loadDynEnnemy(std::string);
+	void	checkClientSpeaking();
+
 
 	bool	setRoom(Client *, char*);
 	bool	selectRoom(Client *, int);

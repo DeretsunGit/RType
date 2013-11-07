@@ -6,6 +6,10 @@ RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
 	this->_isrunning = true;
 	this->setMaxRoom(maxRoom);
 	// convertir le blPath en ofstream
+	//set callback
+	//set default callback
+	//set handler
+
 }
 
 bool		RTypeServer::start()
@@ -29,9 +33,17 @@ bool		RTypeServer::start()
 			// send error "U MAD ZER IS ALRIDI TO MUCH PLAIERS"
 			}
 		}
+
 		// boucle pour verifier qu'il n'y a pas de client qui font des operations sur room, set resolution, etc...
 	}
 	return (1);
+}
+
+void	RTypeServer::checkClientSpeaking()
+{
+	//foreach client
+	//servercommunication.interpretcommand de la socket du client
+	//stocker iterateur dans la classe pour l'avoir dans le callback
 }
 
 template<class ret, class clist>

@@ -25,6 +25,7 @@ public:
 	void	roomLoop();
 	bool	startGame();
 
+
 	bool	addClient(Client*);
 	bool	addPlayer(Player*);
 	bool	removePlayer(int);
