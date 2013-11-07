@@ -12,6 +12,7 @@
 #include <map>
 #include "IReadableSocket.h"
 #include "Packet.hpp"
+#include "Room.h"
 #include "Player.h"
 
 /* TCP BLOCK STRUCTURES DEFINITION */
@@ -132,16 +133,6 @@ struct s_assoc_sprites
 	t_coord *coords;
 };
 
-struct s_udp_ready
-{
-	char opcode;
-};
-
-struct s_udp_ok
-{
-	char opcode;
-};
-
 struct s_lets_play
 {
 	char opcode;
@@ -162,6 +153,16 @@ struct s_send_error
 };
 
 /* UPD BLOCK STRUCTURES DEFINITION */
+
+struct s_udp_ready
+{
+	char opcode;
+};
+
+struct s_udp_ok
+{
+	char opcode;
+};
 
 struct s_inputs
 {
@@ -211,20 +212,19 @@ struct s_death
 
 /* END OF BLOCK STRUCTURES DEFINITION */
 
-
 template<typename T>
 class ServerCommunication
 {
 private:
-	std::map<char, void (ServerCommunication::*)(IReadableSocket& socket) const> _commandMap;
+	std::map<char, void (ServerCommunication::*)(IReadableSocket&) const> _commandMap;
 	std::map<char, void (T::*)(void*)> _callableMap;
 
 	T* _handler;
-	void (T::*)(char, IReadableSocket&) _defaultCallback;
+	void (T::*_defaultCallback)(char, IReadableSocket&);
 
-	bool exempleOfDeserialisationFunction(IReadableSocket&)
+	bool exempleOfDeserialisationFunction(IReadableSocket& socket)
 	{
-		s_tmp tmp; // structure correspondant à chaque commande
+		s_coord tmp; // structure correspondant à chaque commande
 		char* data;
 		short datasize;
 		int readSize = 0;
@@ -248,7 +248,7 @@ private:
 			else if (!_handler && _callableMap.find(0x01) != _callableMap.end())
 			{
 				// déserialisation dans tmp
-				tmp.tmp = true;
+				tmp._posX = 0;
 				(_handler->*_callableMap[0x01])(&tmp);
 			}
 		}
@@ -260,7 +260,20 @@ public:
 	{
 		_handler = NULL;
 		_defaultCallback = NULL;
-		_commandMap[0x01] = &ServerCommunication::exempleOfDeserialisationFunction;
+		_commandMap[0x00] = &ServerCommunication::TCPsayHello;
+		_commandMap[0x00] = &ServerCommunication::TCPsetRoom;
+		_commandMap[0x00] = &ServerCommunication::TCPselectRoom;
+		_commandMap[0x00] = &ServerCommunication::TCPleaveRoom;
+		_commandMap[0x00] = &ServerCommunication::TCPchangeDifficulty;
+		_commandMap[0x00] = &ServerCommunication::TCPsetMap;
+		_commandMap[0x00] = &ServerCommunication::TCPgetFileTrunk;
+		_commandMap[0x00] = &ServerCommunication::TCPsetReady;
+		_commandMap[0x00] = &ServerCommunication::TCPdownloadRessource;
+		_commandMap[0x00] = &ServerCommunication::UDPReady;
+		_commandMap[0x00] = &ServerCommunication::TCPletsPlay;
+		_commandMap[0x00] = &ServerCommunication::TCPsaveMap;
+		_commandMap[0x00] = &ServerCommunication::UDPinputs;
+		_commandMap[0x00] = &ServerCommunication::UDPpauseOk;
 	}
 
 	~ServerCommunication() {}
@@ -270,7 +283,7 @@ public:
 		map[opcode] = mthd;
 	}
 
-	void setDefaultCallback(void (t::*)(char, IReadableSocket&) cb)
+	void setDefaultCallback(void (T::*cb)(char, IReadableSocket&))
 	{
 		_defaultCallback = cb;
 	}
@@ -280,7 +293,7 @@ public:
 		this->_handler = handler;
 	}
 
-	void interpretCommand(IReadableSocket&) const
+	void interpretCommand(IReadableSocket& socket) const
 	{
 		std::map<char, void (ServerCommunication::*)(IReadableSocket&) const>::const_iterator ite;
 		char opcode;
@@ -297,4 +310,87 @@ public:
 				(this->*_defaultCallback(opcode, socket));
 		}
 	}
+
+	/* SERVER TO CLIENT */
+	void TCProomList(Packet& packet, std::list<Room>& rooms)
+	{}
+
+	void TCProomState(Packet& packet, Room& room)
+	{}
+
+	void TCPwrongMap(Packet& packet)
+	{}
+
+	void TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport) // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
+	{}
+
+	void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data)
+	{}
+	
+	void TCPassocSprites(Packet& packet, std::list<char>& idSprites, std::list<std::string>& filenames, std::list<t_coord>& coords)
+	{}
+
+	void UDPok(Packet& packet)
+	{}
+
+	void TCPsendError(Packet& packet, char errorCode, const char* errorMsg)
+	{}
+
+	void UDPscreenState(Packet& packet, int score, std::list<Element>& elements) // elements pour idSprite et CoordSprite
+	{}
+
+	void UDPendOfGame(Packet& packet, int score)
+	{}
+
+	void UDPpause(Packet& packet)
+	{}
+
+	void UDPspawn(Packet& packet)
+	{}
+
+	void UPDdeath(Packet& packet)
+	{}
+
+	/* CLIENT TO SERVER */
+	bool TCPsayHello(IReadableSocket& socket)
+	{ return true; }
+
+	bool TCPsetRoom(IReadableSocket& socket)
+	{ return true; }
+
+	bool TCPselectRoom(IReadableSocket& socket)
+	{ return true; }
+
+	bool TCPleaveRoom(IReadableSocket& socket)
+	{ return true; }
+
+	bool TCPchangeDifficulty(IReadableSocket& socket)
+	{ return true; }
+
+	bool TCPsetMap(IReadableSocket& socket)
+	{ return true; }
+	
+	bool TCPgetFileTrunk(IReadableSocket& socket)
+	{ return true; }
+
+	bool TCPsetReady(IReadableSocket& socket)
+	{ return true; }
+
+	bool TCPdownloadRessource(IReadableSocket& socket)
+	{ return true; }
+
+	bool UDPReady(IReadableSocket& socket)
+	{ return true; }
+
+	bool TCPletsPlay(IReadableSocket& socket)
+	{ return true; }
+
+	bool TCPsaveMap(IReadableSocket& socket)
+	{ return true; }
+
+	bool UDPinputs(IReadableSocket& socket)
+	{ return true; }
+
+	bool UDPpauseOk(IReadableSocket& socket)
+	{ return true; }
 };
