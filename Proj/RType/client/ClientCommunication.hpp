@@ -180,7 +180,9 @@ struct s_screen_state
 	char opcode;
 	short datasize;
 	int score;
-	s_sprite *sprites;
+	// s_sprite *sprites;
+  char*		idSprite;
+  t_coord*	coords;
 };
 
 struct s_end_of_game
@@ -283,7 +285,7 @@ public:
 
 	void setCallback(char opcode, void (T::*mthd)(void* data))
 	{
-		map[opcode] = mthd;
+	  _callableMap[opcode] = mthd;
 	}
 
 	void setDefaultCallback(void (T::*cb)(char, IReadableSocket&))
@@ -298,7 +300,7 @@ public:
 
 	void interpretCommand(IReadableSocket& socket) const
 	{
-		typename std::map<char, void (ClientCommunication::*)(IReadableSocket&) const>::const_iterator ite;
+	  typename CommandMap::const_iterator ite;
 		char opcode;
 
 		if (socket.readable())
@@ -310,7 +312,7 @@ public:
 					socket.putback(&opcode, 1);
 			}
 			else if (_handler != NULL && _defaultCallback != NULL)
-				(this->*_defaultCallback(opcode, socket));
+			  (this->_handler->*_defaultCallback)(opcode, socket);
 		}
 	}
 
@@ -330,10 +332,10 @@ public:
 	void TCPchangeDifficulty(Packet& packet, char difficulty)
 	{}
 
-	void TCPsetMap(Packet& packet, bool mapStatus, const char* filename, const char* fileContent)
+	void TCPsetMap(Packet& packet, bool mapStatus, const char* filename)
 	{}
-	
-	void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data)
+
+  void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size)
 	{}
 
 	void TCPsetReady(Packet& packet)
@@ -382,7 +384,7 @@ public:
 	{
 		return true;
 	}
-	
+
 	bool TCPassocSprites(IReadableSocket& socket) const
 	{
 		return true;

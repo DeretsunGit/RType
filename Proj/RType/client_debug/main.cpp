@@ -4,16 +4,6 @@
 #include "SFML/Window.hpp"
 #include "Debugger.h"
 
-template<typename T>
-T		      stringTo(const std::string& str)
-{
-  std::istringstream  stream(str);
-  T		      sent;
-
-  stream >> sent;
-  return (sent);
-}
-
 int main(int ac, char** av)
 {
 /*  sf::Window  window(sf::VideoMode(800, 600), "My window");
@@ -25,7 +15,6 @@ int main(int ac, char** av)
       if (e.type == sf::Event::Closed)
 	window.close();
   }*/
-  std::cout << sizeof(RTypeOpcodes) << std::endl;
   if (ac == 3)
   {
     try
@@ -36,9 +25,9 @@ int main(int ac, char** av)
     }
     catch (const std::exception& e)
     {
-      std::cerr << e.what() << std::endl;
+      std::cerr << "EXCEPTION: " << e.what() << std::endl;
+      std::cin.get();
     }
   }
-  std::cin.get();
   return (0);
 }
