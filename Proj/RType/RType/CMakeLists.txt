@@ -133,6 +133,8 @@ add_executable (DebugClient
 	${CMAKE_BINARY_DIR}/client_debug/main.cpp
 	${CMAKE_BINARY_DIR}/client_debug/Debugger.h
 	${CMAKE_BINARY_DIR}/client_debug/Debugger.cpp
+	${CMAKE_BINARY_DIR}/client/ClientCommunication.hpp
+	Opcodes.h
 	Thread.h
 	TCPSocketClient.h
 	UDPSocketClient.h

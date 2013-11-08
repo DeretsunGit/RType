@@ -1,4 +1,6 @@
 #include <sstream>
+#include <iostream>
+#include "Opcodes.h"
 #include "SFML/Window.hpp"
 #include "Debugger.h"
 
@@ -23,11 +25,20 @@ int main(int ac, char** av)
       if (e.type == sf::Event::Closed)
 	window.close();
   }*/
+  std::cout << sizeof(RTypeOpcodes) << std::endl;
   if (ac == 3)
   {
-    Debugger  d(av[1], stringTo<unsigned short>(av[2]));
+    try
+    {
+      Debugger  d(av[1], stringTo<unsigned short>(av[2]));
 
-    d.start();
+      d.start();
+    }
+    catch (const std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+    }
   }
+  std::cin.get();
   return (0);
 }
