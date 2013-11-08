@@ -10,6 +10,21 @@
 
 #ifdef		_WIN32
 
-#include	"WinDynLib.h"
+# include	<iostream>
+# include	<stdexcept>
+# include	"WinDynLib.h"
+
+WinDynLib::WinDynLib(const char* libName)
+  : _handler(LoadLibrary(libName))
+{
+  if (!this->_handler)
+    throw std::runtime_error("DynLib: LoadLibrary failed");
+}
+
+WinDynLib::~WinDynLib()
+{
+  if (FreeLibrary(this->_handler))
+    std::cerr << "DynLib: FreeLibrary failed" << std::endl;
+}
 
 #endif		// _WIN32

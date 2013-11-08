@@ -15,6 +15,7 @@ endif(WIN32)
 
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_BINARY_DIR}/client)
+include_directories(${CMAKE_BINARY_DIR}/Abstract)
 
 add_library(Abstract
 	${CMAKE_BINARY_DIR}/Abstract/DynLib.h

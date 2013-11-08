@@ -3,18 +3,10 @@
 #include "Opcodes.h"
 #include "SFML/Window.hpp"
 #include "Debugger.h"
+#include "DynLib.h"
 
 int main(int ac, char** av)
 {
-/*  sf::Window  window(sf::VideoMode(800, 600), "My window");
-  sf::Event   e;
-
-  while (window.isOpen())
-  {
-    while (window.waitEvent(e))
-      if (e.type == sf::Event::Closed)
-	window.close();
-  }*/
   if (ac == 3)
   {
     try

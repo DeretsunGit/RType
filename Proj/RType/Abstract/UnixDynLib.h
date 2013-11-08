@@ -13,8 +13,9 @@
 #ifndef	_WIN32
 
 # include	<dlfcn.h>
+# include	"IDynLib.h"
 
-class	UnixDynLib
+class	UnixDynLib: public IDynLib
 {
 public:
   UnixDynLib(const char* libName);

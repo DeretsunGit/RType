@@ -10,6 +10,31 @@
 
 #ifdef	_WIN32
 
-class	WinDynLib;
+#include  <Windows.h>
+#include  "IDynLib.h"
+
+class	WinDynLib: public IDynLib
+{
+public:
+  WinDynLib(const char* lib);
+  ~WinDynLib();
+
+  template<typename T>
+  bool	getSym(const char* symName, T& dest)
+  {
+    FARPROC sym(GetProcAddress(this->_handler, symName));
+
+    if (sym)
+      dest = reinterpret_cast<T>(sym);
+    return (sym != NULL);
+  }
+
+private:
+  WinDynLib();
+  WinDynLib(const WinDynLib&);
+  WinDynLib&  operator=(const WinDynLib&);
+
+  HMODULE _handler;
+};
 
 #endif	// _WIN32

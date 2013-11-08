@@ -87,9 +87,6 @@ void			Debugger::start()
 
 void	      Debugger::networkThread()
 {
-  char	      buff[255];
-  int	      ret;
-
   while (this->_live && this->_tcp.isLive())
   {
     this->_TCPcomm.interpretCommand(this->_tcp);
@@ -348,7 +345,7 @@ void		Debugger::sendFileTrunk(const Args& a)
       else
 	{
 	  f.read(buff, sizeof(buff));
-	  this->_TCPcomm.TCPsendFileTrunk(p, a[1].c_str(), buff, f.gcount());
+	  this->_TCPcomm.TCPsendFileTrunk(p, a[1].c_str(), buff, static_cast<size_t>(f.gcount()));
 	  this->_tcp.send(p);
 	}
     }
@@ -432,8 +429,8 @@ void		Debugger::sendInputs(const Args& a)
     {
       in.x = stringTo<int>(a[1]);
       in.y = stringTo<int>(a[2]);
-      in.fire = stringTo<int>(a[3]);
-      in.shield = stringTo<int>(a[4]);
+      in.fire = stringTo<int>(a[3]) != 0;
+      in.shield = stringTo<int>(a[4]) != 0;
       this->_UDPcomm.UDPinputs(p, in);
       this->_udp->send(p);
     }
