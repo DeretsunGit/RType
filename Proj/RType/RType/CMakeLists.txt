@@ -99,6 +99,7 @@ add_executable (Server
 	Room.h
 	Ennemy.cpp
 	ServerCommunication.hpp
+	ServerCommunication.cpp
 	Ennemy.h
 	Event.cpp
 	Event.h

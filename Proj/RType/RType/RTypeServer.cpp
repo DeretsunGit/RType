@@ -1,4 +1,6 @@
 #include "RTypeServer.h"
+#include "ServerCommunication.cpp"
+template class ServerCommunication<RTypeServer>;
 
 RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
   : _port(port), _TCPsocket(port)

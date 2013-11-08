@@ -253,7 +253,7 @@ private:
 			{
 				// déserialisation dans tmp
 				tmp._posX = 0;
-				(_handler->*_callableMap[0x01])(tmp);
+				(_handler->*_callableMap[0x01])(&tmp);
 			}
 		}
 		return true;
@@ -315,86 +315,36 @@ public:
 		}
 	}
 
+	// les fonctions ayant disparues se trouvent dans ServerCommunication.cpp .
+	//pas mal de problemes d'include nous ont forcés a faire ca.
+
 	/* SERVER TO CLIENT */
-	void TCProomList(Packet& packet, std::list<Room>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
-	{}
-
-	void TCProomState(Packet& packet, Room& room)
-	{}
-
-	void TCPwrongMap(Packet& packet)
-	{}
-
-	void TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport) // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
-	{}
-
-	void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data)
-	{}
-
-	void TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<t_coord>& coords)
-	{}
-
-	void UDPok(Packet& packet)
-	{}
-
-	void TCPsendError(Packet& packet, char errorCode, const char* errorMsg)
-	{}
-
-	void UDPscreenState(Packet& packet, int score, std::list<Element>& elements) // elements pour idSprite et CoordSprite
-	{}
-
-	void UDPendOfGame(Packet& packet, int score)
-	{}
-
-	void UDPpause(Packet& packet)
-	{}
-
-	void UDPspawn(Packet& packet)
-	{}
-
-	void UPDdeath(Packet& packet)
-	{}
-
+	void TCProomList(Packet& packet, std::list<Room>& rooms); // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
+	void TCProomState(Packet& packet, Room& room);
+	void TCPwrongMap(Packet& packet);
+	void TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport); // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
+	void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data);
+	void TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<t_coord>& coords);
+	void UDPok(Packet& packet);
+	void TCPsendError(Packet& packet, char errorCode, const char* errorMsg);
+	void UDPscreenState(Packet& packet, int score, std::list<Element>& elements); // elements pour idSprite et CoordSprite
+	void UDPendOfGame(Packet& packet, int score);
+	void UDPpause(Packet& packet);
+	void UDPspawn(Packet& packet);
+	void UPDdeath(Packet& packet);
 	/* CLIENT TO SERVER */
-	bool TCPsayHello(IReadableSocket& socket)
-	{ return true; }
-
-	bool TCPsetRoom(IReadableSocket& socket)
-	{ return true; }
-
-	bool TCPselectRoom(IReadableSocket& socket)
-	{ return true; }
-
-	bool TCPleaveRoom(IReadableSocket& socket)
-	{ return true; }
-
-	bool TCPchangeDifficulty(IReadableSocket& socket)
-	{ return true; }
-
-	bool TCPsetMap(IReadableSocket& socket)
-	{ return true; }
-
-	bool TCPgetFileTrunk(IReadableSocket& socket)
-	{ return true; }
-
-	bool TCPsetReady(IReadableSocket& socket)
-	{ return true; }
-
-	bool TCPdownloadRessource(IReadableSocket& socket)
-	{ return true; }
-
-	bool UDPReady(IReadableSocket& socket)
-	{ return true; }
-
-	bool TCPletsPlay(IReadableSocket& socket)
-	{ return true; }
-
-	bool TCPsaveMap(IReadableSocket& socket)
-	{ return true; }
-
-	bool UDPinputs(IReadableSocket& socket)
-	{ return true; }
-
-	bool UDPpauseOk(IReadableSocket& socket)
-	{ return true; }
+	bool TCPsayHello(IReadableSocket& socket);
+	bool TCPsetRoom(IReadableSocket& socket);
+	bool TCPselectRoom(IReadableSocket& socket);
+	bool TCPleaveRoom(IReadableSocket& socket);
+	bool TCPchangeDifficulty(IReadableSocket& socket);
+	bool TCPsetMap(IReadableSocket& socket);
+	bool TCPgetFileTrunk(IReadableSocket& socket);
+	bool TCPsetReady(IReadableSocket& socket);
+	bool TCPdownloadRessource(IReadableSocket& socket);
+	bool UDPReady(IReadableSocket& socket);
+	bool TCPletsPlay(IReadableSocket& socket);
+	bool TCPsaveMap(IReadableSocket& socket);
+	bool UDPinputs(IReadableSocket& socket);
+	bool UDPpauseOk(IReadableSocket& socket);
 };

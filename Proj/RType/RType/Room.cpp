@@ -3,6 +3,9 @@
 #include "Game.h"
 #include "Room.h"
 #include "rtype_common.h"
+#include "ServerCommunication.cpp"
+template class ServerCommunication<Room>;
+
 
 Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 {
