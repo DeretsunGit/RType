@@ -6,6 +6,7 @@
 
 class Client
 {
+	bool				_toDelete;
 	const int			_id;
 	bool				_isWaiting;
 	t_coord				_resolution;
@@ -15,10 +16,16 @@ public:
 	Client(ITCPSocketClient*, int id);
 	~Client();
 
-	void		setWaiting(bool);
 
-	int			getId();
-	bool		getWaiting();
+	void		setDelete(bool);
+	void		setWaiting(bool);
+	void		setResolution(short int, short int);
+	void		setName(char *);
+
+	bool		getDelete() const;
+	t_coord		getResolution() const;
+	int			getId() const;
+	bool		getWaiting() const;
 	ITCPSocketClient*	getTCPSock();
 
 };
