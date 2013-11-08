@@ -21,7 +21,7 @@ RTypeServer::~RTypeServer()
 	// quitter tous les clients proprement
 }
 
-void	RTypeServer::callBackError(char, IReadableSocket&)
+void		RTypeServer::callBackError(char, IReadableSocket&)
 {
 	// send message invalid command
 }
@@ -36,8 +36,7 @@ bool		RTypeServer::serverLoop()
 {
 	int		id = 0;
 	ITCPSocketClient*	newClient;
-	// création du prompt
-	// load des librairies dynamiques
+	// création du prompt - commande de load des lib dynamiques
 
 	// gestion socket
 	while (this->_isrunning)
@@ -49,26 +48,24 @@ bool		RTypeServer::serverLoop()
 			if (this->_clientList.size() < MAXCLIENT)
 				this->_clientList.push_back(new Client(newClient, id));
 			else
-			{
 				this->sendError(66, "No more client allowed.");
-			// send error "U MAD ZER IS ALRIDI TO MUCH PLAIERS"
-			}
 		}
-
-		// boucle pour verifier qu'il n'y a pas de client qui font des operations sur room, set resolution, etc...
+		this->CheckClientAnswer();
 	}
 	return (1);
 }
 
 void		RTypeServer::CheckClientAnswer()
 {
-	//foreach client
-
 	std::list<Client*>::iterator	it_client;
 
 	for (it_client = (this->_clientList).begin(); (it_client != (this->_clientList).end()); it_client++)
 		{
-			if ((*it_client)->getWaiting() == false)
+			if ((*it_client)->getDelete() == true)
+			{
+				this->_clientList.erase(it_client);
+			}
+			else if ((*it_client)->getWaiting() == true)
 			{
 				this->_currentClient = (*it_client);
 				this->_RTypeServerCom.interpretCommand(*(this->_currentClient->getTCPSock()));
@@ -78,15 +75,21 @@ void		RTypeServer::CheckClientAnswer()
 
 void		RTypeServer::sayHello(void *data)
 {
-	reinterpret_cast<s_say_hello *>(data);
-	// set du client
+	if ((reinterpret_cast<s_say_hello *>(data))->magic != "KOUKOU")
+	{
+		this->_currentClient->setDelete(true);
+	}
+	else
+	{
+		this->_currentClient->setName((reinterpret_cast<s_say_hello *>(data))->nickname);
+		this->_currentClient->setResolution((reinterpret_cast<s_say_hello *>(data))->resolution[1],
+											(reinterpret_cast<s_say_hello *>(data))->resolution[2]);
+	}
 }
 
 void		RTypeServer::setRoom(void *data)
 {
 	std::list<Room*>::iterator	it_room;
-
-	reinterpret_cast<s_set_room *>(data);
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
@@ -101,23 +104,23 @@ void		RTypeServer::setRoom(void *data)
 	return;
 }
 
-void		RTypeServer::selectRoom(void *data)//(Client *roomJoiner, int id)
+void		RTypeServer::selectRoom(void *data)
 {
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
-			if ((*it_room)->getId() == *(reinterpret_cast<int *>(data)))
+			if ((*it_room)->getId() == (reinterpret_cast<s_select_room *>(data))->roomId)
 			{
 				(*it_room)->addClient(this->_currentClient);
 				this->_currentClient->setWaiting(false);
-				return;// (true);
+				return;
 			}
 		}
-	return;// (false);
+	return;
 }
 
-void		RTypeServer::leaveRoom(void *data)//(Client * roomLeaver)
+void		RTypeServer::leaveRoom(void *data)
 {
 	std::list<Room*>::iterator	it_room;
 
@@ -126,20 +129,20 @@ void		RTypeServer::leaveRoom(void *data)//(Client * roomLeaver)
 			if ((*it_room)->removeClient(this->_currentClient->getId()))
 			{
 				this->_currentClient->setWaiting(true);
-				return;// (true);
+				return;
 			}
 		}
-	return;// (false);
+	return;
 }
 
 void		RTypeServer::sendRoomList()
 {
-
+	//this->_RTypeServerCom.TCProomList(this->pack, (this->_roomPool));
 }
 
 void		RTypeServer::sendError(char errorCode, const char *message)
 {
-
+	//this->_RTypeServerCom.TCProomList(this->pack, (this->_roomPool));
 }
 
 void		RTypeServer::setMaxRoom(char newMaxRoom)
