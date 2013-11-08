@@ -14,6 +14,8 @@
 #include "Packet.hpp"
 #include "Player.h"
 
+#define HEADSIZE sizeof(char) + sizeof(short) // taille du "header" opcode + datasize
+
 /* TCP BLOCK STRUCTURES DEFINITION */
 struct s_say_hello
 {
@@ -150,6 +152,7 @@ struct s_save_map
 struct s_send_error
 {
 	char opcode;
+	short datasize;
 	char errorCode;
 	char errorDesc[256];
 };
@@ -180,9 +183,7 @@ struct s_screen_state
 	char opcode;
 	short datasize;
 	int score;
-	// s_sprite *sprites;
-  char*		idSprite;
-  t_coord*	coords;
+	s_sprite *sprites;
 };
 
 struct s_end_of_game
@@ -228,57 +229,24 @@ private:
   T* _handler;
   void (T::*_defaultCallback)(char, IReadableSocket&);
 
-  bool exempleOfDeserialisationFunction(IReadableSocket& socket)
-  {
-    s_coord tmp; // structure correspondant à chaque commande
-    char* data;
-    short datasize;
-    int readSize = 0;
-
-    if (socket.readable())
-      {
-	readSize += socket.recv(reinterpret_cast<char*>(&datasize), 2);
-	if (readSize != 2)
-	  {
-	    socket.putback(reinterpret_cast<char*>(&datasize), readSize);
-	    return false;
-	  }
-	data = new char[datasize];
-	readSize += socket.recv(data, datasize);
-	if (readSize != datasize + 2)
-	  {
-	    socket.putback(reinterpret_cast<char*>(&datasize), 2);
-	    socket.putback(data, readSize -2);
-	    return false;
-	  }
-	else if (!_handler && _callableMap.find(0x01) != _callableMap.end())
-	  {
-	    // déserialisation dans tmp
-	    tmp._posX = 0;
-	    (_handler->*_callableMap[0x01])(&tmp);
-	  }
-      }
-    return true;
-  }
-
 public:
 	ClientCommunication()
 	{
 		_handler = NULL;
 		_defaultCallback = NULL;
-		_commandMap[0x00] = &ClientCommunication::TCProomList;
-		_commandMap[0x00] = &ClientCommunication::TCProomState;
-		_commandMap[0x00] = &ClientCommunication::TCPwrongMap;
-		_commandMap[0x00] = &ClientCommunication::TCPstartLoading;
-		_commandMap[0x00] = &ClientCommunication::TCPgetFileTrunk;
-		_commandMap[0x00] = &ClientCommunication::TCPassocSprites;
-		_commandMap[0x00] = &ClientCommunication::UDPok;
-		_commandMap[0x00] = &ClientCommunication::TCPsendError;
-		_commandMap[0x00] = &ClientCommunication::UDPscreenState;
-		_commandMap[0x00] = &ClientCommunication::UDPendOfGame;
-		_commandMap[0x00] = &ClientCommunication::UDPpause;
-		_commandMap[0x00] = &ClientCommunication::UDPspawn;
-		_commandMap[0x00] = &ClientCommunication::UPDdeath;
+		_commandMap[0x0F] = &ClientCommunication::TCProomList;			// 0x0F -
+		_commandMap[0x10] = &ClientCommunication::TCProomState;			// 0x10 -
+		_commandMap[0x11] = &ClientCommunication::TCPwrongMap;			// 0x11 -
+		_commandMap[0x12] = &ClientCommunication::TCPstartLoading;		// 0x12 -
+		_commandMap[0x13] = &ClientCommunication::TCPgetFileTrunk;		// 0x13 -
+		_commandMap[0x14] = &ClientCommunication::TCPassocSprites;		// 0x14 -
+		_commandMap[0x15] = &ClientCommunication::UDPok;				// 0x15 -
+		_commandMap[0x16] = &ClientCommunication::TCPsendError;			// 0x16 -
+		_commandMap[0x17] = &ClientCommunication::UDPscreenState;		// 0x17 -
+		_commandMap[0x18] = &ClientCommunication::UDPendOfGame;			// 0x18 -
+		_commandMap[0x19] = &ClientCommunication::UDPpause;				// 0x19 -
+		_commandMap[0x1A] = &ClientCommunication::UDPspawn;				// 0x1A -
+		_commandMap[0x1B] = &ClientCommunication::UPDdeath;				// 0x1B -
 	}
 
 	~ClientCommunication() {}
@@ -331,6 +299,7 @@ public:
   void TCPsaveMap(Packet& packet, const char* mapName);
   void UDPinputs(Packet& packet, s_inputs& inputs);
   void UDPpauseOk(Packet& packet);
+
 
   /* SERVER TO CLIENT */
   bool TCProomList(IReadableSocket& socket) const;

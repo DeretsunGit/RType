@@ -180,12 +180,12 @@ char	Room::getNbPlayer() const
 	return (static_cast<char>(_party.size()));
 }
 
-std::vector<Player*> Room::getPlayers() const
+const std::vector<Player*>& Room::getPlayers() const
 {
 	return (this->_party);
 }
 
-std::string	Room::getName() const
+const std::string&	Room::getName() const
 {
 	return(*this->_name);
 }
@@ -195,43 +195,19 @@ char	Room::getDifficulty() const
 	return (this->_difficulty);
 }
 
-bool	Room::setName(char *newName)
+bool	Room::setName(const char *newName)
 {
 	std::string temp(newName);
 	*this->_name = temp.size() <= 32 ? temp : *this->_name;
 	return (temp.size() <= 32 ? true : false);
 }
 
-/*
-Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const
+const std::string& Room::getMap() const
 {
-	if (!rooms.size())
-		return (NULL);
+	return (*this->_map);
+}
 
-	s_tcp_header block;
-	Packet* packet = new Packet();
-	std::list<Room>::const_iterator ite = rooms.begin();
-	int i = 3;
-
-	block.opcode = 0x01;
-	block.datasize = ((short)rooms.size() * 2);
-	char* buff = new char[TCPHEADSIZE + block.datasize];
-
-	memcpy(buff, &block, TCPHEADSIZE);
-
-	while (i < rooms.size() + TCPHEADSIZE)
-	{
-		buff[i] = ite->getId();
-		buff[i+1] = ite->getNbPlayer();
-		i += 2;
-	}
-
-	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
-	{
-		delete buff;
-		delete packet;
-		return NULL;
-	}
-
-	return (packet);
-}*/
+bool Room::getMapStatus() const
+{
+	return this->_isRandom;
+}

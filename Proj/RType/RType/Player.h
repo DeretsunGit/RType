@@ -31,6 +31,7 @@ public:
 	bool	isWinner() const;
 	bool	isDefeated() const;
 	bool	getShield() const;
+	const std::string& getName() const;
 	Client	*getClient() const;
 
 	void	setClient(Client *);

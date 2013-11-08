@@ -15,6 +15,8 @@
 //#include "Room.h"
 #include "Player.h"
 
+#define HEADSIZE sizeof(char) + sizeof(short) // taille du "header" opcode + datasize
+
 /* TCP BLOCK STRUCTURES DEFINITION */
 struct s_say_hello
 {
@@ -151,6 +153,7 @@ struct s_save_map
 struct s_send_error
 {
 	char opcode;
+	short datasize;
 	char errorCode;
 	char errorDesc[256];
 };
@@ -226,58 +229,25 @@ private:
 	T* _handler;
 	void (T::*_defaultCallback)(char, IReadableSocket&);
 
-	bool exempleOfDeserialisationFunction(IReadableSocket& socket)
-	{
-		s_coord tmp; // structure correspondant à chaque commande
-		char* data;
-		short datasize;
-		int readSize = 0;
-
-		if (socket.readable())
-		{
-			readSize += socket.recv(reinterpret_cast<char*>(&datasize), 2);
-			if (readSize != 2)
-			{
-				socket.putback(reinterpret_cast<char*>(&datasize), readSize);
-				return false;
-			}
-			data = new char[datasize];
-			readSize += socket.recv(data, datasize);
-			if (readSize != datasize + 2)
-			{
-				socket.putback(reinterpret_cast<char*>(&datasize), 2);
-				socket.putback(data, readSize -2);
-				return false;
-			}
-			else if (!_handler && _callableMap.find(0x01) != _callableMap.end())
-			{
-				// déserialisation dans tmp
-				tmp._posX = 0;
-				(_handler->*_callableMap[0x01])(&tmp);
-			}
-		}
-		return true;
-	}
-
 public:
 	ServerCommunication()
 	{
 		_handler = NULL;
 		_defaultCallback = NULL;
-		_commandMap[0x00] = &ServerCommunication::TCPsayHello;			// 0x01 - RTypeServer
-		_commandMap[0x00] = &ServerCommunication::TCPsetRoom;			// 0x02 -
-		_commandMap[0x00] = &ServerCommunication::TCPselectRoom;		// 0x03 -
-		_commandMap[0x00] = &ServerCommunication::TCPleaveRoom;			// 0x04 -
-		_commandMap[0x00] = &ServerCommunication::TCPchangeDifficulty;	// 0x05 - Room
-		_commandMap[0x00] = &ServerCommunication::TCPsetMap;			// 0x06 -
-		_commandMap[0x00] = &ServerCommunication::TCPgetFileTrunk;		// 0x07 -
-		_commandMap[0x00] = &ServerCommunication::TCPsetReady;			// 0x08 -
-		_commandMap[0x00] = &ServerCommunication::TCPdownloadRessource;	// 0x09 -
-		_commandMap[0x00] = &ServerCommunication::UDPReady;				// 0x0A -
-		_commandMap[0x00] = &ServerCommunication::TCPletsPlay;			// 0x0B -
-		_commandMap[0x00] = &ServerCommunication::TCPsaveMap;			// 0x0C -
-		_commandMap[0x00] = &ServerCommunication::UDPinputs;			// 0x0D - Game
-		_commandMap[0x00] = &ServerCommunication::UDPpauseOk;			// 0x0E - 
+		_commandMap[0x01] = &ServerCommunication::TCPsayHello;			// 0x01 - RTypeServer
+		_commandMap[0x02] = &ServerCommunication::TCPsetRoom;			// 0x02 -
+		_commandMap[0x03] = &ServerCommunication::TCPselectRoom;		// 0x03 -
+		_commandMap[0x04] = &ServerCommunication::TCPleaveRoom;			// 0x04 -
+		_commandMap[0x05] = &ServerCommunication::TCPchangeDifficulty;	// 0x05 - Room
+		_commandMap[0x06] = &ServerCommunication::TCPsetMap;			// 0x06 -
+		_commandMap[0x07] = &ServerCommunication::TCPgetFileTrunk;		// 0x07 -
+		_commandMap[0x08] = &ServerCommunication::TCPsetReady;			// 0x08 -
+		_commandMap[0x09] = &ServerCommunication::TCPdownloadRessource;	// 0x09 -
+		_commandMap[0x0A] = &ServerCommunication::UDPReady;				// 0x0A -
+		_commandMap[0x0B] = &ServerCommunication::TCPletsPlay;			// 0x0B -
+		_commandMap[0x0C] = &ServerCommunication::TCPsaveMap;			// 0x0C -
+		_commandMap[0x0D] = &ServerCommunication::UDPinputs;			// 0x0D - Game
+		_commandMap[0x0E] = &ServerCommunication::UDPpauseOk;			// 0x0E - 
 	}
 
 	~ServerCommunication() {}
@@ -323,8 +293,8 @@ public:
 	void TCProomState(Packet& packet, Room& room);
 	void TCPwrongMap(Packet& packet);
 	void TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport); // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
-	void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data);
-	void TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<t_coord>& coords);
+	void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size);
+	void TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<short[4]>& coords);
 	void UDPok(Packet& packet);
 	void TCPsendError(Packet& packet, char errorCode, const char* errorMsg);
 	void UDPscreenState(Packet& packet, int score, std::list<Element>& elements); // elements pour idSprite et CoordSprite

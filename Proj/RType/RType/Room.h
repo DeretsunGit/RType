@@ -51,10 +51,12 @@ public:
 	char	getDifficulty() const;
 	char	getId() const;
 	char	getNbPlayer() const;
-	std::string	getName() const;
-	std::vector<Player*> getPlayers() const;
+	const std::string& getMap() const;
+	bool	getMapStatus() const;
+	const std::string&	getName() const;
+	const std::vector<Player*>& getPlayers() const;
 
-	bool	setName(char *);
+	bool	setName(const char *);
 
 	//Packet* TCPsendRoomList(const std::list<Room>& rooms) const;
 };

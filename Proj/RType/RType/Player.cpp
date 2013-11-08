@@ -78,6 +78,11 @@ void	Player::setClient(Client *newClient)
 	this->_client = newClient;
 }
 
+const std::string& Player::getName() const
+{
+	return this->_name;
+}
+
 Client	*Player::getClient() const
 {
 	return (this->_client);
