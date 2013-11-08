@@ -20,24 +20,29 @@ struct s_say_hello
 	char opcode;
 	short datasize;
 	char magic[6];
-	char *nickname;
+	char nickname[32];
 	short resolution[2];
+};
+
+struct s_room_list_content
+{
+	char roomName[32];
+	char roomId;
+	char nbPlayer;
 };
 
 struct s_room_list
 {
 	char opcode;
 	short datasize;
-	char **roomName;
-	char *roomId;
-	char *nbPlayer;
+	s_room_list_content* rooms;
 };
 
 struct s_set_room
 {
 	char opcode;
 	short datasize;
-	char *roomName;
+	char roomName[32];
 };
 
 struct s_select_room
@@ -49,30 +54,24 @@ struct s_select_room
 struct s_leave_room
 {
 	char opcode;
-	char roomId;
-};
-
-struct s_room_state_content
-{
-	char *roomName;
-	char *playerNames[4];
-	bool playerStates[4];
-	char difficulty;
-	bool mapStatus; // random or file
-	char *map; // map name
 };
 
 struct s_room_state
 {
 	char opcode;
 	short datasize;
-	struct s_room_state_content *content;
+	char roomName[32];
+	char playerNames[4][32];
+	bool playerStates[4];
+	char difficulty;
+	bool mapStatus; // random or file
+	char map[128]; // map name
 };
 
 struct s_change_difficulty
 {
 	char opcode;
-	bool difficulty;
+	char difficulty;
 };
 
 struct s_set_map
@@ -80,8 +79,7 @@ struct s_set_map
 	char opcode;
 	short datasize;
 	bool mapStatus;
-	char *filename;
-	char *fileContent;
+	char filename[128];
 };
 
 struct s_wrong_map
@@ -96,40 +94,45 @@ struct s_set_ready
 
 struct s_ressource
 {
-	char *filename;
-	char *md5;
+	char filename[128];
+	char md5[32];
 };
 
 struct s_start_loading
 {
 	char opcode;
 	short datasize;
+	unsigned short port;
 	struct s_ressource *ressources;
-	unsigned short UDPport;
 };
 
 struct s_download_ressource
 {
 	char opcode;
 	short datasize;
-	char *filename;
+	char filename[128];
 };
 
 struct s_file_trunk
 {
 	char opcode;
 	short datasize;
-	char *filename;
-	char *data;
+	char filename[128];
+	char data[1024];
+};
+
+struct s_sprite
+{
+	char idSprite;
+	short coord[4];
 };
 
 struct s_assoc_sprites
 {
 	char opcode;
 	short datasize;
-	char *idSprite;
-	char *filename;
-	t_coord *coords;
+	char filename[128];
+	s_sprite *sprites;
 };
 
 struct s_lets_play
@@ -141,14 +144,14 @@ struct s_save_map
 {
 	char opcode;
 	short datasize;
-	char *mapName;
+	char mapName[128];
 };
 
 struct s_send_error
 {
 	char opcode;
 	char errorCode;
-	char *errorDescr;
+	char errorDesc[256];
 };
 
 /* UPD BLOCK STRUCTURES DEFINITION */
@@ -177,8 +180,7 @@ struct s_screen_state
 	char opcode;
 	short datasize;
 	int score;
-	char *idSprite;
-	t_coord* coordSprite;
+	s_sprite *sprites;
 };
 
 struct s_end_of_game
@@ -319,10 +321,10 @@ public:
 	void TCPselectRoom(Packet& packet, const char roomId)
 	{}
 
-	void TCPleaveRoom(Packet& packet, const char roomId)
+	void TCPleaveRoom(Packet& packet)
 	{}
 
-	void TCPchangeDifficulty(Packet& packet, bool difficulty)
+	void TCPchangeDifficulty(Packet& packet, char difficulty)
 	{}
 
 	void TCPsetMap(Packet& packet, bool mapStatus, const char* filename, const char* fileContent)
