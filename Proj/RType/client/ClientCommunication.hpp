@@ -217,44 +217,47 @@ template<typename T>
 class ClientCommunication
 {
 private:
-	std::map<char, void (ClientCommunication::*)(IReadableSocket& socket) const> _commandMap;
-	std::map<char, void (T::*)(void*)> _callableMap;
+  typedef bool	(ClientCommunication::*Command)(IReadableSocket&) const;
+  typedef std::map<char, Command>	CommandMap;
 
-	T* _handler;
-	void (T::*_defaultCallback)(char, IReadableSocket&);
+  CommandMap _commandMap;
+  std::map<char, void (T::*)(void*)> _callableMap;
 
-	bool exempleOfDeserialisationFunction(IReadableSocket& socket)
-	{
-		s_coord tmp; // structure correspondant à chaque commande
-		char* data;
-		short datasize;
-		int readSize = 0;
+  T* _handler;
+  void (T::*_defaultCallback)(char, IReadableSocket&);
 
-		if (socket.readable())
-		{
-			readSize += socket.recv(reinterpret_cast<char*>(&datasize), 2);
-			if (readSize != 2)
-			{
-				socket.putback(reinterpret_cast<char*>(&datasize), readSize);
-				return false;
-			}
-			data = new char[datasize];
-			readSize += socket.recv(data, datasize);
-			if (readSize != datasize + 2)
-			{
-				socket.putback(reinterpret_cast<char*>(&datasize), 2);
-				socket.putback(data, readSize -2);
-				return false;
-			}
-			else if (!_handler && _callableMap.find(0x01) != _callableMap.end())
-			{
-				// déserialisation dans tmp
-				tmp._posX = 0;
-				(_handler->*_callableMap[0x01])(&tmp);
-			}
-		}
-		return true;
-	}
+  bool exempleOfDeserialisationFunction(IReadableSocket& socket)
+  {
+    s_coord tmp; // structure correspondant à chaque commande
+    char* data;
+    short datasize;
+    int readSize = 0;
+
+    if (socket.readable())
+      {
+	readSize += socket.recv(reinterpret_cast<char*>(&datasize), 2);
+	if (readSize != 2)
+	  {
+	    socket.putback(reinterpret_cast<char*>(&datasize), readSize);
+	    return false;
+	  }
+	data = new char[datasize];
+	readSize += socket.recv(data, datasize);
+	if (readSize != datasize + 2)
+	  {
+	    socket.putback(reinterpret_cast<char*>(&datasize), 2);
+	    socket.putback(data, readSize -2);
+	    return false;
+	  }
+	else if (!_handler && _callableMap.find(0x01) != _callableMap.end())
+	  {
+	    // déserialisation dans tmp
+	    tmp._posX = 0;
+	    (_handler->*_callableMap[0x01])(tmp);
+	  }
+      }
+    return true;
+  }
 
 public:
 	ClientCommunication()
@@ -295,7 +298,7 @@ public:
 
 	void interpretCommand(IReadableSocket& socket) const
 	{
-		std::map<char, void (ClientCommunication::*)(IReadableSocket&) const>::const_iterator ite;
+		typename std::map<char, void (ClientCommunication::*)(IReadableSocket&) const>::const_iterator ite;
 		char opcode;
 
 		if (socket.readable())
@@ -355,67 +358,67 @@ public:
 	{}
 
 	/* SERVER TO CLIENT */
-	bool TCProomList(IReadableSocket& socket)
+	bool TCProomList(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool TCProomState(IReadableSocket& socket)
+	bool TCProomState(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool TCPwrongMap(IReadableSocket& socket)
+	bool TCPwrongMap(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool TCPstartLoading(IReadableSocket& socket)
+	bool TCPstartLoading(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool TCPgetFileTrunk(IReadableSocket& socket)
+	bool TCPgetFileTrunk(IReadableSocket& socket) const
 	{
 		return true;
 	}
 	
-	bool TCPassocSprites(IReadableSocket& socket)
+	bool TCPassocSprites(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool UDPok(IReadableSocket& socket)
+	bool UDPok(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool TCPsendError(IReadableSocket& socket)
+	bool TCPsendError(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool UDPscreenState(IReadableSocket& socket)
+	bool UDPscreenState(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool UDPendOfGame(IReadableSocket& socket)
+	bool UDPendOfGame(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool UDPpause(IReadableSocket& socket)
+	bool UDPpause(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool UDPspawn(IReadableSocket& socket)
+	bool UDPspawn(IReadableSocket& socket) const
 	{
 		return true;
 	}
 
-	bool UPDdeath(IReadableSocket& socket)
+	bool UPDdeath(IReadableSocket& socket) const
 	{
 		return true;
 	}

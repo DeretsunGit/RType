@@ -262,27 +262,27 @@ public:
 	{
 		_handler = NULL;
 		_defaultCallback = NULL;
-		_commandMap[0x00] = &ServerCommunication::TCPsayHello;
-		_commandMap[0x00] = &ServerCommunication::TCPsetRoom;
-		_commandMap[0x00] = &ServerCommunication::TCPselectRoom;
-		_commandMap[0x00] = &ServerCommunication::TCPleaveRoom;
-		_commandMap[0x00] = &ServerCommunication::TCPchangeDifficulty;
-		_commandMap[0x00] = &ServerCommunication::TCPsetMap;
-		_commandMap[0x00] = &ServerCommunication::TCPgetFileTrunk;
-		_commandMap[0x00] = &ServerCommunication::TCPsetReady;
-		_commandMap[0x00] = &ServerCommunication::TCPdownloadRessource;
-		_commandMap[0x00] = &ServerCommunication::UDPReady;
-		_commandMap[0x00] = &ServerCommunication::TCPletsPlay;
-		_commandMap[0x00] = &ServerCommunication::TCPsaveMap;
-		_commandMap[0x00] = &ServerCommunication::UDPinputs;
-		_commandMap[0x00] = &ServerCommunication::UDPpauseOk;
+		_commandMap[0x00] = &ServerCommunication::TCPsayHello;			// 0x01 - RTypeServer
+		_commandMap[0x00] = &ServerCommunication::TCPsetRoom;			// 0x02 -
+		_commandMap[0x00] = &ServerCommunication::TCPselectRoom;		// 0x03 -
+		_commandMap[0x00] = &ServerCommunication::TCPleaveRoom;			// 0x04 -
+		_commandMap[0x00] = &ServerCommunication::TCPchangeDifficulty;	// 0x05 - Room
+		_commandMap[0x00] = &ServerCommunication::TCPsetMap;			// 0x06 -
+		_commandMap[0x00] = &ServerCommunication::TCPgetFileTrunk;		// 0x07 -
+		_commandMap[0x00] = &ServerCommunication::TCPsetReady;			// 0x08 -
+		_commandMap[0x00] = &ServerCommunication::TCPdownloadRessource;	// 0x09 -
+		_commandMap[0x00] = &ServerCommunication::UDPReady;				// 0x0A -
+		_commandMap[0x00] = &ServerCommunication::TCPletsPlay;			// 0x0B -
+		_commandMap[0x00] = &ServerCommunication::TCPsaveMap;			// 0x0C -
+		_commandMap[0x00] = &ServerCommunication::UDPinputs;			// 0x0D - Game
+		_commandMap[0x00] = &ServerCommunication::UDPpauseOk;			// 0x0E - 
 	}
 
 	~ServerCommunication() {}
 
 	void setCallback(char opcode, void (T::*mthd)(void* data))
 	{
-		map[opcode] = mthd;
+	  this->_callableMap[opcode] = mthd;
 	}
 
 	void setDefaultCallback(void (T::*cb)(char, IReadableSocket&))
@@ -297,7 +297,7 @@ public:
 
 	void interpretCommand(IReadableSocket& socket) const
 	{
-		std::map<char, void (ServerCommunication::*)(IReadableSocket&) const>::const_iterator ite;
+	  typename std::map<char, void (ServerCommunication::*)(IReadableSocket&) const>::const_iterator ite;
 		char opcode;
 
 		if (socket.readable())
@@ -314,7 +314,7 @@ public:
 	}
 
 	/* SERVER TO CLIENT */
-	void TCProomList(Packet& packet, std::list<Room>& rooms)
+	void TCProomList(Packet& packet, std::list<Room>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 	{}
 
 	void TCProomState(Packet& packet, Room& room)

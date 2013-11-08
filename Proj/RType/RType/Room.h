@@ -4,20 +4,23 @@
 #include "Thread.h"
 #include "Mutex.h"
 #include "Player.h"
+//#include "ServerCommunication.hpp"
 
 class Room
 {
 private:
 	const char	_id;
+	bool		_isRandom;
+	char		_nbReady;
+	char		_difficulty;
 	std::string	*_name; //limite 32
 	std::string	*_map; //limite 128
-	bool		_isRandom;
 	std::vector<Player*> _party;
-	char	_nbReady;
-	char	_difficulty;
 
-	Thread*	_th;
-	Mutex	_m;
+	Thread*		_th;
+	Mutex		_m;
+	//ServerCommunication<Room>	_RoomCom;
+
 public:
 	Room(char);
 	~Room();
@@ -25,6 +28,18 @@ public:
 	void	roomLoop();
 	bool	startGame();
 
+	// callBack Gestion
+	void	changeDifficulty(void *);
+	void	setMap(void *);
+	void	getFileTrunk(void *);
+	void	setReady(void *);
+	void	downloadRessource(void *);
+	void	ready(void *);
+	void	letsPlay(void *);
+	void	saveMap(void *);
+	void	callBackError(char, IReadableSocket&);
+
+	// Client Gestion
 	bool	addClient(Client*);
 	bool	addPlayer(Player*);
 	bool	removePlayer(int);
@@ -36,10 +51,7 @@ public:
 	std::string	getName() const;
 	std::vector<Player*> getPlayers() const;
 
-	bool	setMap(char *);
 	bool	setName(char *);
-	void	setId(char);
-	void	setDifficulty(char);
 
 	//Packet* TCPsendRoomList(const std::list<Room>& rooms) const;
 };

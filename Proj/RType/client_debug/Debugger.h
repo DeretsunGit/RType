@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ClientCommunication.hpp"
 #include "Thread.h"
 #include "TCPSocketClient.h"
 #include "UDPSocketClient.h"
@@ -13,14 +14,17 @@ public:
   void	start();
 
 private:
-  Thread	    _th;
-  TCPSocketClient   _tcp;
-  UDPSocketClient*  _udp;
-  bool		    _live;
+  Thread			_th;
+  TCPSocketClient		_tcp;
+  UDPSocketClient*		_udp;
+  bool				_live;
+  ClientCommunication<Debugger>	_comm;
 
   void	networkThread();
 
   Debugger();
   Debugger(const Debugger&);
   Debugger& operator=(const Debugger&);
+
+  void	defaultHandler(char opcode, IReadableSocket& sock);
 };

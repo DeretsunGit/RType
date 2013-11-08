@@ -6,20 +6,20 @@
 
 class Client
 {
-	std::string	_name; // limite a 32
-	t_coord resolution;
-	bool _isWaiting;
-	const int		_id;
+	const int			_id;
+	bool				_isWaiting;
+	t_coord				_resolution;
+	std::string*		_name; // limite a 32
 	ITCPSocketClient*	_tcpSocket;
 public:
 	Client(ITCPSocketClient*, int id);
-	ITCPSocketClient *getTCPSock();
-
-	void setWaiting(bool);
-
-	int getId();
-	bool getWaiting();
-
 	~Client();
+
+	void		setWaiting(bool);
+
+	int			getId();
+	bool		getWaiting();
+	ITCPSocketClient*	getTCPSock();
+
 };
 

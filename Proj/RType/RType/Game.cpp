@@ -4,27 +4,42 @@
 Game::Game(const std::vector<Player*>& p)
   : _players(p)
 {
+	
+	/*
+	this->_GameCom.setCallback(0x0D, &Game::inputs);
+	this->_GameCom.setCallback(0x0E, &Game::pauseOk);
+	this->_GameCom.setDefaultCallback(&Game::callBackError);
+	this->_GameCom.setHandler(this);*/
 	Packet packet;
 	std::cout << "Size: " << this->_players.size() << std::endl;
-	std::cout << __LINE__ << std::endl;
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	// on récupère Script en argument
 	this->setUDP();
-	std::cout << __LINE__ << std::endl;
 	//this->_com.TCPsendStartGame(packet, this->_port);
 	this->TCPsend(packet);
-	std::cout << __LINE__ << std::endl;
 	this->mapGeneration();
-	std::cout << __LINE__ << std::endl;
 	this->genPool();
-	std::cout << __LINE__ << std::endl;
 	this->startGame();
-	std::cout << __LINE__ << std::endl;
 	// startGame() va attendre que les clients soient ready via TCP
 	// puis envoi aux client le start game via TCP
 	this->gameLoop();
-  std::cout << __LINE__ << std::endl;
+  	
+}
+
+void	Game::callBackError(char, IReadableSocket&)
+{
+
+}
+
+void	inputs(void *data)
+{
+
+}
+
+void	pauseOk(void *data)
+{
+
 }
 
 void	Game::setUDP()
