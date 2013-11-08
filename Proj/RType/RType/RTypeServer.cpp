@@ -69,32 +69,34 @@ void		RTypeServer::CheckClientAnswer()
 			if ((*it_client)->getWaiting() == false)
 			{
 				this->_currentClient = (*it_client);
-				this->_RTypeServerCom.interpretCommand(*(this->_currentClient->getTCPSock()), this);
+				this->_RTypeServerCom.interpretCommand(*(this->_currentClient->getTCPSock()));
 			}
 		}
 }
 
 void		RTypeServer::sayHello(void *data)
 {
-
+	reinterpret_cast<s_say_hello *>(data);
+	// set du client
 }
 
-void		RTypeServer::setRoom(void *data)//(Client *roomMaster, char *name)
+void		RTypeServer::setRoom(void *data)
 {
-	// recup fichiers, etc...
 	std::list<Room*>::iterator	it_room;
+
+	reinterpret_cast<s_set_room *>(data);
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
 			if ((*it_room)->getNbPlayer() == 0)
 			{
-				(*it_room)->setName((reinterpret_cast<char *>(data))); // send d'erreur si false
+				(*it_room)->setName((reinterpret_cast<s_set_room *>(data))->roomName);
 				(*it_room)->addClient(this->_currentClient);
 				this->_currentClient->setWaiting(false);
-				return;// (true);
+				return;
 			}
 		}
-	return;// (false);
+	return;
 }
 
 void		RTypeServer::selectRoom(void *data)//(Client *roomJoiner, int id)

@@ -6,6 +6,9 @@
 #include "Player.h"
 #include "ServerCommunication.hpp"
 
+//template<typename T>
+//class ServerCommunication;
+
 class Room
 {
 private:

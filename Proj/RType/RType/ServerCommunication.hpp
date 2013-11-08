@@ -213,6 +213,7 @@ struct s_death
 };
 
 /* END OF BLOCK STRUCTURES DEFINITION */
+
 class Room;
 
 template<typename T>
@@ -296,7 +297,7 @@ public:
 		this->_handler = handler;
 	}
 
-	void interpretCommand(IReadableSocket& socket, T* currentClass)
+	void interpretCommand(IReadableSocket& socket)
 	{
 	  typename std::map<char, bool (ServerCommunication::*)(IReadableSocket&) >::const_iterator ite;
 		char opcode;
@@ -310,7 +311,7 @@ public:
 					socket.putback(&opcode, 1);
 			}
 			else if (_handler != NULL && _defaultCallback != NULL)
-				(currentClass->*_defaultCallback)(opcode, socket);
+				(this->_handler->*_defaultCallback)(opcode, socket);
 		}
 	}
 
