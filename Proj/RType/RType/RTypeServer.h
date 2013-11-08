@@ -27,12 +27,8 @@ public:
 	RTypeServer(int, char, std::string);
 	~RTypeServer();
 
-	bool	start();
-	template<class ret, class clist>
-	ret		createValidId(ret, std::list<clist>);
-	bool	loadDynEnnemy(std::string);
-	void	CheckClientAnswer();
-
+	bool	serverLoop();
+	
 	//CallBack gestion
 	void	sayHello(void *);
 	void	setRoom(void *);//(Client *, char*);
@@ -45,4 +41,9 @@ public:
 	void	genRoomPool(int);
 	void	delRoomPool(int);
 	int		getMaxRoom();
+
+	template<class ret, class clist>
+	ret		createValidId(ret, std::list<clist>);
+	bool	loadDynEnnemy(std::string);
+	void	CheckClientAnswer();
 };

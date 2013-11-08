@@ -26,9 +26,9 @@ void	RTypeServer::callBackError(char, IReadableSocket&)
 	// send message invalid command
 }
 
-bool		RTypeServer::start()
+bool		RTypeServer::serverLoop()
 {
-	int id = 0;
+	int		id = 0;
 	ITCPSocketClient*	newClient;
 	// création du prompt
 	// load des librairies dynamiques
@@ -53,7 +53,7 @@ bool		RTypeServer::start()
 	return (1);
 }
 
-void	RTypeServer::CheckClientAnswer()
+void		RTypeServer::CheckClientAnswer()
 {
 	//foreach client
 
@@ -163,7 +163,6 @@ void		RTypeServer::delRoomPool(int nbRoom)
 template<class ret, class clist>
 ret			RTypeServer::createValidId(ret id, std::list<clist> checkList)
 {
-	//id = 0; // id random serait mieux
   typename std::list<clist>::iterator	it;
 
 	for (it = (checkList).begin(); (it != (checkList).end()); it++)

@@ -39,7 +39,7 @@ public:
 	void	saveMap(void *);
 	void	callBackError(char, IReadableSocket&);
 
-	// allowed manip from RTypeServer
+	// Client Gestion
 	bool	addClient(Client*);
 	bool	addPlayer(Player*);
 	bool	removePlayer(int);
@@ -52,9 +52,6 @@ public:
 	std::vector<Player*> getPlayers() const;
 
 	bool	setName(char *);
-	void	setId(char);
 
-	
-	
 	//Packet* TCPsendRoomList(const std::list<Room>& rooms) const;
 };

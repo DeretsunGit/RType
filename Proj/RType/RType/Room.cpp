@@ -9,7 +9,8 @@ Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 	this->_isRandom = true;
 	this->_difficulty = 1;
 	this->_nbReady = 0;
-	/*this->_RoomCom.setCallback(0x05, &Room::changeDifficulty);
+	/*
+	this->_RoomCom.setCallback(0x05, &Room::changeDifficulty);
 	this->_RoomCom.setCallback(0x06, &Room::setMap);
 	this->_RoomCom.setCallback(0x07, &Room::getFileTrunk);
 	this->_RoomCom.setCallback(0x08, &Room::setReady);
@@ -18,7 +19,8 @@ Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 	this->_RoomCom.setCallback(0x0B, &Room::letsPlay);
 	this->_RoomCom.setCallback(0x0C, &Room::saveMap);
 	this->_RoomCom.setDefaultCallback(&Room::callBackError);
-	this->_RoomCom.setHandler(this);*/
+	this->_RoomCom.setHandler(this);
+	*/
 	this->_th->start();
 }
 
@@ -29,6 +31,35 @@ Room::~Room(void)
 void	callBackError(char, IReadableSocket&)
 {
 
+}
+
+bool	Room::startGame()
+{
+  bool	ready(false);
+
+  while (!ready)
+  {
+    Sleep(10);
+    this->_m.lock();
+    ready = this->_party.size() >= 2;
+    this->_m.unlock();
+  }
+	Game newGame(this->_party);
+	// on instancie une game
+	return (true);
+}
+
+void	Room::roomLoop()
+{
+	/*
+	while (this->_nbReady != _party.size())
+	{
+		// add les joueurs voulant join
+		//	delete les joueurs qui partent / deco
+	}*/
+  while (this->_party.size() < 2)
+    Sleep(10);
+  startGame();
 }
 
 void	Room::setMap(void *newMapName)//(char *newName)
@@ -45,26 +76,32 @@ void	Room::getFileTrunk(void *data)
 {
 
 }
+
 void	Room::setReady(void *data)
 {
 
 }
+
 void	Room::downloadRessource(void *data)
 {
 
 }
+
 void	Room::ready(void *data)
 {
 
 }
+
 void	Room::letsPlay(void *data)
 {
 
 }
+
 void	Room::saveMap(void *data)
 {
 
 }
+
 #include <iostream>
 bool	Room::removeClient(int id)
 {
@@ -128,35 +165,6 @@ bool	Room::addPlayer(Player* player)
 		return (true);
 	}
 	return (false);
-}
-
-bool	Room::startGame()
-{
-  bool	ready(false);
-
-  while (!ready)
-  {
-    Sleep(10);
-    this->_m.lock();
-    ready = this->_party.size() >= 2;
-    this->_m.unlock();
-  }
-	Game newGame(this->_party);
-	// on instancie une game
-	return (true);
-}
-
-void	Room::roomLoop()
-{
-	/*
-	while (this->_nbReady != _party.size())
-	{
-		// add les joueurs voulant join
-		//	delete les joueurs qui partent / deco
-	}*/
-  while (this->_party.size() < 2)
-    Sleep(10);
-  startGame();
 }
 
 char	Room::getId() const

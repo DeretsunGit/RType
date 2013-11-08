@@ -5,10 +5,16 @@ Client::Client(ITCPSocketClient* newSocket, const int id) : _id(id)
 {
 	this->_tcpSocket = newSocket;
 	this->_isWaiting = true;
-//	this->_id = id;
+	this->_resolution._posX = 1600;
+	this->_resolution._posY = 900;
+	this->_name = new std::string("");
 }
 
-ITCPSocketClient *Client::getTCPSock()
+Client::~Client(void)
+{
+}
+
+ITCPSocketClient*	Client::getTCPSock()
 {
 	return (this->_tcpSocket);
 }
@@ -28,6 +34,4 @@ void		Client::setWaiting(bool newState)
 	this->_isWaiting = newState;
 }
 
-Client::~Client(void)
-{
-}
+
