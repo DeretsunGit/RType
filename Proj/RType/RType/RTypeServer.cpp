@@ -6,14 +6,12 @@ RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
 	this->_isrunning = true;
 	this->setMaxRoom(maxRoom);
 	// convertir le blPath en ofstream
-	/*
-	this->_RTypeServercom.setCallback(0x01, &RTypeServer::sayHello);
-	this->_RTypeServercom.setCallback(0x02, &RTypeServer::setRoom);
-	this->_RTypeServercom.setCallback(0x03, &RTypeServer::selectRoom);
-	this->_RTypeServercom.setCallback(0x04, &RTypeServer::leaveRoom);
-	this->_RTypeServercom.setDefaultCallback(&RTypeServer::callBackError);
-	this->_RTypeServercom.setHandler(this);
-	*/
+	this->_RTypeServerCom.setCallback(0x01, &RTypeServer::sayHello);
+	this->_RTypeServerCom.setCallback(0x02, &RTypeServer::setRoom);
+	this->_RTypeServerCom.setCallback(0x03, &RTypeServer::selectRoom);
+	this->_RTypeServerCom.setCallback(0x04, &RTypeServer::leaveRoom);
+	this->_RTypeServerCom.setDefaultCallback(&RTypeServer::callBackError);
+	this->_RTypeServerCom.setHandler(this);
 }
 
 RTypeServer::~RTypeServer()
@@ -29,6 +27,7 @@ void	RTypeServer::callBackError(char, IReadableSocket&)
 bool		RTypeServer::start()
 {
 	this->serverLoop();
+	return (true);
 }
 
 bool		RTypeServer::serverLoop()
@@ -70,7 +69,7 @@ void		RTypeServer::CheckClientAnswer()
 			if ((*it_client)->getWaiting() == false)
 			{
 				this->_currentClient = (*it_client);
-				//this->_RTypeServercom.interpretCommand(*(this->_currentClient->getTCPSock()));
+				this->_RTypeServerCom.interpretCommand(*(this->_currentClient->getTCPSock()), this);
 			}
 		}
 }

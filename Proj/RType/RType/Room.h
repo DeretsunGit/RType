@@ -4,7 +4,7 @@
 #include "Thread.h"
 #include "Mutex.h"
 #include "Player.h"
-//#include "ServerCommunication.hpp"
+#include "ServerCommunication.hpp"
 
 class Room
 {
@@ -19,7 +19,7 @@ private:
 
 	Thread*		_th;
 	Mutex		_m;
-	//ServerCommunication<Room>	_RoomCom;
+	ServerCommunication<Room>	_RoomCom;
 
 public:
 	Room(char);
@@ -37,7 +37,7 @@ public:
 	void	ready(void *);
 	void	letsPlay(void *);
 	void	saveMap(void *);
-	void	callBackError(char, IReadableSocket&);
+	void	callBackErrorR(char, IReadableSocket&);
 
 	// Client Gestion
 	bool	addClient(Client*);

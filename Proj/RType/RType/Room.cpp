@@ -9,7 +9,7 @@ Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 	this->_isRandom = true;
 	this->_difficulty = 1;
 	this->_nbReady = 0;
-	/*
+	
 	this->_RoomCom.setCallback(0x05, &Room::changeDifficulty);
 	this->_RoomCom.setCallback(0x06, &Room::setMap);
 	this->_RoomCom.setCallback(0x07, &Room::getFileTrunk);
@@ -18,9 +18,9 @@ Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 	this->_RoomCom.setCallback(0x0A, &Room::ready);
 	this->_RoomCom.setCallback(0x0B, &Room::letsPlay);
 	this->_RoomCom.setCallback(0x0C, &Room::saveMap);
-	this->_RoomCom.setDefaultCallback(&Room::callBackError);
+	//this->_RoomCom.setDefaultCallback(&Room::callBackErrorR);
 	this->_RoomCom.setHandler(this);
-	*/
+	
 	this->_th->start();
 }
 
@@ -28,7 +28,7 @@ Room::~Room(void)
 {
 }
 
-void	callBackError(char, IReadableSocket&)
+void	callBackErrorR(char, IReadableSocket&)
 {
 
 }
