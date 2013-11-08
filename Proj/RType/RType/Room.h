@@ -10,15 +10,15 @@ class Room
 {
 private:
 	const char	_id;
+	bool		_isRandom;
+	char		_nbReady;
+	char		_difficulty;
 	std::string	*_name; //limite 32
 	std::string	*_map; //limite 128
-	bool		_isRandom;
 	std::vector<Player*> _party;
-	char	_nbReady;
-	char	_difficulty;
 
-	Thread*	_th;
-	Mutex	_m;
+	Thread*		_th;
+	Mutex		_m;
 	//ServerCommunication<Room>	_RoomCom;
 
 public:

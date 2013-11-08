@@ -26,6 +26,11 @@ void	RTypeServer::callBackError(char, IReadableSocket&)
 	// send message invalid command
 }
 
+bool		RTypeServer::start()
+{
+	this->serverLoop();
+}
+
 bool		RTypeServer::serverLoop()
 {
 	int		id = 0;
@@ -44,6 +49,7 @@ bool		RTypeServer::serverLoop()
 				this->_clientList.push_back(new Client(newClient, id));
 			else
 			{
+				this->sendError(66, "No more client allowed.");
 			// send error "U MAD ZER IS ALRIDI TO MUCH PLAIERS"
 			}
 		}
@@ -121,6 +127,16 @@ void		RTypeServer::leaveRoom(void *data)//(Client * roomLeaver)
 			}
 		}
 	return;// (false);
+}
+
+void		RTypeServer::sendRoomList()
+{
+
+}
+
+void		RTypeServer::sendError(char errorCode, const char *message)
+{
+
 }
 
 void		RTypeServer::setMaxRoom(char newMaxRoom)

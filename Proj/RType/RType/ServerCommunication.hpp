@@ -312,7 +312,7 @@ public:
 	}
 
 	/* SERVER TO CLIENT */
-	void TCProomList(Packet& packet, std::list<Room>& rooms)
+	void TCProomList(Packet& packet, std::list<Room>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 	{}
 
 	void TCProomState(Packet& packet, Room& room)

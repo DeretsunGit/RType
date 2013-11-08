@@ -27,6 +27,7 @@ public:
 	RTypeServer(int, char, std::string);
 	~RTypeServer();
 
+	bool	start();
 	bool	serverLoop();
 	
 	//CallBack gestion
@@ -35,6 +36,10 @@ public:
 	void	selectRoom(void *);//(Client *, int);
 	void	leaveRoom(void *);//(Client *);
 	void	callBackError(char, IReadableSocket&);
+
+	//Send Gestion
+	void	sendRoomList();
+	void	sendError(char, const char *);
 
 	//Room gestion
 	void	setMaxRoom(char);
