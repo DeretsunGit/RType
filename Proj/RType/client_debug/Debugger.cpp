@@ -4,7 +4,11 @@
 
 Debugger::Debugger(const char* hostname, unsigned short port)
   : _th(*this, &Debugger::networkThread), _tcp(hostname, port), _udp(NULL), _live(true)
-{}
+{
+  _comm.setHandler(this);
+  _comm.setDefaultCallback(&Debugger::defaultHandler);
+  //_comm.setCallback
+}
 
 Debugger::~Debugger()
 {
@@ -31,19 +35,16 @@ void	      Debugger::networkThread()
 
   while (this->_live)
   {
-    if ((ret = this->_tcp.recv(buff, sizeof(buff))) > 0)
-    {
-      std::ostringstream  stream;
-      buff[ret] = 0;
-      stream << "TCP received: [" << buff << "]\n";      
-      std::cout << stream.str() << std::flush;
-    }
-    if (this->_udp && (ret = this->_udp->recv(buff, sizeof(buff))) > 0)
-    {
-      std::ostringstream  stream;
-      buff[ret] = 0;
-      stream << "TCP received: [" << buff << "]\n";      
-      std::cout << stream.str() << std::flush;
-    }
+    this->_comm.interpretCommand(this->_tcp);
+    if (this->_udp)
+      this->_comm.interpretCommand(*this->_udp);
+    Sleep(1);
   }
+}
+
+void	Debugger::defaultHandler(char opcode, IReadableSocket& sock)
+{
+  std::cout << "Received unknown opcode (" << static_cast<int>(opcode)
+	    << ") on " << (&sock == this->_udp ? "UDP" : "TCP")
+	    << " socket." << std::endl;
 }

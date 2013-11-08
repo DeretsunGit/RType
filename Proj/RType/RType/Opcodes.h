@@ -1,6 +1,6 @@
 #pragma once
 
-enum RTypeOpcodes: char
+enum RTypeOpcodes
 {
   sayHello = 0,
   roomList,
