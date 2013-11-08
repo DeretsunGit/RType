@@ -6,10 +6,24 @@ RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
 	this->_isrunning = true;
 	this->setMaxRoom(maxRoom);
 	// convertir le blPath en ofstream
-	//set callback
-	//set default callback
-	//set handler
+	/*
+	this->_com.setCallback(0x01, &RTypeServer::sayHello);
+	this->_com.setCallback(0x02, &RTypeServer::setRoom);
+	this->_com.setCallback(0x03, &RTypeServer::selectRoom);
+	this->_com.setCallback(0x04, &RTypeServer::leaveRoom);
+	this->_com.setDefaultCallback(&RTypeServer::callBackError);
+	this->_com.setHandler(this);
+	*/
+}
 
+RTypeServer::~RTypeServer()
+{
+	// quitter tous les clients proprement
+}
+
+void	RTypeServer::callBackError(char, IReadableSocket&)
+{
+	// send message invalid command
 }
 
 bool		RTypeServer::start()
@@ -39,36 +53,28 @@ bool		RTypeServer::start()
 	return (1);
 }
 
-void	RTypeServer::checkClientSpeaking()
+void	RTypeServer::CheckClientAnswer()
 {
 	//foreach client
-	//servercommunication.interpretcommand de la socket du client
-	//stocker iterateur dans la classe pour l'avoir dans le callback
-}
 
-template<class ret, class clist>
-ret			RTypeServer::createValidId(ret id, std::list<clist> checkList)
-{
-	//id = 0; // id random serait mieux
-  typename std::list<clist>::iterator	it;
+	std::list<Client*>::iterator	it_client;
 
-	for (it = (checkList).begin(); (it != (checkList).end()); it++)
+	for (it_client = (this->_clientList).begin(); (it_client != (this->_clientList).end()); it_client++)
 		{
-			if (id == (*it)->getId())
+			if ((*it_client)->getWaiting() == false)
 			{
-				id ++;
-				it = (checkList).begin();
+				this->_currentClient = (*it_client);
+				//this->_com.interpretCommand(*(this->_currentClient->getTCPSock()));
 			}
 		}
-	return (id);
 }
 
-bool		RTypeServer::loadDynEnnemy(std::string filename)
+void		RTypeServer::sayHello(void *data)
 {
-	return (1);
+
 }
 
-bool		RTypeServer::setRoom(Client *roomMaster, char *name)
+void		RTypeServer::setRoom(void *data)//(Client *roomMaster, char *name)
 {
 	// recup fichiers, etc...
 	std::list<Room*>::iterator	it_room;
@@ -77,44 +83,44 @@ bool		RTypeServer::setRoom(Client *roomMaster, char *name)
 		{
 			if ((*it_room)->getNbPlayer() == 0)
 			{
-				(*it_room)->setName(name); // send d'erreur si false
-				(*it_room)->addClient(roomMaster);
-				roomMaster->setWaiting(false);
-				return (true);
+				(*it_room)->setName((reinterpret_cast<char *>(data))); // send d'erreur si false
+				(*it_room)->addClient(this->_currentClient);
+				this->_currentClient->setWaiting(false);
+				return;// (true);
 			}
 		}
-	return (false);
+	return;// (false);
 }
 
-bool		RTypeServer::selectRoom(Client *roomJoiner, int id)
+void		RTypeServer::selectRoom(void *data)//(Client *roomJoiner, int id)
 {
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
-			if ((*it_room)->getId() == id)
+			if ((*it_room)->getId() == *(reinterpret_cast<int *>(data)))
 			{
-				(*it_room)->addClient(roomJoiner);
-				roomJoiner->setWaiting(false);
-				return (true);
+				(*it_room)->addClient(this->_currentClient);
+				this->_currentClient->setWaiting(false);
+				return;// (true);
 			}
 		}
-	return (false);
+	return;// (false);
 }
 
-bool		RTypeServer::leaveRoom(Client * roomLeaver)
+void		RTypeServer::leaveRoom(void *data)//(Client * roomLeaver)
 {
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
-			if ((*it_room)->removeClient(roomLeaver->getId()))
+			if ((*it_room)->removeClient(this->_currentClient->getId()))
 			{
-				roomLeaver->setWaiting(true);
-				return (true);
+				this->_currentClient->setWaiting(true);
+				return;// (true);
 			}
 		}
-	return (false);
+	return;// (false);
 }
 
 void		RTypeServer::setMaxRoom(char newMaxRoom)
@@ -154,7 +160,24 @@ void		RTypeServer::delRoomPool(int nbRoom)
 		}
 }
 
-RTypeServer::~RTypeServer()
+template<class ret, class clist>
+ret			RTypeServer::createValidId(ret id, std::list<clist> checkList)
 {
-	// quitter tous les clients proprement
+	//id = 0; // id random serait mieux
+  typename std::list<clist>::iterator	it;
+
+	for (it = (checkList).begin(); (it != (checkList).end()); it++)
+		{
+			if (id == (*it)->getId())
+			{
+				id ++;
+				it = (checkList).begin();
+			}
+		}
+	return (id);
+}
+
+bool		RTypeServer::loadDynEnnemy(std::string filename)
+{
+	return (1);
 }

@@ -12,16 +12,15 @@
 
 class RTypeServer
 {
-	bool _isrunning;
-	int	_port;
-	char	_maxRoom;
-//	int _maxClient;
+	bool		_isrunning;
+	int			_port;
+	char		_maxRoom;
+	Client *	_currentClient;
 
+	std::list<Room *>		_roomPool;
 	std::list<Client *>		_clientList;
 	TCPSocketServer			_TCPsocket;
-	std::list<Room*>		_roomPool;
-	ServerCommunication<RTypeServer>	_com;
-
+	//ServerCommunication<RTypeServer>	_com;
 	// std::ofstream _blFile;
 
 public:
@@ -32,17 +31,18 @@ public:
 	template<class ret, class clist>
 	ret		createValidId(ret, std::list<clist>);
 	bool	loadDynEnnemy(std::string);
-	void	checkClientSpeaking();
+	void	CheckClientAnswer();
 
+	//CallBack gestion
+	void	sayHello(void *);
+	void	setRoom(void *);//(Client *, char*);
+	void	selectRoom(void *);//(Client *, int);
+	void	leaveRoom(void *);//(Client *);
+	void	callBackError(char, IReadableSocket&);
 
-	bool	setRoom(Client *, char*);
-	bool	selectRoom(Client *, int);
-	bool	leaveRoom(Client *);
-
+	//Room gestion
 	void	setMaxRoom(char);
 	void	genRoomPool(int);
 	void	delRoomPool(int);
-
-
 	int		getMaxRoom();
 };

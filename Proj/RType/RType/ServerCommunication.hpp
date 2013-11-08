@@ -260,10 +260,10 @@ public:
 	{
 		_handler = NULL;
 		_defaultCallback = NULL;
-		_commandMap[0x00] = &ServerCommunication::TCPsayHello;
-		_commandMap[0x00] = &ServerCommunication::TCPsetRoom;
-		_commandMap[0x00] = &ServerCommunication::TCPselectRoom;
-		_commandMap[0x00] = &ServerCommunication::TCPleaveRoom;
+		_commandMap[0x00] = &ServerCommunication::TCPsayHello;			// 0x01
+		_commandMap[0x00] = &ServerCommunication::TCPsetRoom;			// 0x02
+		_commandMap[0x00] = &ServerCommunication::TCPselectRoom;		// 0x03
+		_commandMap[0x00] = &ServerCommunication::TCPleaveRoom;			// etc ...
 		_commandMap[0x00] = &ServerCommunication::TCPchangeDifficulty;
 		_commandMap[0x00] = &ServerCommunication::TCPsetMap;
 		_commandMap[0x00] = &ServerCommunication::TCPgetFileTrunk;

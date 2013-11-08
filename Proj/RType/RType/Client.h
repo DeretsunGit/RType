@@ -13,13 +13,13 @@ class Client
 	ITCPSocketClient*	_tcpSocket;
 public:
 	Client(ITCPSocketClient*, int id);
-	ITCPSocketClient *getTCPSock();
+	~Client();
 
 	void setWaiting(bool);
 
 	int getId();
 	bool getWaiting();
+	ITCPSocketClient *getTCPSock();
 
-	~Client();
 };
 
