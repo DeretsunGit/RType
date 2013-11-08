@@ -70,16 +70,16 @@ void			Debugger::start()
       if (!line.empty())
 	args.push_back(line);
     // TO REMOVE
-    {
-      std::cout << "Args: ";
-      for (Args::iterator it = args.begin(); it != args.end(); ++it)
-	{
-	  if (it != args.begin())
-	    std::cout << ", ";
-	  std::cout << '[' << *it << ']';
-	}
-      std::cout << std::endl;
-    }
+    // {
+    //   std::cout << "Args: ";
+    //   for (Args::iterator it = args.begin(); it != args.end(); ++it)
+    // 	{
+    // 	  if (it != args.begin())
+    // 	    std::cout << ", ";
+    // 	  std::cout << '[' << *it << ']';
+    // 	}
+    //   std::cout << std::endl;
+    // }
     if (!args.empty() && (it = this->_senders.find(args[0])) != end)
       (this->*it->second)(args);
   }
