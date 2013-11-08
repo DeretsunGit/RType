@@ -7,12 +7,12 @@ RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
 	this->setMaxRoom(maxRoom);
 	// convertir le blPath en ofstream
 	/*
-	this->_com.setCallback(0x01, &RTypeServer::sayHello);
-	this->_com.setCallback(0x02, &RTypeServer::setRoom);
-	this->_com.setCallback(0x03, &RTypeServer::selectRoom);
-	this->_com.setCallback(0x04, &RTypeServer::leaveRoom);
-	this->_com.setDefaultCallback(&RTypeServer::callBackError);
-	this->_com.setHandler(this);
+	this->_RTypeServercom.setCallback(0x01, &RTypeServer::sayHello);
+	this->_RTypeServercom.setCallback(0x02, &RTypeServer::setRoom);
+	this->_RTypeServercom.setCallback(0x03, &RTypeServer::selectRoom);
+	this->_RTypeServercom.setCallback(0x04, &RTypeServer::leaveRoom);
+	this->_RTypeServercom.setDefaultCallback(&RTypeServer::callBackError);
+	this->_RTypeServercom.setHandler(this);
 	*/
 }
 
@@ -64,7 +64,7 @@ void	RTypeServer::CheckClientAnswer()
 			if ((*it_client)->getWaiting() == false)
 			{
 				this->_currentClient = (*it_client);
-				//this->_com.interpretCommand(*(this->_currentClient->getTCPSock()));
+				//this->_RTypeServercom.interpretCommand(*(this->_currentClient->getTCPSock()));
 			}
 		}
 }

@@ -15,7 +15,7 @@ class Game
 private:
 	unsigned short int	_port;
 	UDPSocketServer*	_udpSock;
-	//ServerCommunication		_com;
+	//ServerCommunication<Game>		_GameCom;
 
 	const std::vector<Player*>&	_players;
 	std::list<Wave>			_livingThings;
@@ -36,6 +36,11 @@ private:
 public:
 	Game(const std::vector<Player*>& p);
 	~Game();
+
+//ServerCommunication
+	void	inputs(void *);
+	void	pauseOk(void *);
+	void	callBackError(char, IReadableSocket&);
 
 	void	genPool();
 	bool	startGame();

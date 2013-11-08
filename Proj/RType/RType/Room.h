@@ -4,6 +4,7 @@
 #include "Thread.h"
 #include "Mutex.h"
 #include "Player.h"
+//#include "ServerCommunication.hpp"
 
 class Room
 {
@@ -18,6 +19,8 @@ private:
 
 	Thread*	_th;
 	Mutex	_m;
+	//ServerCommunication<Room>	_RoomCom;
+
 public:
 	Room(char);
 	~Room();
@@ -25,7 +28,18 @@ public:
 	void	roomLoop();
 	bool	startGame();
 
+	// callBack Gestion
+	void	changeDifficulty(void *);
+	void	setMap(void *);
+	void	getFileTrunk(void *);
+	void	setReady(void *);
+	void	downloadRessource(void *);
+	void	ready(void *);
+	void	letsPlay(void *);
+	void	saveMap(void *);
+	void	callBackError(char, IReadableSocket&);
 
+	// allowed manip from RTypeServer
 	bool	addClient(Client*);
 	bool	addPlayer(Player*);
 	bool	removePlayer(int);
@@ -37,10 +51,10 @@ public:
 	std::string	getName() const;
 	std::vector<Player*> getPlayers() const;
 
-	bool	setMap(char *);
 	bool	setName(char *);
 	void	setId(char);
-	void	setDifficulty(char);
 
+	
+	
 	//Packet* TCPsendRoomList(const std::list<Room>& rooms) const;
 };
