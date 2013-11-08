@@ -17,6 +17,12 @@ include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_BINARY_DIR}/client)
 
 add_library(Abstract
+	${CMAKE_BINARY_DIR}/Abstract/DynLib.h
+	${CMAKE_BINARY_DIR}/Abstract/IDynLib.h
+	${CMAKE_BINARY_DIR}/Abstract/UnixDynLib.cpp
+	${CMAKE_BINARY_DIR}/Abstract/UnixDynLib.h
+	${CMAKE_BINARY_DIR}/Abstract/WinDynLib.cpp
+	${CMAKE_BINARY_DIR}/Abstract/WinDynLib.h
 	Caller.hpp
 	IReadableSocket.h
 	IMutex.h
@@ -169,5 +175,12 @@ if(WIN32)
 	target_link_libraries(Client sfml-graphics sfml-system sfml-window)
 	target_link_libraries(DebugClient sfml-graphics sfml-system sfml-window)
 else(WIN32)
-	target_link_libraries(Client sfml-graphics sfml-system sfml-window GLEW)
+	target_link_libraries(Abstract
+		dl)
+	target_link_libraries(Client
+		sfml-graphics
+		sfml-system
+		sfml-window
+		GLEW
+		dl)
 endif(WIN32)
