@@ -137,12 +137,12 @@ void		RTypeServer::leaveRoom(void *data)
 
 void		RTypeServer::sendRoomList()
 {
-
+	//this->_RTypeServerCom.TCProomList(this->pack, (this->_roomPool));
 }
 
 void		RTypeServer::sendError(char errorCode, const char *message)
 {
-
+	//this->_RTypeServerCom.TCProomList(this->pack, (this->_roomPool));
 }
 
 void		RTypeServer::setMaxRoom(char newMaxRoom)

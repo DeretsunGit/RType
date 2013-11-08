@@ -20,6 +20,8 @@ private:
 	std::string	*_map; //limite 128
 	std::vector<Player*> _party;
 
+	Client *	_currentClient;
+
 	Thread*		_th;
 	Mutex		_m;
 	ServerCommunication<Room>	_RoomCom;

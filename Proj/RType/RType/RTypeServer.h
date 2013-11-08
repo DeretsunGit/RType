@@ -21,6 +21,7 @@ class RTypeServer
 	std::list<Client *>		_clientList;
 	TCPSocketServer			_TCPsocket;
 	ServerCommunication<RTypeServer>	_RTypeServerCom;
+	//Packet&				pack;
 	// std::ofstream _blFile;
 
 public:

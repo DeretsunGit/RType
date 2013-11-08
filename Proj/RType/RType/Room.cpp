@@ -21,7 +21,7 @@ Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 	this->_RoomCom.setCallback(0x0A, &Room::ready);
 	this->_RoomCom.setCallback(0x0B, &Room::letsPlay);
 	this->_RoomCom.setCallback(0x0C, &Room::saveMap);
-	//this->_RoomCom.setDefaultCallback(&Room::callBackErrorR);
+	this->_RoomCom.setDefaultCallback(&Room::callBackErrorR);
 	this->_RoomCom.setHandler(this);
 	
 	this->_th->start();
@@ -31,7 +31,7 @@ Room::~Room(void)
 {
 }
 
-void	callBackErrorR(char, IReadableSocket&)
+void	Room::callBackErrorR(char, IReadableSocket&)
 {
 
 }
@@ -65,14 +65,19 @@ void	Room::roomLoop()
   startGame();
 }
 
-void	Room::setMap(void *newMapName)//(char *newName)
+void	Room::setMap(void *data)
 {
-	this->_map = new std::string(reinterpret_cast<char *>(newMapName));
+	this->_m.lock();
+	this->_isRandom = (reinterpret_cast<s_set_map *>(data))->mapStatus;
+	this->_map->replace(0, std::string::npos, (reinterpret_cast<s_set_map *>(data))->filename);
+	this->_m.unlock();
 }
 
-void	Room::changeDifficulty(void *newDifficulty)//(char newDifficulty)
+void	Room::changeDifficulty(void *data)
 {
-	this->_difficulty = *(reinterpret_cast<char *>(newDifficulty));
+	this->_m.lock();
+	this->_difficulty = (reinterpret_cast<s_change_difficulty *>(data))->difficulty;
+		this->_m.unlock();
 }
 
 void	Room::getFileTrunk(void *data)
@@ -82,7 +87,21 @@ void	Room::getFileTrunk(void *data)
 
 void	Room::setReady(void *data)
 {
+	this->_m.lock();
+	int i = 0;
+	std::vector<Player*>::iterator ite = _party.begin();
 
+	while (i < _party.size())
+	{
+		if (_party[i]->getClient()->getId() == 	this->_currentClient->getId())
+		{
+			(* ite)->setReady(!(* ite)->getReady());
+			return;
+		}
+		++i;
+		++ite;
+	}
+		this->_m.unlock();
 }
 
 void	Room::downloadRessource(void *data)
@@ -97,7 +116,6 @@ void	Room::ready(void *data)
 
 void	Room::letsPlay(void *data)
 {
-
 }
 
 void	Room::saveMap(void *data)
@@ -201,37 +219,3 @@ bool	Room::setName(char *newName)
 	*this->_name = temp.size() <= 32 ? temp : *this->_name;
 	return (temp.size() <= 32 ? true : false);
 }
-
-/*
-Packet*	Room::TCPsendRoomList(const std::list<Room>& rooms) const
-{
-	if (!rooms.size())
-		return (NULL);
-
-	s_tcp_header block;
-	Packet* packet = new Packet();
-	std::list<Room>::const_iterator ite = rooms.begin();
-	int i = 3;
-
-	block.opcode = 0x01;
-	block.datasize = ((short)rooms.size() * 2);
-	char* buff = new char[TCPHEADSIZE + block.datasize];
-
-	memcpy(buff, &block, TCPHEADSIZE);
-
-	while (i < rooms.size() + TCPHEADSIZE)
-	{
-		buff[i] = ite->getId();
-		buff[i+1] = ite->getNbPlayer();
-		i += 2;
-	}
-
-	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
-	{
-		delete buff;
-		delete packet;
-		return NULL;
-	}
-
-	return (packet);
-}*/
