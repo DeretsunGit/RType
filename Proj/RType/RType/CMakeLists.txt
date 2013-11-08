@@ -112,6 +112,7 @@ add_executable (Server
 
 add_executable (Client
 	../client/ClientCommunication.hpp
+	../client/ClientCommunication.cpp
 	Packet.hpp
 	../client/main.cpp
 	../client/Background.h
@@ -135,6 +136,7 @@ add_executable (DebugClient
 	${CMAKE_BINARY_DIR}/client_debug/Debugger.h
 	${CMAKE_BINARY_DIR}/client_debug/Debugger.cpp
 	${CMAKE_BINARY_DIR}/client/ClientCommunication.hpp
+	${CMAKE_BINARY_DIR}/client/ClientCommunication.cpp
 	Opcodes.h
 	Thread.h
 	TCPSocketClient.h
@@ -145,6 +147,10 @@ find_package (Threads REQUIRED)
 
 target_link_libraries (Abstract
 	${CMAKE_THREAD_LIBS_INIT}
+	)
+
+target_link_libraries (Client
+	Abstract
 	)
 
 target_link_libraries (Server

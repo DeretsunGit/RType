@@ -3,6 +3,9 @@
 #include <fstream>
 #include "Debugger.h"
 #include "Opcodes.h"
+#include "ClientCommunication.cpp"
+
+template class ClientCommunication<Debugger>;
 
 Debugger::Debugger(const char* hostname, unsigned short port)
   : _th(*this, &Debugger::networkThread), _tcp(hostname, port), _udp(NULL), _live(true)

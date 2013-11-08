@@ -255,7 +255,7 @@ private:
 	  {
 	    // déserialisation dans tmp
 	    tmp._posX = 0;
-	    (_handler->*_callableMap[0x01])(tmp);
+	    (_handler->*_callableMap[0x01])(&tmp);
 	  }
       }
     return true;
@@ -317,111 +317,33 @@ public:
 	}
 
 	/* CLIENT TO SERVER */
-	void TCPsayHello(Packet& packet, const char* nickname, short resolution[2])
-	{}
+  void TCPsayHello(Packet& packet, const char* nickname, short resolution[2]);
+  void TCPsetRoom(Packet& packet, const char* roomName);
+  void TCPselectRoom(Packet& packet, const char roomId);
+  void TCPleaveRoom(Packet& packet);
+  void TCPchangeDifficulty(Packet& packet, char difficulty);
+  void TCPsetMap(Packet& packet, bool mapStatus, const char* filename);
+  void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size);
+  void TCPsetReady(Packet& packet);
+  void TCPdownloadRessource(Packet& packet, const char* filename);
+  void UDPReady(Packet& packet);
+  void TCPletsPlay(Packet& packet);
+  void TCPsaveMap(Packet& packet, const char* mapName);
+  void UDPinputs(Packet& packet, s_inputs& inputs);
+  void UDPpauseOk(Packet& packet);
 
-	void TCPsetRoom(Packet& packet, const char* roomName)
-	{}
-
-	void TCPselectRoom(Packet& packet, const char roomId)
-	{}
-
-	void TCPleaveRoom(Packet& packet)
-	{}
-
-	void TCPchangeDifficulty(Packet& packet, char difficulty)
-	{}
-
-	void TCPsetMap(Packet& packet, bool mapStatus, const char* filename)
-	{}
-
-  void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size)
-	{}
-
-	void TCPsetReady(Packet& packet)
-	{}
-
-	void TCPdownloadRessource(Packet& packet, const char* filename)
-	{}
-
-	void UDPReady(Packet& packet)
-	{}
-
-	void TCPletsPlay(Packet& packet)
-	{}
-
-	void TCPsaveMap(Packet& packet, const char* mapName)
-	{}
-
-	void UDPinputs(Packet& packet, s_inputs& inputs)
-	{}
-
-	void UDPpauseOk(Packet& packet)
-	{}
-
-	/* SERVER TO CLIENT */
-	bool TCProomList(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool TCProomState(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool TCPwrongMap(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool TCPstartLoading(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool TCPgetFileTrunk(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool TCPassocSprites(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool UDPok(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool TCPsendError(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool UDPscreenState(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool UDPendOfGame(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool UDPpause(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool UDPspawn(IReadableSocket& socket) const
-	{
-		return true;
-	}
-
-	bool UPDdeath(IReadableSocket& socket) const
-	{
-		return true;
-	}
+  /* SERVER TO CLIENT */
+  bool TCProomList(IReadableSocket& socket) const;
+  bool TCProomState(IReadableSocket& socket) const;
+  bool TCPwrongMap(IReadableSocket& socket) const;
+  bool TCPstartLoading(IReadableSocket& socket) const;
+  bool TCPgetFileTrunk(IReadableSocket& socket) const;
+  bool TCPassocSprites(IReadableSocket& socket) const;
+  bool UDPok(IReadableSocket& socket) const;
+  bool TCPsendError(IReadableSocket& socket) const;
+  bool UDPscreenState(IReadableSocket& socket) const;
+  bool UDPendOfGame(IReadableSocket& socket) const;
+  bool UDPpause(IReadableSocket& socket) const;
+  bool UDPspawn(IReadableSocket& socket) const;
+  bool UPDdeath(IReadableSocket& socket) const;
 };
