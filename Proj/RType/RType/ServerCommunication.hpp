@@ -12,7 +12,7 @@
 #include <map>
 #include "IReadableSocket.h"
 #include "Packet.hpp"
-#include "Room.h"
+//#include "Room.h"
 #include "Player.h"
 
 /* TCP BLOCK STRUCTURES DEFINITION */
@@ -213,12 +213,13 @@ struct s_death
 };
 
 /* END OF BLOCK STRUCTURES DEFINITION */
+class Room;
 
 template<typename T>
 class ServerCommunication
 {
 private:
-	std::map<char, void (ServerCommunication::*)(IReadableSocket&) const> _commandMap;
+	std::map<char, bool (ServerCommunication::*)(IReadableSocket&)> _commandMap;
 	std::map<char, void (T::*)(void*)> _callableMap;
 
 	T* _handler;
@@ -295,9 +296,9 @@ public:
 		this->_handler = handler;
 	}
 
-	void interpretCommand(IReadableSocket& socket) const
+	void interpretCommand(IReadableSocket& socket, T* currentClass)
 	{
-	  typename std::map<char, void (ServerCommunication::*)(IReadableSocket&) const>::const_iterator ite;
+	  typename std::map<char, bool (ServerCommunication::*)(IReadableSocket&) >::const_iterator ite;
 		char opcode;
 
 		if (socket.readable())
@@ -309,7 +310,7 @@ public:
 					socket.putback(&opcode, 1);
 			}
 			else if (_handler != NULL && _defaultCallback != NULL)
-				(this->*_defaultCallback(opcode, socket));
+				(currentClass->*_defaultCallback)(opcode, socket);
 		}
 	}
 

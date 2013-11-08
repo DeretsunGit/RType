@@ -20,7 +20,7 @@ class RTypeServer
 	std::list<Room *>		_roomPool;
 	std::list<Client *>		_clientList;
 	TCPSocketServer			_TCPsocket;
-	//ServerCommunication<RTypeServer>	_RTypeServerCom;
+	ServerCommunication<RTypeServer>	_RTypeServerCom;
 	// std::ofstream _blFile;
 
 public:
