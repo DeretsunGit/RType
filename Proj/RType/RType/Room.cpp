@@ -12,7 +12,8 @@ Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 	this->_isRandom = true;
 	this->_difficulty = 1;
 	this->_nbReady = 0;
-	
+
+	this->_RoomCom.setCallback(0x04, &Room::leaveRoom);
 	this->_RoomCom.setCallback(0x05, &Room::changeDifficulty);
 	this->_RoomCom.setCallback(0x06, &Room::setMap);
 	this->_RoomCom.setCallback(0x07, &Room::getFileTrunk);
@@ -21,7 +22,7 @@ Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 	this->_RoomCom.setCallback(0x0A, &Room::ready);
 	this->_RoomCom.setCallback(0x0B, &Room::letsPlay);
 	this->_RoomCom.setCallback(0x0C, &Room::saveMap);
-	this->_RoomCom.setDefaultCallback(&Room::callBackErrorR);
+	this->_RoomCom.setDefaultCallback(&Room::callBackError);
 	this->_RoomCom.setHandler(this);
 	
 	this->_th->start();
@@ -31,7 +32,7 @@ Room::~Room(void)
 {
 }
 
-void	Room::callBackErrorR(char, IReadableSocket&)
+void	Room::callBackError(char, IReadableSocket&)
 {
 
 }
@@ -63,6 +64,16 @@ void	Room::roomLoop()
   while (this->_party.size() < 2)
     Sleep(10);
   startGame();
+}
+
+void	Room::leaveRoom(void *data)
+{
+	this->_m.lock();
+	if (removeClient(this->_currentClient->getId()))
+	{
+		this->_currentClient->setWaiting(true);
+	}
+	this->_m.unlock();
 }
 
 void	Room::setMap(void *data)
@@ -111,11 +122,12 @@ void	Room::downloadRessource(void *data)
 
 void	Room::ready(void *data)
 {
-
+	// init UDP ?
 }
 
 void	Room::letsPlay(void *data)
 {
+	// launch game if all clients said it
 }
 
 void	Room::saveMap(void *data)

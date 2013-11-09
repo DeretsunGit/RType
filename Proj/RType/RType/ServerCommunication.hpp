@@ -289,7 +289,7 @@ public:
 	//pas mal de problemes d'include nous ont forcés a faire ca.
 
 	/* SERVER TO CLIENT */
-	void TCProomList(Packet& packet, std::list<Room>& rooms); // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
+	void TCProomList(Packet& packet, std::list<Room *>& rooms); // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 	void TCProomState(Packet& packet, Room& room);
 	void TCPwrongMap(Packet& packet);
 	void TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport); // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem

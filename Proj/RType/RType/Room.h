@@ -34,6 +34,7 @@ public:
 	bool	startGame();
 
 	// callBack Gestion
+	void	leaveRoom(void *);
 	void	changeDifficulty(void *);
 	void	setMap(void *);
 	void	getFileTrunk(void *);
@@ -42,7 +43,7 @@ public:
 	void	ready(void *);
 	void	letsPlay(void *);
 	void	saveMap(void *);
-	void	callBackErrorR(char, IReadableSocket&);
+	void	callBackError(char, IReadableSocket&);
 
 	// Client Gestion
 	bool	addClient(Client*);

@@ -3,21 +3,21 @@
 
 	/* SERVER TO CLIENT */
 template<class T>
-void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
+void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 {
 	s_room_list block;
 	block.opcode = 0x0F;
 	block.datasize = static_cast<short>(sizeof(s_room_list_content) * rooms.size());
-	std::list<Room>::const_iterator ite = rooms.begin();
+	std::list<Room *>::const_iterator ite = rooms.begin();
 	int start = HEADSIZE;
 	packet.set(reinterpret_cast<char*>(&block), 0, HEADSIZE);
 
 	while (ite != rooms.end())
 	{
 		s_room_list_content room;
-		room.nbPlayer = ite->getNbPlayer();
-		room.roomId = ite->getId();
-		memcpy(room.roomName, ite->getName().c_str(), ite->getName().size());
+		room.nbPlayer = (* ite)->getNbPlayer();
+		room.roomId = (* ite)->getId();
+		memcpy(room.roomName, (* ite)->getName().c_str(), (* ite)->getName().size());
 		packet.set(reinterpret_cast<char*>(&room), start, sizeof(s_room_list_content));
 		start += sizeof(s_room_list_content);
 		++ite;

@@ -2,6 +2,7 @@
 
 #include <list>
 #include <iterator>
+#include <iostream>
 
 #ifdef _WIN32
 

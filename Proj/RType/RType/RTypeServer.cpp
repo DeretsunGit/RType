@@ -21,9 +21,11 @@ RTypeServer::~RTypeServer()
 	// quitter tous les clients proprement
 }
 
-void		RTypeServer::callBackError(char, IReadableSocket&)
+void		RTypeServer::callBackError(char opcode, IReadableSocket& clientSock)
 {
-	// send message invalid command
+	std::cout << "Impossible Action :" << std::hex << opcode;
+	std::cout << "can't be done while _isWaiting = true" << std::endl;
+	this->sendError(60, "You can't perform this action by now.");
 }
 
 bool		RTypeServer::start()
@@ -38,12 +40,10 @@ bool		RTypeServer::serverLoop()
 	ITCPSocketClient*	newClient;
 	// création du prompt - commande de load des lib dynamiques
 
-	// gestion socket
 	while (this->_isrunning)
 	{
 		if ((newClient = this->_TCPsocket.accept()) != NULL)
 		{
-			// on ne push que si le client dit koukou
 			id = createValidId<int, Client *>(id, this->_clientList);
 			if (this->_clientList.size() < MAXCLIENT)
 				this->_clientList.push_back(new Client(newClient, id));
@@ -137,12 +137,12 @@ void		RTypeServer::leaveRoom(void *data)
 
 void		RTypeServer::sendRoomList()
 {
-	//this->_RTypeServerCom.TCProomList(this->pack, (this->_roomPool));
+	this->_RTypeServerCom.TCProomList(this->_pack, (this->_roomPool));
 }
 
 void		RTypeServer::sendError(char errorCode, const char *message)
 {
-	//this->_RTypeServerCom.TCProomList(this->pack, (this->_roomPool));
+	this->_RTypeServerCom.TCPsendError(this->_pack, errorCode, message);
 }
 
 void		RTypeServer::setMaxRoom(char newMaxRoom)
