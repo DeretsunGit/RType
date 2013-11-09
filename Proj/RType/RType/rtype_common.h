@@ -16,6 +16,8 @@
 
 #endif
 
+#define PATTERNFILE	""
+
 #define MAXROOM		100
 #define MAXCLIENT	400
 

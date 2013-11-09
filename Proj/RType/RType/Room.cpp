@@ -32,15 +32,25 @@ Room::~Room(void)
 {
 }
 
-void	Room::callBackError(char, IReadableSocket&)
+void	Room::callBackError(char opcode, IReadableSocket& client)
 {
-
+	// faire un fichier qui resume les opcodes d'erreur
+	std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;
+	std::cout << " can't be done while _isWaiting = true" << std::endl;
+	this->sendError(61, "You can't perform this action by now.");
 }
 
 bool	Room::startGame()
 {
   bool	ready(false);
 
+  std::cout << "Room (id = " << this->_id << ", nb player = "<< this->_nbReady
+			<<") attempt to create a game." << std::endl;
+  // generation du script
+  // cree la game avec joueurs (UDP set) et un pointeur sur Script
+  // 
+
+  /*
   while (!ready)
   {
     Sleep(10);
@@ -49,6 +59,7 @@ bool	Room::startGame()
     this->_m.unlock();
   }
 	Game newGame(this->_party);
+	*/
 	// on instancie une game
 	return (true);
 }
@@ -57,18 +68,16 @@ void	Room::roomLoop()
 {
 		std::vector<Player*>::iterator	ite = this->_party.begin();
 
-	while (this->_party.size() <= 4)
+	while (this->_party.size() != 0)
 	{
 		for (ite = (this->_party).begin(); (ite != (this->_party).end()); ite++)
 			{
 				this->_currentClient = (*ite)->getClient();
 				this->_RoomCom.interpretCommand(*(this->_currentClient->getTCPSock()));
-				if (this->_nbReady == 4)
+				if (this->_nbReady == this->_party.size())
 					this->startGame();
 			}
 	}
-		// add les joueurs voulant join
-		//	delete les joueurs qui partent / deco
 }
 
 void	Room::leaveRoom(void *data)
@@ -139,6 +148,11 @@ void	Room::letsPlay(void *data)
 void	Room::saveMap(void *data)
 {
 
+}
+
+void		Room::sendError(char errorCode, const char *message)
+{
+	this->_RoomCom.TCPsendError(this->_pack, errorCode, message);
 }
 
 #include <iostream>

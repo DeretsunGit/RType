@@ -25,6 +25,7 @@ private:
 	Thread*		_th;
 	Mutex		_m;
 	ServerCommunication<Room>	_RoomCom;
+	Packet		_pack;
 
 public:
 	Room(char);
@@ -44,6 +45,9 @@ public:
 	void	letsPlay(void *);
 	void	saveMap(void *);
 	void	callBackError(char, IReadableSocket&);
+
+	// send gestion
+	void	sendError(char, const char *);
 
 	// Client Gestion
 	bool	addClient(Client*);

@@ -116,6 +116,8 @@ add_executable (Server
 	Game.h
 	Wall.cpp
 	Wall.h
+	Script.h
+	Script.cpp
 	)
 
 add_executable (Client

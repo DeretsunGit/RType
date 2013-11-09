@@ -31,6 +31,7 @@ void		RTypeServer::callBackError(char opcode, IReadableSocket& clientSock)
 
 bool		RTypeServer::start()
 {
+	this->genRoomPool(this->_maxRoom);
 	this->serverLoop();
 	return (true);
 }
@@ -98,6 +99,7 @@ void		RTypeServer::setRoom(void *data)
 			{
 				(*it_room)->setName((reinterpret_cast<s_set_room *>(data))->roomName);
 				(*it_room)->addClient(this->_currentClient);
+				(*it_room)->roomLoop();
 				this->_currentClient->setWaiting(false);
 				return;
 			}
