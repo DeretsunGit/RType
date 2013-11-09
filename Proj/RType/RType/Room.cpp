@@ -55,15 +55,20 @@ bool	Room::startGame()
 
 void	Room::roomLoop()
 {
-	/*
-	while (this->_nbReady != _party.size())
+		std::vector<Player*>::iterator	ite = this->_party.begin();
+
+	while (this->_party.size() <= 4)
 	{
+		for (ite = (this->_party).begin(); (ite != (this->_party).end()); ite++)
+			{
+				this->_currentClient = (*ite)->getClient();
+				this->_RoomCom.interpretCommand(*(this->_currentClient->getTCPSock()));
+				if (this->_nbReady == 4)
+					this->startGame();
+			}
+	}
 		// add les joueurs voulant join
 		//	delete les joueurs qui partent / deco
-	}*/
-  while (this->_party.size() < 2)
-    Sleep(10);
-  startGame();
 }
 
 void	Room::leaveRoom(void *data)
@@ -128,6 +133,7 @@ void	Room::ready(void *data)
 void	Room::letsPlay(void *data)
 {
 	// launch game if all clients said it
+
 }
 
 void	Room::saveMap(void *data)
@@ -182,7 +188,7 @@ bool	Room::addClient(Client* newClient)
   if (_party.size() < 2)
   {
     std::cout << "PUSH BACK" <<  std::endl;
-    _party.push_back(new Player(newClient));
+    _party.push_back(new Player(newClient, this->validId()));
     this->_m.unlock();
     return (true);
   }
@@ -237,7 +243,25 @@ const std::string& Room::getMap() const
 	return (*this->_map);
 }
 
-bool Room::getMapStatus() const
+bool	Room::getMapStatus() const
 {
 	return this->_isRandom;
+}
+
+int		Room::validId()
+{
+	int i = 1;
+	std::vector<Player*>::iterator ite;
+
+	while (i < _party.size())
+	{
+		ite = _party.begin();
+		for (ite = (this->_party).begin(); (ite != (this->_party).end()); ite++)
+		{
+			if ((*ite)->getId() == i)
+				i++;
+		}
+		++ite;
+	}
+	return (i);
 }

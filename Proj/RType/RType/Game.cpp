@@ -273,7 +273,7 @@ void Game::playerShoot(Player *currentPlayer)
 	{
 		if ((*it_bullet)->getHP() == 0)
 		{
-			(*it_bullet)->setPos(currentPlayer->getPos()); // faux car tir en haut a gauche
+			(*it_bullet)->setPos(&(currentPlayer->getPos())); // faux car tir en haut a gauche
 			(*it_bullet)->setHP(1);
 			(*it_bullet)->setFaction(PLAYER);
 		}
@@ -311,7 +311,7 @@ void	Game::moveWall()
 			{
 				temp._posX = (*it_wall)->getPos()._posX - 3 * (*it_wall)->getSpeed();
 				temp._posY = (*it_wall)->getPos()._posY;
-				(*it_wall)->setPos(temp);
+				(*it_wall)->setPos(&temp);
 			}
 			// on supprime les murs inactifs et on set les nouveaux murs
 			if ((*it_wall)->getPos()._posX <= -100)

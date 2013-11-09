@@ -7,6 +7,7 @@ Element::Element()
 	this->_hp =				1;
 	this->_sendPriority =	1;
 	this->_speed =			1;
+	this->_id =			0;
 }
 
 Element::~Element()
@@ -63,9 +64,14 @@ void	Element::setHP(int hp)
 	this->_hp = hp;
 }
 
-void	Element::setHitboxSize(t_coord newHitbox)
+void	Element::setHitboxSize(t_coord *newHitbox)
 {
-	this->_hitboxSize = newHitbox;
+	this->_hitboxSize = *newHitbox;
+}
+
+void	Element::setId(int id)
+{
+this->_id = id;
 }
 
 void	Element::setFaction(char faction)
@@ -88,9 +94,9 @@ void	Element::setSendPriority(char newPriority)
 	this->_sendPriority = newPriority;
 }
 
-void	Element::setPos(t_coord newCoord)
+void	Element::setPos(t_coord *newCoord)
 {
-	this->_pos = newCoord;
+	this->_pos = *newCoord;
 }
 
 t_coord	Element::getPos() const

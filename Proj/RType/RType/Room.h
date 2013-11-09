@@ -50,6 +50,7 @@ public:
 	bool	addPlayer(Player*);
 	bool	removePlayer(int);
 	bool	removeClient(int);
+	int		validId();
 
 	char	getDifficulty() const;
 	char	getId() const;

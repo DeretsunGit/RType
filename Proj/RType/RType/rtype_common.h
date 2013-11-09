@@ -19,6 +19,9 @@
 #define MAXROOM		100
 #define MAXCLIENT	400
 
+#define SHIELD_LIGHT	0
+#define	SHILED_DARK		1
+
 #define	WALL	0
 #define PLAYER	1
 #define ENNEMY	2

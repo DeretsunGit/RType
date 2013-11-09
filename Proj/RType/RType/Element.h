@@ -29,9 +29,10 @@ public:
 	void					setShipProof(bool);
 	void					setFaction(char);
 	void					setSendPriority(char);
-	void					setPos(t_coord);
+	void					setPos(t_coord *);
 	void					setSpeed(short int);
-	void					setHitboxSize(t_coord);
+	void					setHitboxSize(t_coord *);
+	void					setId(int);
 
 	t_coord					getPos() const;
 	t_coord					getHitboxSize() const;
@@ -44,6 +45,7 @@ public:
 	char					getFaction() const;
 	char					getSendPriority() const;
 	short int				getSpeed() const;
+
 
 	void					move();
 	int						isCollision(std::list<Element*>);
