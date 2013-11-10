@@ -1,6 +1,6 @@
 #pragma once
 
-template<class Type = char, unsigned long size = 500>
+template<class Type = char, unsigned long size = 1024>
 class CircularBuffer
 {
 public:

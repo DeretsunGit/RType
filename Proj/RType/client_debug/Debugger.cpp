@@ -82,7 +82,7 @@ void			Debugger::start()
     // }
     if (!args.empty() && (it = this->_senders.find(args[0])) != end)
       (this->*it->second)(args);
-    else
+    else if (!args.empty())
       std::cout << "Unknown command " << args[0] << std::endl;
   }
 }
@@ -113,6 +113,7 @@ void	Debugger::defaultHandler(char opcode, IReadableSocket& sock)
   std::cout << "Received unknown opcode (" << static_cast<int>(opcode)
 	    << ") on " << (&sock == this->_udp ? "UDP" : "TCP")
 	    << " socket." << std::endl;
+  throw std::exception();
 }
 
 void		Debugger::handleRoomList(void *data)
@@ -293,11 +294,11 @@ void		Debugger::sendLeaveRoom(const Args& a)
 {
   Packet	p;
 
-  if (a.size() != 2)
-    std::cout << "Usage: leaveRoom roomId" << std::endl;
+  if (a.size() != 1)
+    std::cout << "Usage: leaveRoom" << std::endl;
   else
     {
-      this->_TCPcomm.TCPselectRoom(p, stringTo<int>(a[1]));
+      this->_TCPcomm.TCPleaveRoom(p);
       this->_tcp.send(p);
     }
 }

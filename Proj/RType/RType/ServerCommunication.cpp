@@ -7,7 +7,7 @@ void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& room
 {
 	s_room_list block;
 	block.opcode = Opcodes::roomList;
-	block.datasize = static_cast<short>(sizeof(s_room_list_content) * rooms.size());
+	block.datasize = static_cast<short>(sizeof(s_room_list_content) * (rooms.size() + 1));
 	std::list<Room *>::const_iterator ite = rooms.begin();
 	int start = HEADSIZE;
 	packet.set(reinterpret_cast<char*>(&block), 0, HEADSIZE);
@@ -15,9 +15,12 @@ void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& room
 	while (ite != rooms.end())
 	{
 		s_room_list_content room;
+		size_t		    size(std::min<size_t>((*ite)->getName().size(), sizeof(room.roomName) - 1));
+
 		room.nbPlayer = (* ite)->getNbPlayer();
 		room.roomId = (* ite)->getId();
-		memcpy(room.roomName, (* ite)->getName().c_str(), (* ite)->getName().size());
+		memcpy(room.roomName, (* ite)->getName().c_str(), size);
+		memset(&room.roomName[size], 0, sizeof(room.roomName) - size);
 		packet.set(reinterpret_cast<char*>(&room), start, sizeof(s_room_list_content));
 		start += sizeof(s_room_list_content);
 		++ite;

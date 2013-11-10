@@ -8,6 +8,7 @@
 // Last update Fri Nov  8 15:12:12 2013 julien edmond
 //
 
+#include	<algorithm>
 #include	<cstring>
 #include	"ClientCommunication.hpp"
 #include	"rtype_common.h"
@@ -17,11 +18,13 @@ template<typename T>
 void ClientCommunication<T>::TCPsayHello(Packet& packet, const char* nickname, short resolution[2])
   {
 	  s_say_hello block;
+	  size_t      size(std::min<size_t>(strlen(nickname), sizeof(block.nickname) - 1));
 
 	  block.opcode = Opcodes::sayHello;
 	  block.datasize = sizeof(s_say_hello) - HEADSIZE;
 	  strcpy(block.magic, "KOUKOU");
-	  memcpy(block.nickname, nickname, strlen(nickname));
+	  memcpy(block.nickname, nickname, size);
+	  memset(&block.nickname[size], 0, sizeof(block.nickname) - size);
 	  memcpy(block.resolution, resolution, sizeof(block.resolution));
 
 	  packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_say_hello));
@@ -31,11 +34,12 @@ template<typename T>
 void ClientCommunication<T>::TCPsetRoom(Packet& packet, const char* roomName)
   {
 	  s_set_room block;
+	  size_t     size(std::min<size_t>(strlen(roomName), sizeof(block.roomName) - 1));
 
 	  block.opcode = Opcodes::setRoom;
 	  block.datasize = sizeof(char) * 32;
-	  memcpy(block.roomName, roomName, strlen(roomName));
-
+	  memcpy(block.roomName, roomName, size);
+	  memset(&block.roomName[size], 0, sizeof(block.roomName) - size);
 	  packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_set_room));
   }
 
@@ -184,32 +188,31 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 
 	if (socket.readable() && (_handler && _callableMap.find(roomList.opcode) != _callableMap.end()))
 	{
-		readSize += socket.recv(reinterpret_cast<char*>(&roomList.datasize), 2);
+		readSize = socket.recv(reinterpret_cast<char*>(&roomList.datasize), 2);
 		if (readSize != 2)
 		{
 			socket.putback(reinterpret_cast<char*>(&roomList.datasize), readSize);
 			return false;
 		}
 		nbRooms = roomList.datasize / sizeof(s_room_list_content);
-		roomList.rooms = new s_room_list_content[nbRooms];
-		readSize = 0;
+		roomList.rooms = new s_room_list_content[nbRooms + 1];
 		while (i < nbRooms)
 		{
-			readSize += socket.recv(reinterpret_cast<char*>(&roomList.rooms[i]), sizeof(s_room_list_content));
+			readSize = socket.recv(reinterpret_cast<char*>(&roomList.rooms[i]), sizeof(s_room_list_content));
 			if (readSize != sizeof(s_room_list_content))
 			{
 				socket.putback(reinterpret_cast<char*>(&roomList.rooms[i]), readSize);
 				while (--i >= 0)
 					socket.putback(reinterpret_cast<char*>(&roomList.rooms[i]), sizeof(s_room_list_content));
 				socket.putback(reinterpret_cast<char*>(&roomList.datasize), 2);
-				delete roomList.rooms;
+				delete [] roomList.rooms;
 				return false;
 			}
-			readSize = 0;
 			++i;
 		}
+		roomList.rooms[nbRooms].roomId = 0;
 		(_handler->*(_callableMap.at(roomList.opcode)))(&roomList);
-		delete roomList.rooms;
+		delete [] roomList.rooms;
 		return true;
 	}
 	return false;
