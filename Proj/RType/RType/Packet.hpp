@@ -48,6 +48,10 @@ public:
 		return (this->_size);
 	}
 
+	void	setSize(int size)
+	{
+		_size = size;		
+	}
 
 
 private:
