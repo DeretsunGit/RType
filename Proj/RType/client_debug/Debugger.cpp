@@ -137,7 +137,7 @@ void		Debugger::handleRoomState(void *data)
   std::cout << "--- ROOM STATE ---" << std::endl;
   std::cout << "Name: \"" << state->roomName << '"' << std::endl;
   std::cout << "Players:" << std::endl << '{' << std::endl;
-  while (*state->playerNames[i])
+  while (i < 4)
     {
       std::cout << "\tName: \"" << state->playerNames[i]
 		<< "\", State: " << (state->playerStates[i]
