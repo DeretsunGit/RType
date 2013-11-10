@@ -30,12 +30,14 @@ struct s_say_hello
 };
 #pragma pack(pop)
 
+#pragma pack(push, 1)
 struct s_room_list_content
 {
 	char roomName[32];
 	char roomId;
 	char nbPlayer;
 };
+#pragma pack(pop)
 
 struct s_room_list
 {
