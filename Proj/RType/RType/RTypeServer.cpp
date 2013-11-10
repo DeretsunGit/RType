@@ -1,5 +1,6 @@
 #include "RTypeServer.h"
 #include "ServerCommunication.cpp"
+#include "Opcodes.h"
 template class ServerCommunication<RTypeServer>;
 
 RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
@@ -8,10 +9,10 @@ RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
 	std::cout << "1 on " << DEBUGSTATE << " RTypeServer Initialised." << std::endl;
 	this->_isrunning = true;
 	// convertir le blPath en ofstream
-	this->_RTypeServerCom.setCallback(0x01, &RTypeServer::sayHello);
-	this->_RTypeServerCom.setCallback(0x02, &RTypeServer::setRoom);
-	this->_RTypeServerCom.setCallback(0x03, &RTypeServer::selectRoom);
-	this->_RTypeServerCom.setCallback(0x04, &RTypeServer::leaveRoom);
+	this->_RTypeServerCom.setCallback(Opcodes::sayHello, &RTypeServer::sayHello);
+	this->_RTypeServerCom.setCallback(Opcodes::setRoom, &RTypeServer::setRoom);
+	this->_RTypeServerCom.setCallback(Opcodes::selectRoom, &RTypeServer::selectRoom);
+	this->_RTypeServerCom.setCallback(Opcodes::leaveRoom, &RTypeServer::leaveRoom);
 	this->_RTypeServerCom.setDefaultCallback(&RTypeServer::callBackError);
 	this->_RTypeServerCom.setHandler(this);
 	this->setMaxRoom(maxRoom);

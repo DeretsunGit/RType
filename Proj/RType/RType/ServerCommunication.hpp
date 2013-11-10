@@ -14,6 +14,7 @@
 #include "Packet.hpp"
 //#include "Room.h"
 #include "Player.h"
+#include "Opcodes.h"
 
 #define HEADSIZE (sizeof(char) + sizeof(short)) // taille du "header" opcode + datasize
 
@@ -241,20 +242,20 @@ public:
 	{
 		_handler = NULL;
 		_defaultCallback = NULL;
-		_commandMap[0x01] = &ServerCommunication::TCPsayHello;			// 0x01 - RTypeServer
-		_commandMap[0x02] = &ServerCommunication::TCPsetRoom;			// 0x02 -
-		_commandMap[0x03] = &ServerCommunication::TCPselectRoom;		// 0x03 -
-		_commandMap[0x04] = &ServerCommunication::TCPleaveRoom;			// 0x04 -
-		_commandMap[0x05] = &ServerCommunication::TCPchangeDifficulty;	// 0x05 - Room
-		_commandMap[0x06] = &ServerCommunication::TCPsetMap;			// 0x06 -
-		_commandMap[0x07] = &ServerCommunication::TCPgetFileTrunk;		// 0x07 -
-		_commandMap[0x08] = &ServerCommunication::TCPsetReady;			// 0x08 -
-		_commandMap[0x09] = &ServerCommunication::TCPdownloadRessource;	// 0x09 -
-		_commandMap[0x0A] = &ServerCommunication::UDPReady;				// 0x0A -
-		_commandMap[0x0B] = &ServerCommunication::TCPletsPlay;			// 0x0B -
-		_commandMap[0x0C] = &ServerCommunication::TCPsaveMap;			// 0x0C -
-		_commandMap[0x0D] = &ServerCommunication::UDPinputs;			// 0x0D - Game
-		_commandMap[0x0E] = &ServerCommunication::UDPpauseOk;			// 0x0E - 
+		_commandMap[Opcodes::sayHello] = &ServerCommunication::TCPsayHello;	
+		_commandMap[Opcodes::setRoom] = &ServerCommunication::TCPsetRoom;
+		_commandMap[Opcodes::selectRoom] = &ServerCommunication::TCPselectRoom;	
+		_commandMap[Opcodes::leaveRoom] = &ServerCommunication::TCPleaveRoom;
+		_commandMap[Opcodes::changeDifficulty] = &ServerCommunication::TCPchangeDifficulty;
+		_commandMap[Opcodes::setMap] = &ServerCommunication::TCPsetMap;	
+		_commandMap[Opcodes::fileTrunk] = &ServerCommunication::TCPgetFileTrunk;
+		_commandMap[Opcodes::setReady] = &ServerCommunication::TCPsetReady;			
+		_commandMap[Opcodes::downloadRsrc] = &ServerCommunication::TCPdownloadRessource;
+		_commandMap[Opcodes::UDPReady] = &ServerCommunication::UDPReady;			
+		_commandMap[Opcodes::letsPlay] = &ServerCommunication::TCPletsPlay;			
+		_commandMap[Opcodes::saveMap] = &ServerCommunication::TCPsaveMap;			
+		_commandMap[Opcodes::inputs] = &ServerCommunication::UDPinputs;		
+		//_commandMap[] = &ServerCommunication::UDPpauseOk;		 
 	}
 
 	~ServerCommunication() {}

@@ -18,7 +18,7 @@ void ClientCommunication<T>::TCPsayHello(Packet& packet, const char* nickname, s
   {
 	  s_say_hello block;
 
-	  block.opcode = 0x01;
+	  block.opcode = Opcodes::sayHello;
 	  block.datasize = sizeof(s_say_hello) - HEADSIZE;
 	  strcpy(block.magic, "KOUKOU");
 	  memcpy(block.nickname, nickname, strlen(nickname));
@@ -32,7 +32,7 @@ void ClientCommunication<T>::TCPsetRoom(Packet& packet, const char* roomName)
   {
 	  s_set_room block;
 
-	  block.opcode = 0x02;
+	  block.opcode = Opcodes::setRoom;
 	  block.datasize = sizeof(char) * 32;
 	  memcpy(block.roomName, roomName, strlen(roomName));
 
@@ -44,7 +44,7 @@ void ClientCommunication<T>::TCPselectRoom(Packet& packet, const char roomId)
   {
 	  s_select_room block;
 
-	  block.opcode = 0x03;
+	  block.opcode = Opcodes::selectRoom;
 	  block.roomId = roomId;
 
 	  packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_select_room));
@@ -55,7 +55,7 @@ void ClientCommunication<T>::TCPleaveRoom(Packet& packet)
   {
 	  s_leave_room block;
 
-	  block.opcode = 0x04;
+	  block.opcode = Opcodes::leaveRoom;
 	  
 	  packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_leave_room));
   }
@@ -65,7 +65,7 @@ void ClientCommunication<T>::TCPchangeDifficulty(Packet& packet, char difficulty
   {
 	  s_change_difficulty block;
 
-	  block.opcode = 0x05;
+	  block.opcode = Opcodes::changeDifficulty;
 	  block.difficulty = difficulty;
 
 	  packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_change_difficulty));
@@ -76,7 +76,7 @@ void ClientCommunication<T>::TCPsetMap(Packet& packet, bool mapStatus, const cha
   {
 	  s_set_map block;
 
-	  block.opcode = 0x06;
+	  block.opcode = Opcodes::setMap;
 	  block.datasize = sizeof(s_set_map) - HEADSIZE;
 	  block.mapStatus = mapStatus;
 	  memcpy(block.filename, filename, strlen(filename));
@@ -89,7 +89,7 @@ void ClientCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filena
   {
 	  s_file_trunk block;
 
-	  block.opcode = 0x07;
+	  block.opcode = Opcodes::fileTrunk;
 	  block.datasize = static_cast<short>(sizeof(char) * (32 + size));
 	  memcpy(block.filename, filename, strlen(filename));
 	  memcpy(block.data, data, size);
@@ -102,7 +102,7 @@ void ClientCommunication<T>::TCPsetReady(Packet& packet)
   {
 	  s_set_ready block;
 
-	  block.opcode = 0x08;
+	  block.opcode = Opcodes::setReady;
 
 	  packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_set_ready));
   }
@@ -112,7 +112,7 @@ void ClientCommunication<T>::TCPdownloadRessource(Packet& packet, const char* fi
 {
   s_download_ressource block;
 
-  block.opcode = 0x09;
+  block.opcode = Opcodes::downloadRsrc;
   block.datasize = sizeof(char) * 128;
   memcpy(block.filename, filename, strlen(filename));
 
@@ -124,7 +124,7 @@ void ClientCommunication<T>::UDPReady(Packet& packet)
  {
 	  s_udp_ready block;
 
-	  block.opcode = 0x0A;
+	  block.opcode = Opcodes::UDPReady;
 
 	  packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_udp_ready));
   }
@@ -134,7 +134,7 @@ void ClientCommunication<T>::TCPletsPlay(Packet& packet)
  {
 	  s_lets_play block;
 
-	  block.opcode = 0x0B;
+	  block.opcode = Opcodes::letsPlay;
 
 	  packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_lets_play));
   }
@@ -144,7 +144,7 @@ void ClientCommunication<T>::TCPsaveMap(Packet& packet, const char* mapName)
 {
 	  s_save_map block;
 
-	  block.opcode = 0x0C;
+	  block.opcode = Opcodes::saveMap;
 	  block.datasize = 128;
 	  memcpy(block.mapName, mapName, strlen(mapName));
 
@@ -157,7 +157,7 @@ void ClientCommunication<T>::UDPinputs(Packet& packet, s_inputs& inputs)
 	  s_inputs block;
 
 	  block = inputs;
-	  block.opcode = 0x0D;
+	  block.opcode = Opcodes::inputs;
 
 	  packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_inputs));
   }
@@ -177,7 +177,7 @@ template<typename T>
 bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 {
 	s_room_list roomList;
-	roomList.opcode = 0x0f;
+	roomList.opcode = Opcodes::roomList;
 	int readSize = 0;
 	int nbRooms = 0;
 	int i = 0;
@@ -210,15 +210,16 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 		}
 		(_handler->*(_callableMap.at(roomList.opcode)))(&roomList);
 		delete roomList.rooms;
+		return true;
 	}
-	return true;
+	return false;
 }
 
 template<typename T>
 bool ClientCommunication<T>::TCProomState(IReadableSocket& socket) const
 {
 	s_room_state status;
-	status.opcode = 0x10;
+	status.opcode = Opcodes::roomState;
 	int readSize = 0;
 
 	if (socket.readable() && (_handler && _callableMap.find(status.opcode) != _callableMap.end()))
@@ -229,33 +230,37 @@ bool ClientCommunication<T>::TCProomState(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&status.datasize), readSize);
 			return false;
 		}
-		readSize += socket.recv(reinterpret_cast<char*>(&status + HEADSIZE), sizeof(s_room_state) - HEADSIZE);
-		if (readSize != status.datasize || readSize != sizeof(s_room_state) - HEADSIZE)
+		readSize = socket.recv(reinterpret_cast<char*>(reinterpret_cast<char *>(&status) + HEADSIZE), sizeof(s_room_state) - HEADSIZE);
+		if (readSize != status.datasize && readSize != sizeof(s_room_state) - HEADSIZE)
 		{
-			socket.putback(reinterpret_cast<char*>(&status + 1), readSize);
+			socket.putback(reinterpret_cast<char*>(reinterpret_cast<char *>(&status) + 1), readSize);
 			return false;
 		}
 		(_handler->*_callableMap.at(status.opcode))(&status);
+		return true;
 	}
-	return true;
+	return false;
 }
 
 template<typename T>
 bool ClientCommunication<T>::TCPwrongMap(IReadableSocket& socket) const
 {
 	s_wrong_map block;
-	block.opcode = 0x11;
+	block.opcode = Opcodes::wrongMap;
 
 	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
+	{
 		(_handler->*_callableMap.at(block.opcode))(&block);
-	return true;
+		return true;
+	}
+	return false;
 }
 
 template<typename T>
 bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 {
 	s_start_loading block;
-	block.opcode = 0x12;
+	block.opcode = Opcodes::startLoading;
 	int readSize = 0;
 	int nbRessources = 0;
 	int i = 0;
@@ -296,15 +301,16 @@ bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 		}
 		(_handler->*_callableMap.at(block.opcode))(&block);
 		delete block.ressources;
+		return true;
 	}
-	return true;
+	return false;
 }
 
 template<typename T>
 bool ClientCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket) const
 {
 	s_file_trunk block;
-	block.opcode = 0x13;
+	block.opcode = Opcodes::fileTrunk;
 	int readSize = 0;
 
 	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
@@ -315,22 +321,23 @@ bool ClientCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&block.datasize), readSize);
 			return false;
 		}
-		readSize += socket.recv(reinterpret_cast<char*>(&block + HEADSIZE), sizeof(s_file_trunk) - HEADSIZE);
-		if (readSize != block.datasize || readSize != sizeof(s_file_trunk) - HEADSIZE)
+		readSize = socket.recv(reinterpret_cast<char*>(reinterpret_cast<char *>(&block) + HEADSIZE), sizeof(s_file_trunk) - HEADSIZE);
+		if (readSize != block.datasize && readSize != sizeof(s_file_trunk) - HEADSIZE)
 		{
-			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
+			socket.putback(reinterpret_cast<char*>(reinterpret_cast<char *>(&block) + 1), readSize);
 			return false;
 		}
 		(_handler->*_callableMap.at(block.opcode))(&block);
+		return true;
 	}
-	return true;
+	return false;
 }
 
 template<typename T>
 bool ClientCommunication<T>::TCPassocSprites(IReadableSocket& socket) const
 {
 	s_assoc_sprites block;
-	block.opcode = 0x14;
+	block.opcode = Opcodes::assocSprite;
 	int readSize = 0;
 	int nbSprites = 0;
 	int i = 0;
@@ -371,26 +378,30 @@ bool ClientCommunication<T>::TCPassocSprites(IReadableSocket& socket) const
 		}
 		(_handler->*_callableMap.at(block.opcode))(&block);
 		delete block.sprites;
+		return true;
 	}
-	return true;
+	return false;
 }
 
 template<typename T>
 bool ClientCommunication<T>::UDPok(IReadableSocket& socket) const
 {
 	s_udp_ok block;
-	block.opcode = 0x15;
+	block.opcode = Opcodes::UDPOkay;
 
 	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
+	{
 		(_handler->*_callableMap.at(block.opcode))(&block);
-	return true;
+		return true;
+	}
+	return false;
 }
 
 template<typename T>
 bool ClientCommunication<T>::TCPsendError(IReadableSocket& socket) const
 {
 	s_send_error block;
-	block.opcode = 0x16;
+	block.opcode = Opcodes::sendError;
 	int readSize = 0;
 
 	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
@@ -401,22 +412,23 @@ bool ClientCommunication<T>::TCPsendError(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&block.datasize), readSize);
 			return false;
 		}
-		readSize += socket.recv(reinterpret_cast<char*>(&block + HEADSIZE), sizeof(s_send_error) - HEADSIZE);
-		if (readSize != block.datasize || readSize != sizeof(s_send_error) - HEADSIZE)
+		readSize = socket.recv(reinterpret_cast<char*>(reinterpret_cast<char *>(&block) + HEADSIZE), sizeof(s_send_error) - HEADSIZE);
+		if (readSize != block.datasize && readSize != sizeof(s_send_error) - HEADSIZE)
 		{
-			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
+			socket.putback(reinterpret_cast<char*>(reinterpret_cast<char *>(&block) + 1), readSize);
 			return false;
 		}
 		(_handler->*_callableMap.at(block.opcode))(&block);
+		return true;
 	}
-	return true;
+	return false;
 }
 
 template<typename T>
 bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 {
 	s_screen_state block;
-	block.opcode = 0x17;
+	block.opcode = Opcodes::screenState;
 	int readSize = 0;
 	int nbElements = 0;
 	int i = 0;
@@ -457,8 +469,9 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 		}
 		(_handler->*_callableMap.at(block.opcode))(&block);
 		delete block.elements;
+		return true;
 	}
-	return true;
+	return false;
 }
 
 template<typename T>
@@ -466,7 +479,7 @@ bool ClientCommunication<T>::UDPendOfGame(IReadableSocket& socket) const
 {
 	s_end_of_game block;
 	int readSize = 0;
-	block.opcode = 0x18;
+	block.opcode = Opcodes::endOfGame;
 
 	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
 	{
@@ -477,8 +490,9 @@ bool ClientCommunication<T>::UDPendOfGame(IReadableSocket& socket) const
 			return false;
 		}
 		(_handler->*_callableMap.at(block.opcode))(&block);
+		return true;
 	}
-	return true;
+	return false;
 }
 
 template<typename T>
@@ -488,8 +502,11 @@ bool ClientCommunication<T>::UDPpause(IReadableSocket& socket) const
 	block.opcode = 0x19;
 
 	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
+	{
 		(_handler->*_callableMap.at(block.opcode))(&block);
-	return true;
+		return true;
+	}
+	return false;
 }
 
 template<typename T>
@@ -499,8 +516,11 @@ bool ClientCommunication<T>::UDPspawn(IReadableSocket& socket) const
 	block.opcode = 0x1A;
 
 	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
+	{
 		(_handler->*_callableMap.at(block.opcode))(&block);
-	return true;
+		return true;
+	}
+	return false;
 }
 
 template<typename T>
@@ -510,6 +530,9 @@ bool ClientCommunication<T>::UPDdeath(IReadableSocket& socket) const
 	block.opcode = 0x1B;
 
 	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
+	{
 		(_handler->*_callableMap.at(block.opcode))(&block);
-	return true;
+		return true;
+	}
+	return false;
 }

@@ -13,6 +13,7 @@
 #include "IReadableSocket.h"
 #include "Packet.hpp"
 #include "Player.h"
+#include "Opcodes.h"
 
 #define HEADSIZE (sizeof(char) + sizeof(short)) // taille du "header" opcode + datasize
 
@@ -240,19 +241,19 @@ public:
 	{
 		_handler = NULL;
 		_defaultCallback = NULL;
-		_commandMap[0x0F] = &ClientCommunication::TCProomList;			// 0x0F -
-		_commandMap[0x10] = &ClientCommunication::TCProomState;			// 0x10 -
-		_commandMap[0x11] = &ClientCommunication::TCPwrongMap;			// 0x11 -
-		_commandMap[0x12] = &ClientCommunication::TCPstartLoading;		// 0x12 -
-		_commandMap[0x13] = &ClientCommunication::TCPgetFileTrunk;		// 0x13 -
-		_commandMap[0x14] = &ClientCommunication::TCPassocSprites;		// 0x14 -
-		_commandMap[0x15] = &ClientCommunication::UDPok;				// 0x15 -
-		_commandMap[0x16] = &ClientCommunication::TCPsendError;			// 0x16 -
-		_commandMap[0x17] = &ClientCommunication::UDPscreenState;		// 0x17 -
-		_commandMap[0x18] = &ClientCommunication::UDPendOfGame;			// 0x18 -
-		_commandMap[0x19] = &ClientCommunication::UDPpause;				// 0x19 -
-		_commandMap[0x1A] = &ClientCommunication::UDPspawn;				// 0x1A -
-		_commandMap[0x1B] = &ClientCommunication::UPDdeath;				// 0x1B -
+		_commandMap[Opcodes::roomList] = &ClientCommunication::TCProomList;			
+		_commandMap[Opcodes::roomState] = &ClientCommunication::TCProomState;			
+		_commandMap[Opcodes::wrongMap] = &ClientCommunication::TCPwrongMap;			
+		_commandMap[Opcodes::startLoading] = &ClientCommunication::TCPstartLoading;		
+		_commandMap[Opcodes::fileTrunk] = &ClientCommunication::TCPgetFileTrunk;		
+		_commandMap[Opcodes::assocSprite] = &ClientCommunication::TCPassocSprites;		
+		_commandMap[Opcodes::UDPOkay] = &ClientCommunication::UDPok;				
+		_commandMap[Opcodes::sendError] = &ClientCommunication::TCPsendError;			
+		_commandMap[Opcodes::screenState] = &ClientCommunication::UDPscreenState;		
+		_commandMap[Opcodes::endOfGame] = &ClientCommunication::UDPendOfGame;			
+		//_commandMap[] = &ClientCommunication::UDPpause;				
+		//_commandMap[0x1A] = &ClientCommunication::UDPspawn;				
+		//_commandMap[0x1B] = &ClientCommunication::UPDdeath;				
 	}
 
 	~ClientCommunication() {}
