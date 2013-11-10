@@ -35,9 +35,9 @@ void	Script::makeRandomScript()
 
 void	Script::setRandomMap()
 {
-	char rand;
-	short int topLen = 0;
-	short int botLen = 0;
+	char		rand;
+	short int	topLen = 0;
+	short int	botLen = 0;
 
 	std::default_random_engine generator;
 	std::uniform_int_distribution<char> distribution(1, this->_patternList.size());
@@ -47,14 +47,13 @@ void	Script::setRandomMap()
 		if (this->_patternList[rand]._isTop = true)
 		{
 			if(topLen += this->_patternList[rand]._len <= this->_mapSize)
-				this->_map._topMap.append(&rand);
+				this->_map._topMap.append(this->_patternList[rand]._elemHeight);
 		}
 		else
 		{
 			if(botLen += this->_patternList[rand]._len <= this->_mapSize)
-				this->_map._topMap.append(&rand);
+				this->_map._topMap.append(this->_patternList[rand]._elemHeight);
 		}
-		//on random un pattern, et len += la longueur du pattern.
 	}
 }
 
@@ -101,7 +100,7 @@ void	Script::getPattern()
 			while (pos2 = line.find(",", pos) != std::string::npos)
 			{
 				temp = line.substr(pos, pos2);
-				newPattern._elemHeight.push_back(std::stoi(temp));
+				newPattern._elemHeight.append(temp);
 				pos = pos2 + 1;
 			}
 		}
@@ -122,4 +121,9 @@ void		Script::setScriptFile(std::string *newfile)
 void		Script::setRandom(bool rand)
 {
 	this->_isRandom = rand;
+}
+
+t_scriptMap	*Script::getMap()
+{
+	return (&this->_map);
 }

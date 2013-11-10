@@ -27,8 +27,6 @@ private:
 	short int				_firstColumn;
 	std::list<Element*>		_map[18][17]; // [hauteur y][largeur x]
 	short int				_globalPos;
-	char					_globalMapTop[256];
-	char					_globalMapBot[256];
 
 	// pools
 	std::list<Wall*>		_wallPool;

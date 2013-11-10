@@ -17,7 +17,7 @@
 
 #endif
 
-#define DEBUGSTATE	10
+#define DEBUGSTATE	8
 
 #define PATTERNFILE	""
 

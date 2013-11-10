@@ -7,6 +7,7 @@
 #include <algorithm>
 #include "rtype_common.h"
 #include "Wave.h"
+#include "Script.h"
 
 typedef struct	s_scriptWave
 {
@@ -25,7 +26,7 @@ typedef struct	s_pattern
 	bool		_isTop;
 	char		_id;
 	char		_len;
-	std::list<char>	_elemHeight;
+	std::string	_elemHeight;
 }				t_pattern;
 
 class Script

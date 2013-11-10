@@ -5,6 +5,7 @@ template class ServerCommunication<RTypeServer>;
 RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
   : _port(port), _TCPsocket(port)
 {
+	std::cout << "1 on " << DEBUGSTATE << " RTypeServer Initialised." << std::endl;
 	this->_isrunning = true;
 	// convertir le blPath en ofstream
 	this->_RTypeServerCom.setCallback(0x01, &RTypeServer::sayHello);
@@ -13,9 +14,10 @@ RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
 	this->_RTypeServerCom.setCallback(0x04, &RTypeServer::leaveRoom);
 	this->_RTypeServerCom.setDefaultCallback(&RTypeServer::callBackError);
 	this->_RTypeServerCom.setHandler(this);
-	std::cout << "1 on " << DEBUGSTATE << "RTypeServer Initialised." << std::endl;
 	this->setMaxRoom(maxRoom);
 	this->loadDynEnnemy("koukou");
+	std::cout << "1 on " << DEBUGSTATE << " Finished." << std::endl;
+
 }
 
 RTypeServer::~RTypeServer()
@@ -40,7 +42,7 @@ bool		RTypeServer::start()
 
 bool		RTypeServer::serverLoop()
 {
-	std::cout << "3 on " << DEBUGSTATE << "RTypeServer serverLoop launched." << std::endl;
+	std::cout << "3 on " << DEBUGSTATE << " RTypeServer serverLoop launched." << std::endl;
 	int		id = 0;
 	ITCPSocketClient*	newClient;
 	// création du prompt - commande de load des lib dynamiques
@@ -52,14 +54,18 @@ bool		RTypeServer::serverLoop()
 			id = createValidId<int, Client *>(id, this->_clientList);
 			if (this->_clientList.size() < MAXCLIENT)
 				{
-					this->_clientList.push_back(new Client(newClient, id));
 					std::cout << "4 on " << DEBUGSTATE << " RTypeServer new Client pushed." << std::endl;
+					this->_clientList.push_back(new Client(newClient, id));
+					std::cout << "4 on " << DEBUGSTATE << " Finished..." << std::endl;
+
 				}
 			else
 				this->sendError(66, "No more client allowed.");
 		}
 		this->CheckClientAnswer();
 	}
+	std::cout << "3 on " << DEBUGSTATE << "F inished..." << std::endl;
+
 	return (1);
 }
 
@@ -86,8 +92,7 @@ void		RTypeServer::CheckClientAnswer()
 
 void		RTypeServer::sayHello(void *data)
 {
-	std::cout << "5 on " << DEBUGSTATE << "RTypeServer Client said hello." << std::endl;
-
+	std::cout << "5 on " << DEBUGSTATE << " RTypeServer Client said hello." << std::endl;
 	std::string		magic((reinterpret_cast<s_say_hello *>(data))->magic);
 	if (magic.compare("KOUKOU") == 0)
 	{
@@ -99,10 +104,13 @@ void		RTypeServer::sayHello(void *data)
 		this->_currentClient->setResolution((reinterpret_cast<s_say_hello *>(data))->resolution[1],
 											(reinterpret_cast<s_say_hello *>(data))->resolution[2]);
 	}
+	std::cout << "5 on " << DEBUGSTATE << " Finished..." << std::endl;
 }
 
 void		RTypeServer::setRoom(void *data)
 {
+	std::cout << "6 on " << DEBUGSTATE << " RTypeServer Room set." << std::endl;
+
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
@@ -113,14 +121,19 @@ void		RTypeServer::setRoom(void *data)
 				(*it_room)->addClient(this->_currentClient);
 				(*it_room)->roomLoop();
 				this->_currentClient->setWaiting(false);
+				std::cout << "6 on " << DEBUGSTATE << " Finished...." << std::endl;
 				return;
 			}
 		}
+				std::cout << "6 on " << DEBUGSTATE << " Badly finished..." << std::endl;
+
 	return;
 }
 
 void		RTypeServer::selectRoom(void *data)
 {
+				std::cout << "7 on " << DEBUGSTATE << " RTypeServer new client in Room." << std::endl;
+
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
@@ -129,14 +142,18 @@ void		RTypeServer::selectRoom(void *data)
 			{
 				(*it_room)->addClient(this->_currentClient);
 				this->_currentClient->setWaiting(false);
+				std::cout << "7 on " << DEBUGSTATE << " Finished..." << std::endl;
+
 				return;
 			}
 		}
+	std::cout << "7 on " << DEBUGSTATE << " Badly finished..." << std::endl;
 	return;
 }
 
 void		RTypeServer::leaveRoom(void *data)
 {
+	std::cout << "8 on " << DEBUGSTATE << " RTypeServer client Left the Room." << std::endl;
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
@@ -144,9 +161,12 @@ void		RTypeServer::leaveRoom(void *data)
 			if ((*it_room)->removeClient(this->_currentClient->getId()))
 			{
 				this->_currentClient->setWaiting(true);
+				std::cout << "8 on " << DEBUGSTATE << "	Finished..." << std::endl;
 				return;
 			}
 		}
+	std::cout << "8 on " << DEBUGSTATE << " Badly finished..." << std::endl;
+
 	return;
 }
 
@@ -162,13 +182,15 @@ void		RTypeServer::sendError(char errorCode, const char *message)
 
 void		RTypeServer::setMaxRoom(char newMaxRoom)
 {
+	std::cout << "2 on " << DEBUGSTATE << " RTypeServer RoomPool set." << std::endl;
+
 	(newMaxRoom <= 100) ?
 		this->_maxRoom = newMaxRoom : this->_maxRoom = MAXROOM;
 	this->_maxRoom = newMaxRoom;
 	(this->_roomPool.size() <= this->_maxRoom) ?
 		this->genRoomPool(this->_maxRoom - static_cast<char>(this->_roomPool.size())) :
 	this->delRoomPool(static_cast<char>(this->_roomPool.size()) - this->_maxRoom);
-	std::cout << "2 on " << DEBUGSTATE << "RTypeServer RoomPool set." << std::endl;
+	std::cout << "2 on " << DEBUGSTATE << " Finished..." << std::endl;
 }
 
 void		RTypeServer::genRoomPool(int nbroom)

@@ -22,7 +22,6 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 	// startGame() va attendre que les clients soient ready via TCP
 	// puis envoi aux client le start game via TCP
 	this->gameLoop();
-  	
 }
 
 void	Game::callBackError(char opcode, IReadableSocket&)
@@ -75,19 +74,13 @@ void	Game::mapGeneration()
 	t_coord						coord;
 	std::list<Wall*>::iterator	it;
 
-	while (i < 256)
-	{
-		this->_globalMapTop[i] = '2';
-		this->_globalMapBot[i] =	 '2';
-		i++;
-	}
 	// on génère maintenant visibleMap
 	while (y < 18)
 	{
 		x = 0;
 		while (x < 17)
 		{
-			if (this->_globalMapTop[x] >= y || this->_globalMapBot[x] >= 18 - y)
+			if (this->_script->getMap()->_topMap[x] >= y || this->_script->getMap()->_botMap[x] >= 18 - y)
 			{
 				for (it = (this->_wallPool).begin(); it != (this->_wallPool).end(); it++)
 				{
@@ -322,7 +315,7 @@ void	Game::moveWall()
 	{
 		while (y < 18)
 		{
-				if (this->_globalMapTop[this->_globalPos] >= y || this->_globalMapBot[this->_globalPos] >= 18 - y)
+			if (this->_script->getMap()->_topMap[this->_globalPos] >= y || this->_script->getMap()->_botMap[this->_globalPos] >= 18 - y)
 				{
 					for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 					{
