@@ -18,7 +18,8 @@
 #define HEADSIZE (sizeof(char) + sizeof(short)) // taille du "header" opcode + datasize
 
 /* TCP BLOCK STRUCTURES DEFINITION */
-struct __attribute__((__packed__)) s_say_hello
+#pragma pack(push, 1)
+struct s_say_hello
 {
 	char opcode;
 	short datasize;
@@ -26,6 +27,7 @@ struct __attribute__((__packed__)) s_say_hello
 	char nickname[32];
 	short resolution[2];
 };
+#pragma pack(pop)
 
 struct s_room_list_content
 {
