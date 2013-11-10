@@ -7,7 +7,8 @@
 template class ServerCommunication<Room>;
 
 
-Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
+Room::Room(char id)
+	: _id(id), _th(new Thread(*this, &Room::roomLoop))
 {
 	this->_script = new Script;
 	this->_script->setRandom(true);
@@ -43,31 +44,21 @@ void	Room::callBackError(char opcode, IReadableSocket& client)
 
 bool	Room::startGame()
 {
-  bool	ready(false);
+	bool	ready(false);
 
-  std::cout << "Room (id = " << this->_id << ", nb player = "<< this->_nbReady
-			<<") attempt to create a game." << std::endl;
+	std::cout << "Room (id = " << this->_id << ", nb player = "<< this->_nbReady
+				<<") attempt to create a game." << std::endl;
 
-  // cree la game avec joueurs (UDP set) et un pointeur sur Script
+	this->_script->LoadMap(this->_map);
+  // cree la game avec joueurs (UDP set) et un pointeur sur script
   // 
-
-  /*
-  while (!ready)
-  {
-    Sleep(10);
-    this->_m.lock();
-    ready = this->_party.size() >= 2;
-    this->_m.unlock();
-  }
-	Game newGame(this->_party);
-	*/
-	// on instancie une game
 	return (true);
 }
 
 void	Room::roomLoop()
 {
-		std::vector<Player*>::iterator	ite = this->_party.begin();
+	this->_m.lock();
+	std::vector<Player*>::iterator	ite = this->_party.begin();
 
 	while (this->_party.size() != 0)
 	{
@@ -79,6 +70,7 @@ void	Room::roomLoop()
 					this->startGame();
 			}
 	}
+	this->_m.unlock();
 }
 
 void	Room::leaveRoom(void *data)
@@ -103,7 +95,7 @@ void	Room::changeDifficulty(void *data)
 {
 	this->_m.lock();
 	this->_difficulty = (reinterpret_cast<s_change_difficulty *>(data))->difficulty;
-		this->_m.unlock();
+	this->_m.unlock();
 }
 
 void	Room::getFileTrunk(void *data)
@@ -137,13 +129,13 @@ void	Room::downloadRessource(void *data)
 
 void	Room::ready(void *data)
 {
+
 	// init UDP ?
 }
 
 void	Room::letsPlay(void *data)
 {
 	// launch game if all clients said it
-
 }
 
 void	Room::saveMap(void *data)
@@ -154,6 +146,12 @@ void	Room::saveMap(void *data)
 void		Room::sendError(char errorCode, const char *message)
 {
 	this->_RoomCom.TCPsendError(this->_pack, errorCode, message);
+}
+
+void		Room::startLoading()
+{
+	this->_udpSock = new UDPSocketServer(0);
+	this->_port = this->_udpSock->getPort();
 }
 
 #include <iostream>
@@ -203,8 +201,11 @@ bool	Room::addClient(Client* newClient)
   if (_party.size() < 2)
   {
     std::cout << "PUSH BACK" <<  std::endl;
-    _party.push_back(new Player(newClient, this->validId()));
-    this->_m.unlock();
+	if (this->_party.size() < 4)
+	    _party.push_back(new Player(newClient, this->validId()));
+	else
+		std::cout << "This lobby is full." << std::endl;
+	this->_m.unlock();
     return (true);
   }
   this->_m.unlock();

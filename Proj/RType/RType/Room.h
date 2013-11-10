@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "ServerCommunication.hpp"
 #include "Script.h"
+#include "Game.h"
 
 //template<typename T>
 //class ServerCommunication;
@@ -19,9 +20,13 @@ private:
 	std::string	*_name; //limite 32
 	std::string	*_map; //limite 128
 	std::vector<Player*> _party;
+	unsigned short int	_port;
+	UDPSocketServer*	_udpSock;
+
 
 	Client *	_currentClient;
 	Script *	_script;
+	Game *		_game;
 	
 	Thread*		_th;
 	Mutex		_m;
@@ -46,6 +51,8 @@ public:
 	void	letsPlay(void *);
 	void	saveMap(void *);
 	void	callBackError(char, IReadableSocket&);
+
+	void	startLoading();
 
 	// send gestion
 	void	sendError(char, const char *);

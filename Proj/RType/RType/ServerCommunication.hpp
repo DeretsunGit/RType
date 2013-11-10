@@ -218,6 +218,7 @@ struct s_death
 /* END OF BLOCK STRUCTURES DEFINITION */
 
 class Room;
+class Game;
 
 template<typename T>
 class ServerCommunication

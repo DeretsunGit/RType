@@ -1,23 +1,21 @@
 #include <iostream>
 #include "Game.h"
+#include "ServerCommunication.cpp"
+template class ServerCommunication<Room>;
 
-Game::Game(const std::vector<Player*>& p)
-  : _players(p)
+Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
+  : _players(p), _script(s), _udpSock(UDPsock)
 {
-	
-	/*
 	this->_GameCom.setCallback(0x0D, &Game::inputs);
 	this->_GameCom.setCallback(0x0E, &Game::pauseOk);
 	this->_GameCom.setDefaultCallback(&Game::callBackError);
-	this->_GameCom.setHandler(this);*/
-	Packet packet;
+	this->_GameCom.setHandler(this);
 	std::cout << "Size: " << this->_players.size() << std::endl;
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	// on récupère Script en argument
-	this->setUDP();
 	//this->_com.TCPsendStartGame(packet, this->_port);
-	this->TCPsend(packet);
+	//this->TCPsend(packet);
 	this->mapGeneration();
 	this->genPool();
 	this->startGame();
@@ -27,27 +25,26 @@ Game::Game(const std::vector<Player*>& p)
   	
 }
 
-void	Game::callBackError(char, IReadableSocket&)
+void	Game::callBackError(char opcode, IReadableSocket&)
+{
+		std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;
+	std::cout << " can't be done while Game is already lauched" << std::endl;
+	this->sendError(61, "You can't perform this action by now.");
+}
+
+void	Game::inputs(void *data)
 {
 
 }
 
-void	inputs(void *data)
+void	Game::pauseOk(void *data)
 {
 
 }
 
-void	pauseOk(void *data)
+void		Game::sendError(char errorCode, const char *message)
 {
-
-}
-
-void	Game::setUDP()
-{
-	std::vector<Player*>::iterator	it_player;
-
-	this->_udpSock = new UDPSocketServer(0);
-	this->_port = this->_udpSock->getPort();
+	this->_GameCom.TCPsendError(this->_pack, errorCode, message);
 }
 
 void	Game::TCPsend(Packet& tosend)

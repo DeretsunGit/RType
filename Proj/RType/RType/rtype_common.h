@@ -17,6 +17,8 @@
 
 #endif
 
+#define DEBUGSTATE	10
+
 #define PATTERNFILE	""
 
 #define MAXROOM		100

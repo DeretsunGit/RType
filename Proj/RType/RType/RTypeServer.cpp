@@ -6,7 +6,6 @@ RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
   : _port(port), _TCPsocket(port)
 {
 	this->_isrunning = true;
-	this->setMaxRoom(maxRoom);
 	// convertir le blPath en ofstream
 	this->_RTypeServerCom.setCallback(0x01, &RTypeServer::sayHello);
 	this->_RTypeServerCom.setCallback(0x02, &RTypeServer::setRoom);
@@ -14,6 +13,9 @@ RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
 	this->_RTypeServerCom.setCallback(0x04, &RTypeServer::leaveRoom);
 	this->_RTypeServerCom.setDefaultCallback(&RTypeServer::callBackError);
 	this->_RTypeServerCom.setHandler(this);
+	std::cout << "1 on " << DEBUGSTATE << "RTypeServer Initialised." << std::endl;
+	this->setMaxRoom(maxRoom);
+	this->loadDynEnnemy("koukou");
 }
 
 RTypeServer::~RTypeServer()
@@ -38,6 +40,7 @@ bool		RTypeServer::start()
 
 bool		RTypeServer::serverLoop()
 {
+	std::cout << "3 on " << DEBUGSTATE << "RTypeServer serverLoop launched." << std::endl;
 	int		id = 0;
 	ITCPSocketClient*	newClient;
 	// création du prompt - commande de load des lib dynamiques
@@ -48,7 +51,10 @@ bool		RTypeServer::serverLoop()
 		{
 			id = createValidId<int, Client *>(id, this->_clientList);
 			if (this->_clientList.size() < MAXCLIENT)
-				this->_clientList.push_back(new Client(newClient, id));
+				{
+					this->_clientList.push_back(new Client(newClient, id));
+					std::cout << "4 on " << DEBUGSTATE << " RTypeServer new Client pushed." << std::endl;
+				}
 			else
 				this->sendError(66, "No more client allowed.");
 		}
@@ -80,6 +86,8 @@ void		RTypeServer::CheckClientAnswer()
 
 void		RTypeServer::sayHello(void *data)
 {
+	std::cout << "5 on " << DEBUGSTATE << "RTypeServer Client said hello." << std::endl;
+
 	std::string		magic((reinterpret_cast<s_say_hello *>(data))->magic);
 	if (magic.compare("KOUKOU") == 0)
 	{
@@ -160,6 +168,7 @@ void		RTypeServer::setMaxRoom(char newMaxRoom)
 	(this->_roomPool.size() <= this->_maxRoom) ?
 		this->genRoomPool(this->_maxRoom - static_cast<char>(this->_roomPool.size())) :
 	this->delRoomPool(static_cast<char>(this->_roomPool.size()) - this->_maxRoom);
+	std::cout << "2 on " << DEBUGSTATE << "RTypeServer RoomPool set." << std::endl;
 }
 
 void		RTypeServer::genRoomPool(int nbroom)
@@ -180,16 +189,16 @@ void		RTypeServer::delRoomPool(int nbRoom)
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end() && i < nbRoom); it_room++)
+	{
+		if ((*it_room)->getNbPlayer() == 0)
 		{
-			if ((*it_room)->getNbPlayer() == 0)
-			{
-				temp = *it_room;
-				this->_roomPool.erase(it_room);
-				delete temp;
-				it_room--;
-				i++;
-			}
+			temp = *it_room;
+			this->_roomPool.erase(it_room);
+			delete temp;
+			it_room--;
+			i++;
 		}
+	}
 }
 
 template<class ret, class clist>
