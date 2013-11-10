@@ -61,7 +61,7 @@ void			Debugger::start()
   SenderMap::iterator	end(this->_senders.end());
 
   this->_th.start();
-  while (std::getline(std::cin, line) && this->_tcp.isLive())
+  while (std::getline(std::cin, line) && this->_tcp.isLive() && line != "exit")
   {
     std::istringstream	input(line);
     Args		args;
@@ -229,11 +229,13 @@ void			Debugger::handleScreenState(void *data)
   std::cout << "--- SCREEN STATE ---" << std::endl;
   std::cout << "Score: " << state->score << std::endl;
   std::cout << "Elements" << std::endl << '{' << std::endl;
-  while (state->idSprite[i])
+  while (state->sprites[i].idSprite)
     {
-      std::cout << "\tSprite " << state->idSprite[i] << " at ("
-		<< state->coords[i]._posX << ", "
-		<< state->coords[i]._posY << ')' << std::endl;
+      std::cout << "\tSprite " << state->sprites[i].idSprite << " at ("
+		<< state->sprites[i].coord[0] << ", "
+		<< state->sprites[i].coord[1] << ", "
+		<< state->sprites[i].coord[2] << ", "
+		<< state->sprites[i].coord[3] << ')' << std::endl;
       ++i;
     }
   std::cout << '}' << std::endl;

@@ -8,7 +8,9 @@
 // Last update Fri Nov  8 15:12:12 2013 julien edmond
 //
 
+#include	<cstring>
 #include	"ClientCommunication.hpp"
+#include	"rtype_common.h"
 
 /* CLIENT TO SERVER */
 template<typename T>
@@ -18,9 +20,9 @@ void ClientCommunication<T>::TCPsayHello(Packet& packet, const char* nickname, s
 
 	  block.opcode = 0x01;
 	  block.datasize = sizeof(s_say_hello) - HEADSIZE;
-	  block.magic = "KOUKOU";
+	  strcpy(block.magic, "KOUKOU");
 	  memcpy(block.nickname, nickname, strlen(nickname));
-	  block.resolution = resolution;
+	  memcpy(block.resolution, resolution, sizeof(block.resolution));
 
 	  packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_say_hello));
   }
@@ -206,7 +208,7 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 			readSize = 0;
 			++i;
 		}
-		(_handler->*_callableMap[roomList.opcode])(&roomList);
+		(_handler->*(_callableMap.at(roomList.opcode)))(&roomList);
 		delete roomList.rooms;
 	}
 	return true;
@@ -233,7 +235,7 @@ bool ClientCommunication<T>::TCProomState(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&status + 1), readSize);
 			return false;
 		}
-		(_handler->*_callableMap[status.opcode])(&status);
+		(_handler->*_callableMap.at(status.opcode))(&status);
 	}
 	return true;
 }
@@ -245,7 +247,7 @@ bool ClientCommunication<T>::TCPwrongMap(IReadableSocket& socket) const
 	block.opcode = 0x11;
 
 	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 	return true;
 }
 
@@ -292,7 +294,7 @@ bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 			readSize = 0;
 			++i;
 		}
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 		delete block.ressources;
 	}
 	return true;
@@ -319,7 +321,7 @@ bool ClientCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
 			return false;
 		}
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 	}
 	return true;
 }
@@ -367,7 +369,7 @@ bool ClientCommunication<T>::TCPassocSprites(IReadableSocket& socket) const
 			readSize = 0;
 			++i;
 		}
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 		delete block.sprites;
 	}
 	return true;
@@ -380,7 +382,7 @@ bool ClientCommunication<T>::UDPok(IReadableSocket& socket) const
 	block.opcode = 0x15;
 
 	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 	return true;
 }
 
@@ -405,7 +407,7 @@ bool ClientCommunication<T>::TCPsendError(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
 			return false;
 		}
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 	}
 	return true;
 }
@@ -453,7 +455,7 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 			readSize = 0;
 			++i;
 		}
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 		delete block.sprites;
 	}
 	return true;
@@ -463,6 +465,7 @@ template<typename T>
 bool ClientCommunication<T>::UDPendOfGame(IReadableSocket& socket) const
 {
 	s_end_of_game block;
+	int readSize = 0;
 	block.opcode = 0x18;
 
 	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
@@ -473,7 +476,7 @@ bool ClientCommunication<T>::UDPendOfGame(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&block.score), readSize);
 			return false;
 		}
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 	}
 	return true;
 }
@@ -485,7 +488,7 @@ bool ClientCommunication<T>::UDPpause(IReadableSocket& socket) const
 	block.opcode = 0x19;
 
 	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 	return true;
 }
 
@@ -496,7 +499,7 @@ bool ClientCommunication<T>::UDPspawn(IReadableSocket& socket) const
 	block.opcode = 0x1A;
 
 	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 	return true;
 }
 
@@ -507,6 +510,6 @@ bool ClientCommunication<T>::UPDdeath(IReadableSocket& socket) const
 	block.opcode = 0x1B;
 
 	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
-		(_handler->*_callableMap[block.opcode])(&block);
+		(_handler->*_callableMap.at(block.opcode))(&block);
 	return true;
 }

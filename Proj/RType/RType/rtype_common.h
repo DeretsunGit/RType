@@ -7,7 +7,9 @@
 
 #ifdef _WIN32
 
-#include <Windows.h>
+# include <Windows.h>
+
+# define	strcpy	strcpy_s
 
 #endif
 
