@@ -14,12 +14,6 @@ public:
   ThreadPool(unsigned int nbThread = 10);
   ~ThreadPool();
 
-private:
-  ThreadPool(const ThreadPool&);
-  ThreadPool& operator=(const ThreadPool&);
-
-  void	poolLoop();
-
   template<typename Obj>
   void addAction(Obj& o, void (Obj::*m)(), bool bufferise = true)
   {
@@ -53,12 +47,23 @@ private:
   }
 
   void	startWorking();
+  void	wait();
+
+private:
+  ThreadPool(const ThreadPool&);
+  ThreadPool& operator=(const ThreadPool&);
+
+  void	poolLoop();
 
   std::vector<Thread>	      _ths;
+  Mutex			      _waitLock;
+  CondVar		      _waitCond;
+  Mutex			      _m;
+  CondVar		      _cond;
   std::queue<ICaller*>	      _buff;
   bool			      _living;
+  unsigned int		      _wait;
+  const unsigned int	      _maxWait;
 
-  Mutex			_m;
-  CondVar		_cond;
   std::queue<ICaller*>	_toDo;
 };

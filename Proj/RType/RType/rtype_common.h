@@ -9,8 +9,6 @@
 
 # include <Windows.h>
 
-# define _CRT_SECURE_NO_WARNINGS
-
 #endif
 
 #ifndef	_WIN32

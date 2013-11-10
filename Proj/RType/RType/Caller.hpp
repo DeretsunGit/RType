@@ -92,7 +92,7 @@ protected:
 
 template <typename Callable, typename Arg>
 ICaller*  getCaller(Callable c, Arg a)
-{ return (new Caller(c, a)); }
+{ return (new Caller<Callable, Arg>(c, a)); }
 
 template <typename Obj>
 class MthdPtrCaller: public Caller<std::mem_fun_t<void, Obj>, Obj*>
@@ -116,7 +116,7 @@ private:
 
 template <typename Obj>
 ICaller*  getCaller(Obj& o, void (Obj::*m)())
-{ return (new MthdPtrCaller(o, m)); }
+{ return (new MthdPtrCaller<Obj>(o, m)); }
 
 template <typename Obj, typename Param>
 class MthdPtrCaller2: public Caller<std::binder1st<std::mem_fun1_t<void, Obj, Param> >, Param>
@@ -140,4 +140,4 @@ private:
 
 template <typename Obj, typename Param>
 ICaller*  getCaller(Obj& o, void (Obj::*m)(Param), Param p)
-{ return (new MthdPtrCaller2(o, m, p)); }
+{ return (new MthdPtrCaller2<Obj, Param>(o, m, p)); }
