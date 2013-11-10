@@ -39,6 +39,7 @@ class Script
 	std::ifstream	*_patternFile;
 	std::ifstream	*_scriptFile;
 	std::vector<t_pattern> _patternList;
+	Randomisation<char>		*_rand;
 
 public:
 	Script();

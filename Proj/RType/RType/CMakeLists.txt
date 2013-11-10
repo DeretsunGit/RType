@@ -75,8 +75,6 @@ add_library(Abstract
 	UnixUDPSocketClient.h
 	UnixUDPSocketServer.cpp
 	UnixUDPSocketServer.h
-	Randomisation.h
-	Randomisation.cpp
 	)
 
 add_executable (Server
@@ -120,6 +118,8 @@ add_executable (Server
 	Wall.h
 	Script.h
 	Script.cpp
+	Randomisation.h
+	Randomisation.cpp
 	)
 
 add_executable (Client

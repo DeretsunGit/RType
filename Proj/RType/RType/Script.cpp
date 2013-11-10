@@ -1,9 +1,12 @@
 #include "Script.h"
+#include "Randomisation.cpp"
+template class Randomisation<char>;
 
 Script::Script()
 {
 	this->_patternFile = new std::ifstream(PATTERNFILE);
 	this->getPattern();
+	this->_rand = new Randomisation<char>;
 }
 
 Script::~Script(void)
@@ -44,7 +47,7 @@ void	Script::setRandomMap()
 	//std::uniform_int_distribution<char> distribution(1, this->_patternList.size());
 	while (topLen < this->_mapSize || botLen < this->_mapSize) // top
 	{
-		rand = my_rand.tRand(1, this->_patternList.size());
+		rand = this->_rand->tRand(1, this->_patternList.size());
 		//rand = distribution(generator);
 		if (this->_patternList[rand]._isTop = true)
 		{

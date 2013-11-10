@@ -2,17 +2,15 @@
 #include <cstdlib>
 #include <limits>
 
-template<class T>
+template<typename T>
 class Randomisation
 {
-	bool	_is;
 
 public:
 	Randomisation();
 	~Randomisation();
 
-	void	init();
-	T		tRand(); //rand sur les positif du type passé
+	//T		tRand(); //rand sur les positif du type passé
 	T		tRand(T); // random de 0 à x
 	T		tRand(T, T); // random entre x et y
 

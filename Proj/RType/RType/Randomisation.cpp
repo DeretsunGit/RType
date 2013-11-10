@@ -1,23 +1,23 @@
 #include "Randomisation.h"
 
 
-template<class T>
+template<typename T>
 Randomisation<T>::Randomisation()
 {
-	srand(TIME(NULL));
+	srand(time(NULL));
 }
 
-template<class T>
+template<typename T>
 Randomisation<T>::~Randomisation()
 {
 
 }
 
-template<class T>
+/*template<class T>
 T		Randomisation<T>::tRand()
 {
 	return (rand() % std::numeric_limits<T>::max());
-}
+}*/
 
 template<class T>
 T		Randomisation<T>::tRand(T max)
@@ -25,8 +25,8 @@ T		Randomisation<T>::tRand(T max)
 	return (rand() % max);
 }
 
-template<class T>
+template<typename T>
 T		Randomisation<T>::tRand(T min, T max)
 {
-	return (rand() % max + min);
+	return (rand() % (max - min) + min);
 }
