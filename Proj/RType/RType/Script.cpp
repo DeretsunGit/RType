@@ -39,11 +39,13 @@ void	Script::setRandomMap()
 	short int	topLen = 0;
 	short int	botLen = 0;
 
-	std::default_random_engine generator;
-	std::uniform_int_distribution<char> distribution(1, this->_patternList.size());
+	Randomisation<char> my_rand;
+	//std::default_random_engine generator;
+	//std::uniform_int_distribution<char> distribution(1, this->_patternList.size());
 	while (topLen < this->_mapSize || botLen < this->_mapSize) // top
 	{
-		rand = distribution(generator);
+		rand = my_rand.tRand(1, this->_patternList.size());
+		//rand = distribution(generator);
 		if (this->_patternList[rand]._isTop = true)
 		{
 			if(topLen += this->_patternList[rand]._len <= this->_mapSize)

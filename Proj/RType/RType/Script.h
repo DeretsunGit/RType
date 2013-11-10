@@ -8,6 +8,7 @@
 #include "rtype_common.h"
 #include "Wave.h"
 #include "Script.h"
+#include "Randomisation.h"
 
 typedef struct	s_scriptWave
 {
