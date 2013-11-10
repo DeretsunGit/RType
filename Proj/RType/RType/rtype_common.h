@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <list>
 #include <iterator>
 #include <iostream>
