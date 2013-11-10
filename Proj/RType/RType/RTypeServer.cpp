@@ -59,13 +59,16 @@ bool		RTypeServer::serverLoop()
 
 void		RTypeServer::CheckClientAnswer()
 {
+	Client		*temp;
 	std::list<Client*>::iterator	it_client;
 
 	for (it_client = (this->_clientList).begin(); (it_client != (this->_clientList).end()); it_client++)
 		{
 			if ((*it_client)->getDelete() == true)
 			{
+				temp = *it_client;
 				this->_clientList.erase(it_client);
+				delete temp;
 			}
 			else if ((*it_client)->getWaiting() == true)
 			{
@@ -77,7 +80,8 @@ void		RTypeServer::CheckClientAnswer()
 
 void		RTypeServer::sayHello(void *data)
 {
-	if ((reinterpret_cast<s_say_hello *>(data))->magic != "KOUKOU")
+	std::string		magic((reinterpret_cast<s_say_hello *>(data))->magic);
+	if (magic.compare("KOUKOU") == 0)
 	{
 		this->_currentClient->setDelete(true);
 	}
@@ -171,6 +175,7 @@ void		RTypeServer::genRoomPool(int nbroom)
 
 void		RTypeServer::delRoomPool(int nbRoom)
 {
+	Room	*temp;
 	int		i = 0;
 	std::list<Room*>::iterator	it_room;
 
@@ -178,7 +183,9 @@ void		RTypeServer::delRoomPool(int nbRoom)
 		{
 			if ((*it_room)->getNbPlayer() == 0)
 			{
+				temp = *it_room;
 				this->_roomPool.erase(it_room);
+				delete temp;
 				it_room--;
 				i++;
 			}

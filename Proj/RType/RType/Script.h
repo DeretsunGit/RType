@@ -35,22 +35,31 @@ class Script
 	std::list<t_scriptWave *>	_waveList;
 	t_scriptMap		_map;
 	std::ifstream	*_patternFile;
-	std::ifstream	_scriptFile;
+	std::ifstream	*_scriptFile;
 	std::vector<t_pattern> _patternList;
 
 public:
-	Script(bool, std::string);
+	Script();
 	~Script(void);
+	void			LoadMap(std::string *);
 
+	void			interpretMap();
 	//random
 	void			makeRandomScript();
 	void			setRandomMap();
 	t_scriptWave	*setRandomWave();
+	void			getPattern();
 
 	//chargement
 	//void	getScript();
 	t_scriptMap		*getMap();
 	t_scriptWave	*getWave();
-	void			getPattern();
+	//std::string		getScriptFile();
+	bool			getRandom();
+
+	void			setScriptFile(std::string *);
+	void			setRandom(bool);
+
+	void			genFile();
 };
 

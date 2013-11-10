@@ -9,7 +9,8 @@ template class ServerCommunication<Room>;
 
 Room::Room(char id) : _id(id), _th(new Thread(*this, &Room::roomLoop))
 {
-	this->_isRandom = true;
+	this->_script = new Script;
+	this->_script->setRandom(true);
 	this->_difficulty = 1;
 	this->_nbReady = 0;
 
@@ -46,7 +47,7 @@ bool	Room::startGame()
 
   std::cout << "Room (id = " << this->_id << ", nb player = "<< this->_nbReady
 			<<") attempt to create a game." << std::endl;
-  // generation du script
+
   // cree la game avec joueurs (UDP set) et un pointeur sur Script
   // 
 
@@ -93,7 +94,7 @@ void	Room::leaveRoom(void *data)
 void	Room::setMap(void *data)
 {
 	this->_m.lock();
-	this->_isRandom = (reinterpret_cast<s_set_map *>(data))->mapStatus;
+	this->_script->setRandom((reinterpret_cast<s_set_map *>(data))->mapStatus);
 	this->_map->replace(0, std::string::npos, (reinterpret_cast<s_set_map *>(data))->filename);
 	this->_m.unlock();
 }
@@ -259,7 +260,7 @@ const std::string& Room::getMap() const
 
 bool	Room::getMapStatus() const
 {
-	return this->_isRandom;
+	return this->_script->getRandom();
 }
 
 int		Room::validId()

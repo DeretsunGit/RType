@@ -5,6 +5,7 @@
 #include "Mutex.h"
 #include "Player.h"
 #include "ServerCommunication.hpp"
+#include "Script.h"
 
 //template<typename T>
 //class ServerCommunication;
@@ -13,7 +14,6 @@ class Room
 {
 private:
 	const char	_id;
-	bool		_isRandom;
 	char		_nbReady;
 	char		_difficulty;
 	std::string	*_name; //limite 32
@@ -21,7 +21,8 @@ private:
 	std::vector<Player*> _party;
 
 	Client *	_currentClient;
-
+	Script *	_script;
+	
 	Thread*		_th;
 	Mutex		_m;
 	ServerCommunication<Room>	_RoomCom;

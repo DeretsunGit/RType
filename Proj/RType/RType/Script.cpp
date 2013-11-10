@@ -1,6 +1,6 @@
 #include "Script.h"
 
-Script::Script(bool isRandom, std::string filename)
+Script::Script()
 {
 	this->_patternFile = new std::ifstream(PATTERNFILE);
 	this->getPattern();
@@ -8,14 +8,29 @@ Script::Script(bool isRandom, std::string filename)
 
 Script::~Script(void)
 {
+	delete this->_scriptFile;
+	delete this->_patternFile;
+}
+
+void	Script::LoadMap(std::string	*map)
+{
+	if (!this->_isRandom && !map->empty())
+		{
+			this->setScriptFile(map);
+			this->interpretMap();
+		}
+	else
+		this->makeRandomScript();
+}
+
+void	Script::interpretMap()
+{
+// on recup la map et on remplit les structures
 }
 
 void	Script::makeRandomScript()
 {
-
-	// random map : recup du retour et ecriture dans un fichier
 	this->setRandomMap();
-	// random	 wave : recup du retour et ecriture dans le fichier
 }
 
 void	Script::setRandomMap()
@@ -92,4 +107,19 @@ void	Script::getPattern()
 		}
 		this->_patternList.push_back(newPattern);
 	}
+}
+
+bool		Script::getRandom()
+{
+	return (this->_isRandom);
+}
+
+void		Script::setScriptFile(std::string *newfile)
+{
+	this->_scriptFile = new std::ifstream(*newfile);
+}
+
+void		Script::setRandom(bool rand)
+{
+	this->_isRandom = rand;
 }
