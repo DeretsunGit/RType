@@ -38,7 +38,7 @@ public:
   WinThread(Callable& c)
     : _call(getCaller(c)), _launched(false)
   {
-    if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, NULL, CREATE_SUSPENDED, &this->_id)))
+    if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, this->_call, CREATE_SUSPENDED, &this->_id)))
       throw std::runtime_error("Thread creation failed");
   }
 

@@ -3,6 +3,7 @@ project(RType)
 
 if(WIN32)
 	include_directories(../client/SFML-2.1/include)
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		link_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-x64/lib)
 	else(CMAKE_SIZEOF_VOID_P EQUAL 8)

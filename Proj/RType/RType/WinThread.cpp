@@ -16,20 +16,24 @@
 WinThread::WinThread(const WinThread& w)
   : _launched(false)
 {
-  if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, NULL, CREATE_SUSPENDED, &this->_id)))
-      throw std::runtime_error("Thread creation failed");
   this->_call = w._call->clone();
+  if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, this->_call, CREATE_SUSPENDED, &this->_id)))
+  {
+    delete this->_call;
+    throw std::runtime_error("Thread creation failed");
+  }
 }
 
 WinThread::~WinThread()
 {
+  TerminateThread(this->_th, 0);
   CloseHandle(this->_th);
   delete this->_call;
 }
 
 bool WinThread::start()
 {
-  return (ResumeThread(this->_th) != -1);
+  return ((this->_launched = (ResumeThread(this->_th) != -1)));
 }
 
 bool WinThread::join()
