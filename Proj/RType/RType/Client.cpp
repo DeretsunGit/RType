@@ -36,6 +36,11 @@ void		Client::setName(char *name)
 	this->_name->replace(0, std::string::npos, name);
 }
 
+std::string		*Client::getName() const
+{
+	return (this->_name);
+}
+
 bool		Client::getDelete() const
 {
 	return (this->_toDelete);

@@ -22,6 +22,7 @@ public:
 	void		setResolution(short int, short int);
 	void		setName(char *);
 
+	std::string	*getName() const;
 	bool		getDelete() const;
 	t_coord		getResolution() const;
 	int			getId() const;

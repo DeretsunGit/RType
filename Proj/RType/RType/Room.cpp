@@ -240,7 +240,7 @@ const std::vector<Player*>& Room::getPlayers() const
 
 const std::string&	Room::getName() const
 {
-	return(*this->_name);
+	return(this->_name);
 }
 
 char	Room::getDifficulty() const
@@ -250,9 +250,9 @@ char	Room::getDifficulty() const
 
 bool	Room::setName(const char *newName)
 {
-	std::string temp(newName);
-	*this->_name = temp.size() <= 32 ? temp : *this->_name;
-	return (temp.size() <= 32 ? true : false);
+	this->_name = newName;
+	return (true);
+//	return (temp.size() <= 32 ? true : false);
 }
 
 const std::string& Room::getMap() const

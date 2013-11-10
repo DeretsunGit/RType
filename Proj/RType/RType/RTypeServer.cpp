@@ -104,6 +104,7 @@ void		RTypeServer::sayHello(void *data)
 		this->_currentClient->setName((reinterpret_cast<s_say_hello *>(data))->nickname);
 		this->_currentClient->setResolution((reinterpret_cast<s_say_hello *>(data))->resolution[1],
 											(reinterpret_cast<s_say_hello *>(data))->resolution[2]);
+		this->sendRoomList();
 	}
 	std::cout << "5 on " << DEBUGSTATE << " Finished..." << std::endl;
 }
@@ -122,7 +123,7 @@ void		RTypeServer::setRoom(void *data)
 				(*it_room)->addClient(this->_currentClient);
 				(*it_room)->getThread()->start();
 				this->_currentClient->setWaiting(false);
-				std::cout << "6 on " << DEBUGSTATE << " Finished...." << std::endl;
+				std::cout << "6 on " << DEBUGSTATE << " Finished : " << *(this->_currentClient->getName()) << " Joined Room " << ((*it_room)->getName()) << " of id : " << static_cast<int>((*it_room)->getId()) << std::endl;
 				return;
 			}
 		}
@@ -174,11 +175,14 @@ void		RTypeServer::leaveRoom(void *data)
 void		RTypeServer::sendRoomList()
 {
 	this->_RTypeServerCom.TCProomList(this->_pack, (this->_roomPool));
+	std::cout << "Opcode : "<< static_cast<int>(this->_pack.getBuffer()[0])<< " ; PacketSize : "<< this->_pack.getSize() << std::endl;
+	this->_currentClient->getTCPSock()->send(this->_pack);
 }
 
 void		RTypeServer::sendError(char errorCode, const char *message)
 {
 	this->_RTypeServerCom.TCPsendError(this->_pack, errorCode, message);
+	this->_currentClient->getTCPSock()->send(this->_pack);
 }
 
 void		RTypeServer::setMaxRoom(char newMaxRoom)
@@ -200,7 +204,7 @@ void		RTypeServer::genRoomPool(int nbroom)
 
 	while (i < nbroom)
 	{
-		this->_roomPool.push_back(new Room(this->createValidId<char, Room *>(0, this->_roomPool)));
+		this->_roomPool.push_back(new Room(this->createValidId<char, Room *>(1, this->_roomPool)));
 		i ++;
 	}
 }

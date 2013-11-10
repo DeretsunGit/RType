@@ -17,9 +17,9 @@ private:
 	const char	_id;
 	char		_nbReady;
 	char		_difficulty;
-	std::string	*_name; //limite 32
+	std::string	_name; //limite 32
 	std::string	*_map; //limite 128
-	std::vector<Player*> _party;
+	std::vector<Player*> _party; //-
 	unsigned short int	_port;
 	UDPSocketServer*	_udpSock;
 
