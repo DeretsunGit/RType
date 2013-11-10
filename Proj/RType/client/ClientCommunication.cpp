@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Fri Nov  8 15:05:51 2013 julien edmond
-// Last update Sun Nov 10 20:11:15 2013 julien edmond
+// Last update Sun Nov 10 20:23:29 2013 julien edmond
 //
 
 #include	<algorithm>
@@ -185,9 +185,11 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
   int i = 0;
 
   roomList.opcode = Opcodes::roomList;
-  if (socket.readable() && (_handler && _callableMap.find(roomList.opcode) != _callableMap.end()))
+  if (socket.readable() &&
+      (_handler && _callableMap.find(roomList.opcode) != _callableMap.end()))
     {
       readSize = socket.recv(reinterpret_cast<char*>(&roomList.datasize), 2);
+      std::cout << "Datasize: " << roomList.datasize << std::endl;
       if (readSize != 2)
 	{
 	  socket.putback(reinterpret_cast<char*>(&roomList.datasize), readSize);
