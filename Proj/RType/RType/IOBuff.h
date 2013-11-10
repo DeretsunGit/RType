@@ -2,15 +2,16 @@
 
 #include "CircularBuffer.h"
 
-template<typename Type = char, unsigned long size = 500>
+template<typename Type = char, unsigned long isize = 4096,
+	 unsigned long osize = isize>
 struct IOBuff
 {
-  CircularBuffer<Type, size>  _input;
-  CircularBuffer<Type, size>  _output;
+  CircularBuffer<Type, isize>  _input;
+  CircularBuffer<Type, osize>  _output;
 };
 
-template<unsigned int size = 500>
-struct UDPBuff: public IOBuff<char, size>
+template<unsigned long isize = 4096, unsigned long osize = isize>
+struct UDPBuff: public IOBuff<char, isize, osize>
 {
   unsigned short  _port;
 };

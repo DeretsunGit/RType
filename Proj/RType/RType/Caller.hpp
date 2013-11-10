@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Thu Oct 24 14:58:58 2013 julien edmond
-// Last update Sat Oct 26 15:17:09 2013 julien edmond
+// Last update Sun Nov 10 19:43:24 2013 julien edmond
 //
 
 #pragma once
@@ -43,7 +43,7 @@ public:
 
   ICaller*  clone()
   { return (new BasicCaller(this->_call)); }
-  
+
 private:
   BasicCaller();
   BasicCaller&	operator=(const BasicCaller&);
@@ -84,7 +84,7 @@ public:
 private:
   Caller();
   Caller&	operator=(const Caller&);
-  
+
 protected:
   Callable	_call;
   Arg		_arg;
@@ -103,11 +103,12 @@ public:
   {}
 
   MthdPtrCaller(const MthdPtrCaller& m)
-    : Caller(m)
+    : Caller<std::mem_fun_t<void, Obj>, Obj*>(m)
   {}
 
   ICaller*  clone()
-  { return (new Caller(this->_call, this->_arg)); }
+  { return (new Caller<std::mem_fun_t<void, Obj>, Obj*>(this->_call,
+							this->_arg)); }
 
 private:
   MthdPtrCaller();
@@ -127,11 +128,11 @@ public:
   {}
 
   MthdPtrCaller2(const MthdPtrCaller2& m)
-    : Caller(m)
+    : Caller<std::binder1st<std::mem_fun1_t<void, Obj, Param> >, Param>(m)
   {}
 
   ICaller*  clone()
-  { return (new Caller(this->_call, this->_arg)); }
+  { return (new Caller<std::binder1st<std::mem_fun1_t<void, Obj, Param> >, Param>(this->_call, this->_arg)); }
 
 private:
   MthdPtrCaller2();

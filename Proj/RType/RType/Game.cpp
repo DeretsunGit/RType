@@ -53,7 +53,7 @@ void	Game::TCPsend(Packet& tosend)
   std::cout << __LINE__ << std::endl;
 	std::vector<Player*>::const_iterator	end(this->_players.end());
   std::cout << __LINE__ << std::endl;
-	
+
   if (tosend.getSize())
   {
     while (it_player != end)
@@ -263,7 +263,7 @@ void Game::playerShoot(Player *currentPlayer)
 	{
 		if ((*it_bullet)->getHP() == 0)
 		{
-			(*it_bullet)->setPos(&(currentPlayer->getPos())); // faux car tir en haut a gauche
+		  //			(*it_bullet)->setPos(&(currentPlayer->getPos())); // faux car tir en haut a gauche
 			(*it_bullet)->setHP(1);
 			(*it_bullet)->setFaction(PLAYER);
 		}
