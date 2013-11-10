@@ -82,6 +82,8 @@ void			Debugger::start()
     // }
     if (!args.empty() && (it = this->_senders.find(args[0])) != end)
       (this->*it->second)(args);
+    else
+      std::cout << "Unknown command " << args[0] << std::endl;
   }
 }
 

@@ -47,8 +47,17 @@ public:
     : BasicThread(c, p)
   {}
 
+  Thread(const Thread& t)
+    : BasicThread(dynamic_cast<const BasicThread&>(t))
+  {}
+
+  Thread&	operator=(const Thread& t)
+  {
+    if (this != &t)
+      this->BasicThread::operator=(t);
+    return (*this);
+  }
+
 private:
   Thread();
-  Thread(const Thread&);
-  Thread&	operator=(const Thread&);
 };

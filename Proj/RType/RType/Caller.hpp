@@ -18,6 +18,7 @@ public:
   ~ICaller() {}
 
   virtual void	call() = 0;
+  virtual ICaller*	clone() = 0;
 };
 
 template<typename Callable>
@@ -28,7 +29,7 @@ public:
     : _call(c)
   {}
 
-  BasicCaller(BasicCaller& c)
+  BasicCaller(const BasicCaller& c)
     : _call(c._call)
   {}
 
@@ -40,12 +41,22 @@ public:
     this->_call();
   }
 
+  ICaller*  clone()
+  { return (new BasicCaller(this->_call)); }
+  
 private:
   BasicCaller();
   BasicCaller&	operator=(const BasicCaller&);
 
+protected:
   Callable	_call;
 };
+
+template<typename Callable>
+ICaller*  getCaller(Callable c)
+{
+  return (new BasicCaller<Callable>(c));
+}
 
 template<typename Callable, typename Arg>
 class Caller : public ICaller
@@ -55,7 +66,7 @@ public:
     : _call(c), _arg(a)
   {}
 
-  Caller(Caller& c)
+  Caller(const Caller& c)
     : _call(c._call), _arg(c._arg)
   {}
 
@@ -67,13 +78,21 @@ public:
     this->_call(this->_arg);
   }
 
+  ICaller*  clone()
+  { return (new Caller(this->_call, this->_arg)); }
+
 private:
   Caller();
   Caller&	operator=(const Caller&);
-
+  
+protected:
   Callable	_call;
   Arg		_arg;
 };
+
+template <typename Callable, typename Arg>
+ICaller*  getCaller(Callable c, Arg a)
+{ return (new Caller(c, a)); }
 
 template <typename Obj>
 class MthdPtrCaller: public Caller<std::mem_fun_t<void, Obj>, Obj*>
@@ -82,7 +101,22 @@ public:
   MthdPtrCaller(Obj& o, void (Obj::*m)())
     : Caller<std::mem_fun_t<void, Obj>, Obj*>(std::mem_fun_t<void, Obj>(m), &o)
   {}
+
+  MthdPtrCaller(const MthdPtrCaller& m)
+    : Caller(m)
+  {}
+
+  ICaller*  clone()
+  { return (new Caller(this->_call, this->_arg)); }
+
+private:
+  MthdPtrCaller();
+  MthdPtrCaller&	operator=(const MthdPtrCaller&);
 };
+
+template <typename Obj>
+ICaller*  getCaller(Obj& o, void (Obj::*m)())
+{ return (new MthdPtrCaller(o, m)); }
 
 template <typename Obj, typename Param>
 class MthdPtrCaller2: public Caller<std::binder1st<std::mem_fun1_t<void, Obj, Param> >, Param>
@@ -91,4 +125,19 @@ public:
   MthdPtrCaller2(Obj& o, void (Obj::*m)(Param), Param p)
     : Caller<std::binder1st<std::mem_fun1_t<void, Obj, Param> >, Param>(std::bind1st(std::mem_fun1_t<void, Obj, Param>(m), &o), p)
   {}
+
+  MthdPtrCaller2(const MthdPtrCaller2& m)
+    : Caller(m)
+  {}
+
+  ICaller*  clone()
+  { return (new Caller(this->_call, this->_arg)); }
+
+private:
+  MthdPtrCaller2();
+  MthdPtrCaller2&	operator=(const MthdPtrCaller2&);
 };
+
+template <typename Obj, typename Param>
+ICaller*  getCaller(Obj& o, void (Obj::*m)(Param), Param p)
+{ return (new MthdPtrCaller2(o, m, p)); }
