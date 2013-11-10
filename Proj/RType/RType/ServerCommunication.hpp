@@ -19,7 +19,7 @@
 #define HEADSIZE (sizeof(char) + sizeof(short)) // taille du "header" opcode + datasize
 
 /* TCP BLOCK STRUCTURES DEFINITION */
-struct s_say_hello
+struct __attribute__((__packed__)) s_say_hello
 {
 	char opcode;
 	short datasize;
@@ -242,20 +242,20 @@ public:
 	{
 		_handler = NULL;
 		_defaultCallback = NULL;
-		_commandMap[Opcodes::sayHello] = &ServerCommunication::TCPsayHello;	
+		_commandMap[Opcodes::sayHello] = &ServerCommunication::TCPsayHello;
 		_commandMap[Opcodes::setRoom] = &ServerCommunication::TCPsetRoom;
-		_commandMap[Opcodes::selectRoom] = &ServerCommunication::TCPselectRoom;	
+		_commandMap[Opcodes::selectRoom] = &ServerCommunication::TCPselectRoom;
 		_commandMap[Opcodes::leaveRoom] = &ServerCommunication::TCPleaveRoom;
 		_commandMap[Opcodes::changeDifficulty] = &ServerCommunication::TCPchangeDifficulty;
-		_commandMap[Opcodes::setMap] = &ServerCommunication::TCPsetMap;	
+		_commandMap[Opcodes::setMap] = &ServerCommunication::TCPsetMap;
 		_commandMap[Opcodes::fileTrunk] = &ServerCommunication::TCPgetFileTrunk;
-		_commandMap[Opcodes::setReady] = &ServerCommunication::TCPsetReady;			
+		_commandMap[Opcodes::setReady] = &ServerCommunication::TCPsetReady;
 		_commandMap[Opcodes::downloadRsrc] = &ServerCommunication::TCPdownloadRessource;
-		_commandMap[Opcodes::UDPReady] = &ServerCommunication::UDPReady;			
-		_commandMap[Opcodes::letsPlay] = &ServerCommunication::TCPletsPlay;			
-		_commandMap[Opcodes::saveMap] = &ServerCommunication::TCPsaveMap;			
-		_commandMap[Opcodes::inputs] = &ServerCommunication::UDPinputs;		
-		//_commandMap[] = &ServerCommunication::UDPpauseOk;		 
+		_commandMap[Opcodes::UDPReady] = &ServerCommunication::UDPReady;
+		_commandMap[Opcodes::letsPlay] = &ServerCommunication::TCPletsPlay;
+		_commandMap[Opcodes::saveMap] = &ServerCommunication::TCPsaveMap;
+		_commandMap[Opcodes::inputs] = &ServerCommunication::UDPinputs;
+		//_commandMap[] = &ServerCommunication::UDPpauseOk;
 	}
 
 	~ServerCommunication() {}

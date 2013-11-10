@@ -18,7 +18,7 @@
 #define HEADSIZE (sizeof(char) + sizeof(short)) // taille du "header" opcode + datasize
 
 /* TCP BLOCK STRUCTURES DEFINITION */
-struct s_say_hello
+struct __attribute__((__packed__)) s_say_hello
 {
 	char opcode;
 	short datasize;
@@ -241,19 +241,19 @@ public:
 	{
 		_handler = NULL;
 		_defaultCallback = NULL;
-		_commandMap[Opcodes::roomList] = &ClientCommunication::TCProomList;			
-		_commandMap[Opcodes::roomState] = &ClientCommunication::TCProomState;			
-		_commandMap[Opcodes::wrongMap] = &ClientCommunication::TCPwrongMap;			
-		_commandMap[Opcodes::startLoading] = &ClientCommunication::TCPstartLoading;		
-		_commandMap[Opcodes::fileTrunk] = &ClientCommunication::TCPgetFileTrunk;		
-		_commandMap[Opcodes::assocSprite] = &ClientCommunication::TCPassocSprites;		
-		_commandMap[Opcodes::UDPOkay] = &ClientCommunication::UDPok;				
-		_commandMap[Opcodes::sendError] = &ClientCommunication::TCPsendError;			
-		_commandMap[Opcodes::screenState] = &ClientCommunication::UDPscreenState;		
-		_commandMap[Opcodes::endOfGame] = &ClientCommunication::UDPendOfGame;			
-		//_commandMap[] = &ClientCommunication::UDPpause;				
-		//_commandMap[0x1A] = &ClientCommunication::UDPspawn;				
-		//_commandMap[0x1B] = &ClientCommunication::UPDdeath;				
+		_commandMap[Opcodes::roomList] = &ClientCommunication::TCProomList;
+		_commandMap[Opcodes::roomState] = &ClientCommunication::TCProomState;
+		_commandMap[Opcodes::wrongMap] = &ClientCommunication::TCPwrongMap;
+		_commandMap[Opcodes::startLoading] = &ClientCommunication::TCPstartLoading;
+		_commandMap[Opcodes::fileTrunk] = &ClientCommunication::TCPgetFileTrunk;
+		_commandMap[Opcodes::assocSprite] = &ClientCommunication::TCPassocSprites;
+		_commandMap[Opcodes::UDPOkay] = &ClientCommunication::UDPok;
+		_commandMap[Opcodes::sendError] = &ClientCommunication::TCPsendError;
+		_commandMap[Opcodes::screenState] = &ClientCommunication::UDPscreenState;
+		_commandMap[Opcodes::endOfGame] = &ClientCommunication::UDPendOfGame;
+		//_commandMap[] = &ClientCommunication::UDPpause;
+		//_commandMap[0x1A] = &ClientCommunication::UDPspawn;
+		//_commandMap[0x1B] = &ClientCommunication::UPDdeath;
 	}
 
 	~ClientCommunication() {}
@@ -281,7 +281,6 @@ public:
 	  if (socket.readable())
 	  {
 		  socket.recv(&opcode, 1);
-		  std::cout << "Received opcode: " << static_cast<int>(opcode) << std::endl;
 		  if ((ite = _commandMap.find(opcode)) != _commandMap.end())
 		  {
 			  if ((this->*(ite->second))(socket) == false)

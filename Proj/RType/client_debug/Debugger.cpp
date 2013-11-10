@@ -260,6 +260,7 @@ void		Debugger::sendSayHello(const Args& a)
       res[0] = stringTo<short>(a[2]);
       res[1] = stringTo<short>(a[3]);
       this->_TCPcomm.TCPsayHello(p, a[1].c_str(), res);
+      std::cout << "Size du packet: " << p.getSize() << std::endl;
       this->_tcp.send(p);
     }
 }

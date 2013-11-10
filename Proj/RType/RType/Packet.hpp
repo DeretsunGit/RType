@@ -13,49 +13,49 @@
 class Packet
 {
 public:
-	Packet(int size, char* data)
-	{
-		set(data, 0, size);
-	}
+  Packet(int size, char* data)
+  {
+    set(data, 0, size);
+  }
 
-	Packet()
-	{
-		_size = 0;
-	}
+  Packet()
+  {
+    _size = 0;
+  }
 
-	~Packet()
-	{
-	}
+  ~Packet()
+  {
+  }
 
-	bool set(const char* data, int start, int size)
-	{
-		if (data == 0)
-			return (false);
+  bool set(const char* data, int start, int size)
+  {
+    if (data == 0)
+      return (false);
 
-		_size += size;
-		memcpy(&_buff[start], data, size);
+    _size += size;
+    memcpy(&_buff[start], data, size);
 
-		return (true);
-	}
+    return (true);
+  }
 
-	const char* getBuffer() const
-	{
-		return (this->_buff);
-	}
+  const char* getBuffer() const
+  {
+    return (this->_buff);
+  }
 
-	int getSize() const
-	{
-		return (this->_size);
-	}
+  int getSize() const
+  {
+    return (this->_size);
+  }
 
-	void	setSize(int size)
-	{
-		_size = size;		
-	}
+  void	setSize(int size)
+  {
+    _size = size;
+  }
 
 
 private:
-	int _size;
-	char _buff[1060];
+  int _size;
+  char _buff[1060];
 
 };
