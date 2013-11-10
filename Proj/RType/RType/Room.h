@@ -67,10 +67,11 @@ public:
 	char	getDifficulty() const;
 	char	getId() const;
 	char	getNbPlayer() const;
-	const std::string& getMap() const;
 	bool	getMapStatus() const;
-	const std::string&	getName() const;
-	const std::vector<Player*>& getPlayers() const;
+	Thread	*getThread();
+	const std::string&		getName() const;
+	const std::string&		getMap() const;
+	const std::vector<Player*>&		getPlayers() const;
 
 	bool	setName(const char *);
 

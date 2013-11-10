@@ -50,6 +50,7 @@ bool	Room::startGame()
 				<<") attempt to create a game." << std::endl;
 
 	this->_script->LoadMap(this->_map);
+	this->_game->startGame();
   // cree la game avec joueurs (UDP set) et un pointeur sur script
   // 
 	return (true);
@@ -262,6 +263,11 @@ const std::string& Room::getMap() const
 bool	Room::getMapStatus() const
 {
 	return this->_script->getRandom();
+}
+
+Thread	*Room::getThread()
+{
+	return (this->_th);
 }
 
 int		Room::validId()

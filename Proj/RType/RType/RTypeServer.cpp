@@ -16,7 +16,7 @@ RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
 	this->_RTypeServerCom.setHandler(this);
 	this->setMaxRoom(maxRoom);
 	this->loadDynEnnemy("koukou");
-	std::cout << "1 on " << DEBUGSTATE << " Finished." << std::endl;
+	std::cout << "1 on " << DEBUGSTATE << " Finished..." << std::endl;
 
 }
 
@@ -119,7 +119,7 @@ void		RTypeServer::setRoom(void *data)
 			{
 				(*it_room)->setName((reinterpret_cast<s_set_room *>(data))->roomName);
 				(*it_room)->addClient(this->_currentClient);
-				(*it_room)->roomLoop();
+				(*it_room)->getThread()->start();
 				this->_currentClient->setWaiting(false);
 				std::cout << "6 on " << DEBUGSTATE << " Finished...." << std::endl;
 				return;
