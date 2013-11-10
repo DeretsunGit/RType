@@ -30,6 +30,13 @@ unsigned int  WinUDPSocketClient::readable() const
   return (this->_buff._input.readableSize());
 }
 
+void	      WinUDPSocketClient::putback(const char* buff, unsigned int size)
+{
+  ScopedLock  lock(this->_m);
+
+  this->_buff._input.putBack(buff, size);
+}
+
 unsigned int  WinUDPSocketClient::recv(char* buff, unsigned int size)
 {
   ScopedLock  lock(this->_m);
@@ -43,9 +50,9 @@ void  WinUDPSocketClient::send(const char* buff, unsigned int size)
   this->_buff._output.writeSome(buff, size);
 }
 
-void  WinUDPSocketClient::send(const Packet* p)
+void  WinUDPSocketClient::send(const Packet& p)
 {
-   this->send(p->getBuffer(), p->getSize());
+   this->send(p.getBuffer(), p.getSize());
 }
 
 ISocket::SocketId WinUDPSocketClient::getId() const

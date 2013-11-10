@@ -1,11 +1,15 @@
 #pragma once
 
+#include <string>
 #include <list>
 #include <iterator>
+#include <iostream>
 
 #ifdef _WIN32
 
-#include <Windows.h>
+# include <Windows.h>
+
+# define	strcpy	strcpy_s
 
 #endif
 
@@ -14,6 +18,16 @@
 # define Sleep(x)	usleep((x) * 1000)
 
 #endif
+
+#define DEBUGSTATE	8
+
+#define PATTERNFILE	""
+
+#define MAXROOM		100
+#define MAXCLIENT	400
+
+#define SHIELD_LIGHT	0
+#define	SHILED_DARK		1
 
 #define	WALL	0
 #define PLAYER	1

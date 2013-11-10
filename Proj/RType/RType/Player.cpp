@@ -1,34 +1,26 @@
-#pragma message ("KUKU")
 #include "Player.h"
-#pragma message ("KOUKOU")
 #include "rtype_common.h"
 
-Player::Player()
-  : _client(NULL)
-{
-	t_coord	temp;
-
-	temp._posX = 50;
-	temp._posY = 30;
-	this->setFaction(PLAYER);
-	this->setHitboxSize(temp);
-	temp._posX = 100;
-	temp._posY = 450;
-	this->setPos(temp);
-}
-
-Player::Player(Client* c)
+Player::Player(Client* c, int id)
   : _client(c)
 {
+	// id et name defined where ?
 	t_coord	temp;
+	this->_ready =		false;
+	this->_score =		0;
+	this->_alive =		true;
+	this->_isShooting = false;
+	this->_shield =		SHIELD_LIGHT;
 
 	temp._posX = 50;
 	temp._posY = 30;
-	this->setFaction(PLAYER);
-	this->setHitboxSize(temp);
+	this->setHitboxSize(&temp);
 	temp._posX = 100;
 	temp._posY = 450;
-	this->setPos(temp);
+	this->setFaction(PLAYER);
+	this->setPos(&temp);
+	this->setHP(	3);
+	this->setId(id);
 }
 
 bool	Player::getIsShooting() const
@@ -38,9 +30,6 @@ bool	Player::getIsShooting() const
 
 bool	Player::getReady() const
 { return this->_ready; }
-
-int		Player::getId() const
-{ return this->_id; }
 
 int		Player::getScore() const
 { return this->_score; }
@@ -78,6 +67,11 @@ void	Player::setIsShooting(bool shooting)
 void	Player::setClient(Client *newClient)
 {
 	this->_client = newClient;
+}
+
+const std::string& Player::getName() const
+{
+	return this->_name;
 }
 
 Client	*Player::getClient() const

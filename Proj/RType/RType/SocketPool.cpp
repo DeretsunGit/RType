@@ -1,7 +1,13 @@
 #include <algorithm>
 #include <iostream>
 #include "SocketPool.h"
-#include "rtype_common.h"
+
+#ifndef	  _WIN32
+# ifndef  Sleep
+#  define Sleep(x)  usleep((x) / 1000)
+# endif	  // !Sleep
+#endif	  // !_WIN32
+
 
 SocketPool::SocketPool()
   : _alive(true), _watcher(*this, &SocketPool::watcher)

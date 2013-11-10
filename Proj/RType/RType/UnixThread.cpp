@@ -14,6 +14,10 @@
 # include	<unistd.h>
 # include	"UnixThread.h"
 
+UnixThread::UnixThread(const UnixThread& u)
+  : _call(u._call->clone()), _launched(false)
+{}
+
 UnixThread::~UnixThread()
 {
   if (this->_launched)

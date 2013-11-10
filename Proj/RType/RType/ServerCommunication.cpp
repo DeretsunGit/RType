@@ -1,234 +1,494 @@
-//
-// ServerCommunication.cpp for RType
-//
-// Made by kevin gilmaire
-// Login   <gilmai_k@epitech.net>
-//
+#include "ServerCommunication.hpp"
+#include "Room.h"
 
-#include <cstring>
-#include "ServerCommunication.h"
-
-ServerCommunication::ServerCommunication()
+	/* SERVER TO CLIENT */
+template<class T>
+void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 {
-	_commandMap[0x07] = &ServerCommunication::TCProomAssignment;
-	_commandMap[0x08] = &ServerCommunication::TCPupdateNickname;
-	_commandMap[0x09] = &ServerCommunication::TCPupdateResolution;
-	_commandMap[0x0a] = &ServerCommunication::TCPgetOwnedFiles;
-	_commandMap[0x0b] = &ServerCommunication::TCPfileTransferConfirmation;
-	//_commandMap[0x0c] = &ServerCommunication::TCPgetReady;
-	_commandMap[0x0d] = &ServerCommunication::TCPsendMap;
-	_commandMap[0x0e] = &ServerCommunication::TCPgetMap;
-	//_commandMap[0x12] = &ServerCommunication::UDPinterpretInputs;
-}
+	s_room_list block;
+	block.opcode = 0x0F;
+	block.datasize = static_cast<short>(sizeof(s_room_list_content) * rooms.size());
+	std::list<Room *>::const_iterator ite = rooms.begin();
+	int start = HEADSIZE;
+	packet.set(reinterpret_cast<char*>(&block), 0, HEADSIZE);
 
-ServerCommunication::~ServerCommunication()
-{
-	;
-}
-
-void	ServerCommunication::TCProomAssignment(const char* data) const
-{
-	s_tcp_header block;
-	memcpy(&block, data, TCPHEADSIZE);
-	std::string nickname;
-	char roomId;
-
-	nickname.assign(&data[TCPHEADSIZE], block.datasize -1);
-	roomId = data[TCPHEADSIZE + block.datasize -1];
-
-	//information filled in string nickname and char roomId
-	
-}
-
-void	ServerCommunication::TCPupdateNickname(const char* data) const
-{
-	s_tcp_header block;
-	memcpy(&block, data, TCPHEADSIZE);
-	std::string nickname;
-
-	nickname.assign(&data[TCPHEADSIZE], block.datasize);
-
-	//information filled in string nickname
-}
-
-void	ServerCommunication::TCPupdateResolution(const char* data) const
-{
-	s_tcp_header block;
-	memcpy(&block, data, TCPHEADSIZE);
-	std::string resolution;
-
-	resolution.assign(&data[TCPHEADSIZE], block.datasize);
-
-	//information filled in string resolution
-}
-
-void	ServerCommunication::TCPgetOwnedFiles(const char* data) const
-{
-	(void)data;
-}
-
-void	ServerCommunication::TCPfileTransferConfirmation(const char* data) const
-{
-	(void)data;
-	/*s_tcp_header block;
-	memcpy(&block, data, TCPHEADSIZE);
-	std::string filename;
-	std::string version;
-	*/
-    // Need real separator between filename and version
-}
-
-bool	ServerCommunication::TCPgetReady(const char* data) const
-{
-	s_tcp_header block;
-	memcpy(&block, data, TCPHEADSIZE);
-	if (block.opcode == 0x0c)
-		return true;
-	return false;
-}
-
-void	ServerCommunication::TCPsendMap(const char* data) const
-{
-	(void)data;
-}
-
-void	ServerCommunication::TCPgetMap(const char* data) const
-{
-	(void)data;
-}
-
-void	ServerCommunication::UDPinterpretInputs(s_inputs& inputs, const char* data) const
-{
-	if (data != NULL)
-		memcpy(&inputs, &data[1], sizeof(s_inputs));
-	return ;
-}
-
-void	ServerCommunication::interpretCommand(const char* command) const
-{
-	std::map<char, void (ServerCommunication::*)(const char*) const>::const_iterator ite;
-
-	if (command != NULL && ((ite = _commandMap.find(command[0])) != _commandMap.end()))
-		(this->*(ite->second))(command);
-}
-/*
-Packet*	ServerCommunication::TCPsendRoomList(const std::list<Room>& rooms) const
-{
-	if (!rooms.size())
-		return (NULL);
-
-	s_tcp_header block;
-	Packet* packet = new Packet();
-	std::list<Room>::const_iterator ite = rooms.begin();
-	int i = 3;
-
-	block.opcode = 0x01;
-	block.datasize = ((short)rooms.size() * 2);
-	char* buff = new char[TCPHEADSIZE + block.datasize];
-
-	memcpy(buff, &block, TCPHEADSIZE);
-
-	while (i < rooms.size() + TCPHEADSIZE)
+	while (ite != rooms.end())
 	{
-		buff[i] = ite->getId();
-		buff[i+1] = ite->getNbPlayer();
-		i += 2;
+		s_room_list_content room;
+		room.nbPlayer = (* ite)->getNbPlayer();
+		room.roomId = (* ite)->getId();
+		memcpy(room.roomName, (* ite)->getName().c_str(), (* ite)->getName().size());
+		packet.set(reinterpret_cast<char*>(&room), start, sizeof(s_room_list_content));
+		start += sizeof(s_room_list_content);
+		++ite;
 	}
-	
-	if (!packet->set(buff, TCPHEADSIZE + block.datasize))
-	{
-		delete buff;
-		delete packet;
-		return NULL;
-	}
-	
-	return (packet);
-}*/
-
-Packet*	ServerCommunication::TCPsendPlayerList(int roomId, const std::vector<Player*>& players) const
-{
-	(void)players;
-	return (new Packet());
+	s_room_list_content end;
+	end.roomId = 0;
+	packet.set(reinterpret_cast<char*>(&end), start, sizeof(s_room_list_content));
 }
 
-Packet*	ServerCommunication::TCPaskClientForFiles(const std::list<std::string>& filenames) const
+template<class T>
+void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 {
-	(void)filenames;
-	return (new Packet());
-}
+	s_room_state block;
 
-Packet*	ServerCommunication::TCPsendFile(const std::string& filename, const char* fileContent) const
-{
-	(void)filename; (void)fileContent;
-	return (new Packet());
-}
+	block.opcode = 0x10;
+	block.datasize = sizeof(s_room_state) - HEADSIZE;
+	block.difficulty = room.getDifficulty();
+	memcpy(block.roomName, room.getName().c_str(), room.getName().size());
+	memcpy(block.map, room.getMap().c_str(), room.getMap().size());
+	block.mapStatus = room.getMapStatus();
 
-Packet*	ServerCommunication::TCPsendStartLoading() const
-{
-	s_tcp_header block;
-	char* buff = new char[TCPHEADSIZE];
-	Packet* packet = new Packet();
-
-	block.opcode = 0x05;
-	block.datasize = 0;
-
-	memcpy(buff, &block, TCPHEADSIZE);
-	/*if (!packet->set(buff, TCPHEADSIZE + block.datasize))
-	{
-		delete buff;
-		delete packet;
-		return (NULL);
-	}*/
-	return (packet);
-}
-
-void	ServerCommunication::TCPsendStartGame(Packet& packet, unsigned short port) const
-{
-	
-	s_tcp_header block;
-
-	block.opcode = 0x06;
-	block.datasize = sizeof(unsigned short);
-
-	packet.set(reinterpret_cast<char*>(&block), 0, TCPHEADSIZE);
-	packet.set(reinterpret_cast<char*>(&port), TCPHEADSIZE, sizeof(short));
-}
-
-void	ServerCommunication::UDPsendGameElements(Packet& packet, const std::list<Element*>& elements, const std::vector<Player*>& players) const
-{
 	int i = 0;
-	std::list<Element*>::const_iterator elem_ite = elements.begin();
-	std::vector<Player*>::const_iterator play_ite = players.begin();
+	std::vector<Player*>::const_iterator ite = room.getPlayers().begin();
 
-	if (!elements.size() || !players.size())
+	while (ite != room.getPlayers().end() && i < 4)
 	{
-		return ;
-	}
-
-	char opcode = 0x10;
-	packet.set(&opcode, 0, 1);
-
-	while (elem_ite != elements.end() && i < 100)
-	{
-		s_element newElement;
-		newElement.posX = (*elem_ite)->getPos()._posX;
-		newElement.posY = (*elem_ite)->getPos()._posY;
-		newElement.spriteId = (*elem_ite)->getSpriteId();
-		packet.set(reinterpret_cast<char*>(&newElement), (i*sizeof(s_element))+1, sizeof(s_element));
+		memcpy(block.playerNames[i], (*ite)->getName().c_str(), (*ite)->getName().size());
+		block.playerStates[i] = (*ite)->getReady();
 		++i;
-		++elem_ite;
+		++ite;
 	}
 
-	i = 0;
-	while (play_ite != players.end() && i < 4)
+	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_room_state));
+}
+
+template<class T>
+void ServerCommunication<T>::TCPwrongMap(Packet& packet)
+{
+	s_wrong_map block;
+
+	block.opcode = 0x11;
+
+	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_wrong_map));
+}
+
+template<class T>
+void ServerCommunication<T>::TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport) // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
+{
+	s_start_loading block;
+
+	block.opcode = 0x12;
+	block.datasize = static_cast<short>((sizeof(s_ressource) * filenames.size()) + sizeof(unsigned short));
+	block.port = UDPport;
+
+	packet.set(reinterpret_cast<char*>(&block), 0, HEADSIZE + sizeof(unsigned short));
+
+	int start = HEADSIZE + sizeof(unsigned short);
+	std::list<std::string>::const_iterator f_ite = filenames.begin();
+	std::list<std::string>::const_iterator m_ite = md5.begin();
+
+	while (f_ite != filenames.end() && m_ite != md5.end())
 	{
-		s_player newPlayer;
-		newPlayer.alive = (*play_ite)->isAlive();
-		newPlayer.win = (*play_ite)->isWinner();
-		newPlayer.defeat = (*play_ite)->isDefeated();
-		newPlayer.shield = (*play_ite)->getShield();
-		packet.set(reinterpret_cast<char*>(&newPlayer), (i*sizeof(s_player))+501, sizeof(s_player));
-		++i;
-		++play_ite;
+		s_ressource ressource;
+		memcpy(ressource.filename, f_ite->c_str(), f_ite->size());
+		memcpy(ressource.md5, m_ite->c_str(), m_ite->size());
+		packet.set(reinterpret_cast<char*>(&ressource), start, sizeof(ressource));
+		start += sizeof(s_ressource);
+		++f_ite;
+		++m_ite;
 	}
+	s_ressource end;
+	end.filename[0] = 0;
+	packet.set(reinterpret_cast<char*>(&end), start, sizeof(s_ressource));
+}
+
+template<class T>
+void ServerCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size)
+{
+	s_file_trunk block;
+
+	block.opcode = 0x13;
+	block.datasize = static_cast<short>(sizeof(char) * (32 + size));
+	memcpy(block.filename, filename, strlen(filename));
+	memcpy(block.data, data, size);
+
+	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_file_trunk));
+}
+
+template<class T>
+void ServerCommunication<T>::TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<short[4]>& coords)
+{
+	s_assoc_sprites block;
+
+	block.opcode = 0x14;
+	block.datasize = static_cast<short>((sizeof(char) * 128) + (sizeof(s_sprite) * idSprites.size()));
+	memcpy(block.filename, filename, strlen(filename));
+
+	packet.set(reinterpret_cast<char*>(&block), 0, HEADSIZE + (sizeof(char) * 128));
+	int start = HEADSIZE + (sizeof(char) * 128);
+	std::list<char>::const_iterator id_ite = idSprites.begin();
+	std::list<short[4]>::const_iterator coord_ite = coords.begin();
+
+	while (id_ite != idSprites.end() && coord_ite != coords.end())
+	{
+		s_sprite newsprite;
+		newsprite.idSprite = *id_ite;
+		memcpy(newsprite.coord, (*coord_ite), sizeof(short) * 4);
+		packet.set(reinterpret_cast<char*>(&newsprite), start, sizeof(s_sprite));
+		start += sizeof(s_sprite);
+		++id_ite;
+		++coord_ite;
+	}
+	s_sprite end;
+	end.idSprite = 0;
+	packet.set(reinterpret_cast<char*>(&end), start, sizeof(s_sprite));
+}
+
+template<class T>
+void ServerCommunication<T>::UDPok(Packet& packet)
+{
+	s_udp_ok block;
+
+	block.opcode = 0x15;
+
+	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_udp_ok));
+}
+
+template<class T>
+void ServerCommunication<T>::TCPsendError(Packet& packet, char errorCode, const char* errorMsg)
+{
+	s_send_error block;
+
+	block.opcode = 0x16;
+	block.datasize = sizeof(s_send_error) - HEADSIZE;
+	block.errorCode = errorCode;
+	memcpy(block.errorDesc, errorMsg, strlen(errorMsg));
+
+	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_send_error));
+}
+
+template<class T>
+void ServerCommunication<T>::UDPscreenState(Packet& packet, int score, std::list<Element>& elements) // elements pour idSprite et CoordSprite
+{
+	s_screen_state block;
+
+	block.opcode = 0x17;
+	block.datasize = static_cast<short>(sizeof(int) + (sizeof(s_sprite) * elements.size()));
+	block.score = score;
+
+	packet.set(reinterpret_cast<char*>(&block), 0, HEADSIZE + sizeof(int));
+
+	int start = HEADSIZE + sizeof(int);
+	std::list<Element>::const_iterator ite = elements.begin();
+
+	while (ite != elements.end())
+	{
+		s_element element;
+		element.idSprite = ite->getSpriteId();
+		element.coord = ite->getPos();
+		packet.set(reinterpret_cast<char*>(&element), start, sizeof(s_element));
+		++ite;
+		start += sizeof(s_element);
+	}
+	s_element end;
+	end.idSprite = 0;
+	packet.set(reinterpret_cast<char*>(&end), start, sizeof(s_element));
+}
+
+template<class T>
+void ServerCommunication<T>::UDPendOfGame(Packet& packet, int score)
+{
+	s_end_of_game block;
+
+	block.opcode = 0x18;
+	block.score = score;
+
+	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_end_of_game));
+}
+
+template<class T>
+void ServerCommunication<T>::UDPpause(Packet& packet)
+{
+	s_pause block;
+
+	block.opcode = 0x19;
+	
+	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_pause));
+}
+
+template<class T>
+void ServerCommunication<T>::UDPspawn(Packet& packet)
+{
+	s_spawn block;
+
+	block.opcode = 0x1A;
+	
+	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_spawn));
+}
+
+template<class T>
+void ServerCommunication<T>::UPDdeath(Packet& packet)
+{
+	s_death block;
+
+	block.opcode = 0x1B;
+	
+	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_death));
+}
+
+/* CLIENT TO SERVER */
+template<class T>
+bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
+{ 
+	s_say_hello block;
+	block.opcode = 0x01;
+	int readSize = 0;
+
+	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
+	{
+		readSize += socket.recv(reinterpret_cast<char*>(&block.datasize), 2);
+		if (readSize != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&block.datasize), readSize);
+			return false;
+		}
+		readSize += socket.recv(reinterpret_cast<char*>(&block + HEADSIZE), sizeof(s_say_hello) - HEADSIZE);
+		if (readSize != block.datasize || readSize != sizeof(s_say_hello) - HEADSIZE)
+		{
+			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
+			return false;
+		}
+		(_handler->*_callableMap[block.opcode])(&block);
+	}
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::TCPsetRoom(IReadableSocket& socket)
+{
+	s_set_room block;
+	block.opcode = 0x02;
+	int readSize = 0;
+
+	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
+	{
+		readSize += socket.recv(reinterpret_cast<char*>(&block.datasize), 2);
+		if (readSize != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&block.datasize), readSize);
+			return false;
+		}
+		readSize += socket.recv(reinterpret_cast<char*>(&block + HEADSIZE), sizeof(s_set_room) - HEADSIZE);
+		if (readSize != block.datasize || readSize != sizeof(s_set_room) - HEADSIZE)
+		{
+			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
+			return false;
+		}
+		(_handler->*_callableMap[block.opcode])(&block);
+	}
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::TCPselectRoom(IReadableSocket& socket)
+{
+	s_select_room block;
+	block.opcode = 0x03;
+	int readSize = 0;
+
+	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
+	{
+		readSize += socket.recv(reinterpret_cast<char*>(&block.roomId), 1);
+		if (readSize != 1)
+			return false;
+		(_handler->*_callableMap[block.opcode])(&block);
+	}
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::TCPleaveRoom(IReadableSocket& socket)
+{
+	s_leave_room block;
+	block.opcode = 0x04;
+
+	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
+		(_handler->*_callableMap[block.opcode])(&block);
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::TCPchangeDifficulty(IReadableSocket& socket)
+{
+	s_change_difficulty block;
+	block.opcode = 0x05;
+	int readSize = 0;
+
+	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
+	{
+		readSize += socket.recv(reinterpret_cast<char*>(&block.difficulty), 1);
+		if (readSize != 1)
+			return false;
+		(_handler->*_callableMap[block.opcode])(&block);
+	}
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::TCPsetMap(IReadableSocket& socket)
+{
+	s_set_map block;
+	block.opcode = 0x06;
+	int readSize = 0;
+
+	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
+	{
+		readSize += socket.recv(reinterpret_cast<char*>(&block.datasize), 2);
+		if (readSize != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&block.datasize), readSize);
+			return false;
+		}
+		readSize += socket.recv(reinterpret_cast<char*>(&block + HEADSIZE), sizeof(s_set_map) - HEADSIZE);
+		if (readSize != block.datasize || readSize != sizeof(s_set_map) - HEADSIZE)
+		{
+			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
+			return false;
+		}
+		(_handler->*_callableMap[block.opcode])(&block);
+	}
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket)
+{
+	s_file_trunk block;
+	block.opcode = 0x07;
+	int readSize = 0;
+
+	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
+	{
+		readSize += socket.recv(reinterpret_cast<char*>(&block.datasize), 2);
+		if (readSize != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&block.datasize), readSize);
+			return false;
+		}
+		readSize += socket.recv(reinterpret_cast<char*>(&block + HEADSIZE), sizeof(s_file_trunk) - HEADSIZE);
+		if (readSize != block.datasize || readSize != sizeof(s_file_trunk) - HEADSIZE)
+		{
+			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
+			return false;
+		}
+		(_handler->*_callableMap[block.opcode])(&block);
+	}
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::TCPsetReady(IReadableSocket& socket)
+{ 
+	s_set_ready block;
+	block.opcode = 0x08;
+
+	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
+		(_handler->*_callableMap[block.opcode])(&block);
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::TCPdownloadRessource(IReadableSocket& socket)
+{
+	s_download_ressource block;
+	block.opcode = 0x09;
+	int readSize = 0;
+
+	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
+	{
+		readSize += socket.recv(reinterpret_cast<char*>(&block.datasize), 2);
+		if (readSize != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&block.datasize), readSize);
+			return false;
+		}
+		readSize += socket.recv(reinterpret_cast<char*>(&block + HEADSIZE), sizeof(s_download_ressource) - HEADSIZE);
+		if (readSize != block.datasize || readSize != sizeof(s_download_ressource) - HEADSIZE)
+		{
+			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
+			return false;
+		}
+		(_handler->*_callableMap[block.opcode])(&block);
+	}
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::UDPReady(IReadableSocket& socket)
+{
+	s_udp_ready block;
+	block.opcode = 0x0A;
+
+	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
+		(_handler->*_callableMap[block.opcode])(&block);
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::TCPletsPlay(IReadableSocket& socket)
+{
+	s_udp_ready block;
+	block.opcode = 0x0B;
+
+	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
+		(_handler->*_callableMap[block.opcode])(&block);
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::TCPsaveMap(IReadableSocket& socket)
+{ 
+	s_save_map block;
+	block.opcode = 0x0C;
+	int readSize = 0;
+
+	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
+	{
+		readSize += socket.recv(reinterpret_cast<char*>(&block.datasize), 2);
+		if (readSize != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&block.datasize), readSize);
+			return false;
+		}
+		readSize += socket.recv(reinterpret_cast<char*>(&block + HEADSIZE), sizeof(s_save_map) - HEADSIZE);
+		if (readSize != block.datasize || readSize != sizeof(s_save_map) - HEADSIZE)
+		{
+			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
+			return false;
+		}
+		(_handler->*_callableMap[block.opcode])(&block);
+	}
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::UDPinputs(IReadableSocket& socket)
+{
+	s_inputs block;
+	block.opcode = 0x0D;
+	int readSize = 0;
+
+	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
+	{
+		readSize += socket.recv(reinterpret_cast<char*>(&block + 1), sizeof(s_inputs) - 1);
+		if (readSize != sizeof(s_inputs) - 1)
+		{
+			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
+			return false;
+		}
+		(_handler->*_callableMap[block.opcode])(&block);
+	}
+	return true;
+}
+
+template<class T>
+bool ServerCommunication<T>::UDPpauseOk(IReadableSocket& socket)
+{ 
+	s_pause_ok block;
+	block.opcode = 0x0E;
+
+	if (_handler && _callableMap.find(block.opcode) != _callableMap.end())
+		(_handler->*_callableMap[block.opcode])(&block);
+	return true;
 }

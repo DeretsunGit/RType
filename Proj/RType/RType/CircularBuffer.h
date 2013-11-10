@@ -59,6 +59,20 @@ public:
     return (sent);
   }
 
+  void		  putBack(const Type* buff, unsigned long s)
+  {
+    unsigned long i(0);
+
+    while (i < s)
+    {
+      ++i;
+      this->_start = (this->_start ? this->_start : size) - 1;
+      if (this->_start == this->_end)
+	this->_end = (this->_end ? this->_end : size) - 1;
+      this->_buff[this->_start] = buff[s - i];
+    }
+  }
+
   void		  writeSome(const Type* buff, unsigned long s)
   {
     unsigned long i(0);

@@ -32,5 +32,7 @@ public:
 				   in_addr& from) = 0;
   virtual void		  sendTo(const char* buff, unsigned int size,
 			         const in_addr& to) = 0;
-  virtual void		  sendTo(const Packet* p, const in_addr& to) = 0;
+  virtual void		  sendTo(const Packet& p, const in_addr& to) = 0;
+  virtual void		  broadcast(const char* buff, unsigned int size) = 0;
+  virtual void		  broadcast(const Packet& p) = 0;
 };

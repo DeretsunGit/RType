@@ -39,6 +39,8 @@ public:
     : _call(new Caller<Callable, Param>(c, p)), _launched(false)
   {}
 
+  UnixThread(const UnixThread&);
+  UnixThread& operator=(const UnixThread&);
   ~UnixThread();
 
   bool	start();
@@ -48,6 +50,8 @@ public:
   bool	isLaunched() const;
 
 private:
+  UnixThread();
+
   pthread_t	_th;
   ICaller*	_call;
   bool		_launched;

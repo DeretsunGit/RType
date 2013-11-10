@@ -27,18 +27,7 @@ public:
 	{
 	}
 
-	/*bool set(char* data, int size)
-	{
-		if (data == 0)
-			return (false);
-
-		_size = size;
-		memcpy(_buff, data, size);
-
-		return (true);
-	}*/
-
-	bool set(char* data, int start, int size)
+	bool set(const char* data, int start, int size)
 	{
 		if (data == 0)
 			return (false);
@@ -63,6 +52,6 @@ public:
 
 private:
 	int _size;
-	char _buff[1000];
+	char _buff[1060];
 
 };

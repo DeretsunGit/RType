@@ -42,6 +42,13 @@ unsigned int  UnixUDPSocketClient::recv(char* buff, unsigned int size)
   return (this->_buff._input.readSome(buff, size));
 }
 
+void	      UnixUDPSocketClient::putback(const char* buff, unsigned int size)
+{
+  ScopedLock  lock(this->_m);
+
+  this->_buff._input.putBack(buff, size);
+}
+
 void  UnixUDPSocketClient::send(const char* buff, unsigned int size)
 {
   ScopedLock  lock(this->_m);
@@ -49,9 +56,9 @@ void  UnixUDPSocketClient::send(const char* buff, unsigned int size)
   this->_buff._output.writeSome(buff, size);
 }
 
-void  UnixUDPSocketClient::send(const Packet* p)
+void  UnixUDPSocketClient::send(const Packet& p)
 {
-  this->send(p->getBuffer(), p->getSize());
+  this->send(p.getBuffer(), p.getSize());
 }
 
 ISocket::SocketId UnixUDPSocketClient::getId() const

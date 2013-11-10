@@ -65,7 +65,7 @@ int		MenuManager::menuLoop(void)
 	logo = this->_spritemgr.getSpritebyId(GAME_LOGO);
 	logo.setPosition(1400 / 2 - static_cast<float>(logo.getTextureRect().width) / 2, 100);
 	
-	while (this->_window->isOpen())
+	while (this->_window->isOpen()) // a virer absolument, -3 parce que c'est mal cf martin
 	{
 		sf::Event event;
         while (this->_window->pollEvent(event))

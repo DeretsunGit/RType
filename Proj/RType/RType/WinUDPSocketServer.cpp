@@ -1,11 +1,12 @@
 #ifdef _WIN32
 
+#include<iostream>
 #include <stdexcept>
 #include <winsock2.h>
 #include "WinUDPSocketServer.h"
 
 #define READ_SIZE 500
-#include<iostream>
+
 WinUDPSocketServer::WinUDPSocketServer(unsigned short port)
   : _sock(WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0)), _live(true)
 {
@@ -78,9 +79,35 @@ void  WinUDPSocketServer::sendTo(const char* buff, unsigned int size, const in_a
   this->_map[to.S_un.S_addr]._output.writeSome(buff, size);
 }
 
-void  WinUDPSocketServer::sendTo(const Packet* p, const in_addr& to)
+void  WinUDPSocketServer::sendTo(const Packet& p, const in_addr& to)
 {
-  this->sendTo(p->getBuffer(), p->getSize(), to);
+  this->sendTo(p.getBuffer(), p.getSize(), to);
+}
+
+void	WinUDPSocketServer::broadcast(const char* buff, unsigned int size)
+{
+  ScopedLock	lock(this->_m);
+  BuffMap::iterator	it(this->_map.begin());
+  BuffMap::iterator	end(this->_map.end());
+
+  while (it != end)
+    {
+      it->second._output.writeSome(buff, size);
+      ++it;
+    }
+}
+
+void	WinUDPSocketServer::broadcast(const Packet& packet)
+{
+  ScopedLock	lock(this->_m);
+  BuffMap::iterator	it(this->_map.begin());
+  BuffMap::iterator	end(this->_map.end());
+
+  while (it != end)
+    {
+      it->second._output.writeSome(packet.getBuffer(), packet.getSize());
+      ++it;
+    }
 }
 
 ISocket::SocketId WinUDPSocketServer::getId() const
@@ -143,9 +170,9 @@ void	WinUDPSocketServer::writeToSock()
     this->_m.lock();
     sin.sin_port = it->second._port;
     buff.len = it->second._output.readSome(buf, READ_SIZE);
-    this->_m.unlock();
     if (WSASendTo(this->_sock, &buff, 1, &buff.len, 0, reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin), NULL, NULL) == SOCKET_ERROR)
-      this->_live = false;
+      this->_map.erase(it);
+    this->_m.unlock();
   }
 }
 

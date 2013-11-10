@@ -10,7 +10,16 @@
 
 #ifdef	_WIN32
 
+# include <stdexcept>
 # include "WinThread.h"
+
+WinThread::WinThread(const WinThread& w)
+  : _launched(false)
+{
+  if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, NULL, CREATE_SUSPENDED, &this->_id)))
+      throw std::runtime_error("Thread creation failed");
+  this->_call = w._call->clone();
+}
 
 WinThread::~WinThread()
 {

@@ -1,38 +1,49 @@
 #include <iostream>
 #include "Game.h"
+#include "ServerCommunication.cpp"
+template class ServerCommunication<Room>;
 
-Game::Game(const std::vector<Player*>& p)
-  : _players(p)
+Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
+  : _players(p), _script(s), _udpSock(UDPsock)
 {
-	Packet packet;
+	this->_GameCom.setCallback(0x0D, &Game::inputs);
+	this->_GameCom.setCallback(0x0E, &Game::pauseOk);
+	this->_GameCom.setDefaultCallback(&Game::callBackError);
+	this->_GameCom.setHandler(this);
 	std::cout << "Size: " << this->_players.size() << std::endl;
-	std::cout << __LINE__ << std::endl;
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	// on récupère Script en argument
-	this->setUDP();
-	std::cout << __LINE__ << std::endl;
-	this->_com.TCPsendStartGame(packet, this->_port);
-	this->TCPsend(packet);
-	std::cout << __LINE__ << std::endl;
+	//this->_com.TCPsendStartGame(packet, this->_port);
+	//this->TCPsend(packet);
 	this->mapGeneration();
-	std::cout << __LINE__ << std::endl;
 	this->genPool();
-	std::cout << __LINE__ << std::endl;
 	this->startGame();
-	std::cout << __LINE__ << std::endl;
 	// startGame() va attendre que les clients soient ready via TCP
 	// puis envoi aux client le start game via TCP
 	this->gameLoop();
-  std::cout << __LINE__ << std::endl;
 }
 
-void	Game::setUDP()
+void	Game::callBackError(char opcode, IReadableSocket&)
 {
-	std::vector<Player*>::iterator	it_player;
+		std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;
+	std::cout << " can't be done while Game is already lauched" << std::endl;
+	this->sendError(61, "You can't perform this action by now.");
+}
 
-	this->_udpSock = new UDPSocketServer(0);
-	this->_port = this->_udpSock->getPort();
+void	Game::inputs(void *data)
+{
+
+}
+
+void	Game::pauseOk(void *data)
+{
+
+}
+
+void		Game::sendError(char errorCode, const char *message)
+{
+	this->_GameCom.TCPsendError(this->_pack, errorCode, message);
 }
 
 void	Game::TCPsend(Packet& tosend)
@@ -48,7 +59,7 @@ void	Game::TCPsend(Packet& tosend)
     while (it_player != end)
     {
       std::cout << (*it_player)->getClient() << '|' << (*it_player)->getClient()->getTCPSock() << std::endl;
-	  (*it_player)->getClient()->getTCPSock()->send(&tosend);
+	  (*it_player)->getClient()->getTCPSock()->send(tosend);
       ++it_player;
     }
   }
@@ -63,19 +74,13 @@ void	Game::mapGeneration()
 	t_coord						coord;
 	std::list<Wall*>::iterator	it;
 
-	while (i < 256)
-	{
-		this->_globalMapTop[i] = '2';
-		this->_globalMapBot[i] =	 '2';
-		i++;
-	}
 	// on génère maintenant visibleMap
 	while (y < 18)
 	{
 		x = 0;
 		while (x < 17)
 		{
-			if (this->_globalMapTop[x] >= y || this->_globalMapBot[x] >= 18 - y)
+			if (this->_script->getMap()->_topMap[x] >= y || this->_script->getMap()->_botMap[x] >= 18 - y)
 			{
 				for (it = (this->_wallPool).begin(); it != (this->_wallPool).end(); it++)
 				{
@@ -157,7 +162,8 @@ void	Game::gameLoop()
 
 void	Game::collision()
 {
-	std::list<Wall*>::iterator		it_wall;
+	int										collision_ret;
+	std::list<Wall*>::iterator				it_wall;
 	std::vector<t_coord>::const_iterator	it_coord;
 	std::vector<Player*>::const_iterator	it_player;
 
@@ -166,7 +172,12 @@ void	Game::collision()
 			if ((*it_wall)->getHP() != 0)
 			{
 				for (it_coord = ((*it_wall)->getCurrentCell()).begin(); it_coord != ((*it_wall)->getCurrentCell()).end(); it_coord++)
-					(*it_wall)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX]);
+					{
+						if ((collision_ret = (*it_wall)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX])) != -1)
+						{
+							// collision entre *it_wall et l'objet d'id collision_ret
+						}
+				}
 			}
 		}
 	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
@@ -174,7 +185,12 @@ void	Game::collision()
 			if ((*it_player)->getHP() != 0)
 			{
 				for (it_coord = ((*it_player)->getCurrentCell()).begin(); it_coord != ((*it_player)->getCurrentCell()).end(); it_coord++)
-					(*it_player)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX]);
+					{
+						if ((collision_ret = (*it_player)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX])) != -1)
+						{
+								// collision entre *it_player et l'objet d'id collision_ret
+						}
+					}
 			}
 		}
 	//ajouter ennemis
@@ -205,8 +221,8 @@ void	Game::sendPriority()
 
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
 	// on déclare un Packet qui va etre alloué dans la méthode
-	Packet pack;
-	_com.UDPsendGameElements(pack, elemToSend, this->_players);
+	//Packet pack;
+	//_com.UDPsendGameElements(pack, elemToSend, this->_players);
 
 	// ici, pack contient les données sérialisées à écrire sur la socket.
 }
@@ -214,12 +230,12 @@ void	Game::sendPriority()
 void	Game::getInputs()
 {
 	//  !! ceci fonctionne pour 1 joueur !!
-	s_inputs inputs;
+	//s_inputs inputs;
 	char *buff = NULL;
 	// recuperer les packets sur la socket
 	// passer en paramètre de la fonction le buffer du packet
 	// remplacé ici par un buffer vide
-	_com.UDPinterpretInputs(inputs, buff);
+	//_com.UDPinterpretInputs(inputs, buff);
 
 	// ici la struct inputs contient les inputs utilisateur
 	// comme définie dans la RFC.
@@ -247,7 +263,7 @@ void Game::playerShoot(Player *currentPlayer)
 	{
 		if ((*it_bullet)->getHP() == 0)
 		{
-			(*it_bullet)->setPos(currentPlayer->getPos()); // faux car tir en haut a gauche
+			(*it_bullet)->setPos(&(currentPlayer->getPos())); // faux car tir en haut a gauche
 			(*it_bullet)->setHP(1);
 			(*it_bullet)->setFaction(PLAYER);
 		}
@@ -285,7 +301,7 @@ void	Game::moveWall()
 			{
 				temp._posX = (*it_wall)->getPos()._posX - 3 * (*it_wall)->getSpeed();
 				temp._posY = (*it_wall)->getPos()._posY;
-				(*it_wall)->setPos(temp);
+				(*it_wall)->setPos(&temp);
 			}
 			// on supprime les murs inactifs et on set les nouveaux murs
 			if ((*it_wall)->getPos()._posX <= -100)
@@ -299,7 +315,7 @@ void	Game::moveWall()
 	{
 		while (y < 18)
 		{
-				if (this->_globalMapTop[this->_globalPos] >= y || this->_globalMapBot[this->_globalPos] >= 18 - y)
+			if (this->_script->getMap()->_topMap[this->_globalPos] >= y || this->_script->getMap()->_botMap[this->_globalPos] >= 18 - y)
 				{
 					for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 					{
@@ -322,12 +338,12 @@ void	Game::moveWall()
 			this->_firstColumn = 0;
 	}
 }
-
+/*
 ServerCommunication	*Game::getServCom()
 {
 	return (&this->_com);
 }
-
+*/
 Game::~Game()
 {
 	// ramener tous les joueurs au menu

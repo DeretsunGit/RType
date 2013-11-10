@@ -36,9 +36,9 @@ public:
 
   template<typename Callable>
   WinThread(Callable& c)
-    : _call(NULL), _launched(false)
+    : _call(getCaller(c)), _launched(false)
   {
-    if (!(this->_th = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)&c, NULL, CREATE_SUSPENDED, &this->_id)))
+    if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, NULL, CREATE_SUSPENDED, &this->_id)))
       throw std::runtime_error("Thread creation failed");
   }
 
@@ -50,6 +50,8 @@ public:
       throw std::runtime_error("Thread creation failed");
   }
 
+  WinThread(const WinThread&);
+  WinThread&  operator=(const WinThread&);
   ~WinThread();
 
   bool	start();
@@ -59,6 +61,8 @@ public:
   bool	isLaunched() const;
 
 private:
+  WinThread();
+
   HANDLE	_th;
   DWORD		_id;
   ICaller*	_call;

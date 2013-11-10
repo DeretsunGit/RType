@@ -8,6 +8,7 @@
 # include	<netdb.h>
 # include	"UnixTCPSocketClient.h"
 # include	"SocketPool.h"
+# include	"Packet.hpp"
 
 // TO REMOVE
 # include	<stdio.h>
@@ -47,6 +48,13 @@ UnixTCPSocketClient::~UnixTCPSocketClient()
   SocketPool::getInstance().releaseSocket(this);
 }
 
+void	      UnixTCPSocketClient::putback(const char* buff, unsigned int size)
+{
+  ScopedLock  lock(this->_m);
+
+  this->_buff._input.putBack(buff, size);
+}
+
 void	UnixTCPSocketClient::send(const char* buff, unsigned int size)
 {
   this->_m.lock();
@@ -54,9 +62,9 @@ void	UnixTCPSocketClient::send(const char* buff, unsigned int size)
   this->_m.unlock();
 }
 
-void	UnixTCPSocketClient::send(const Packet* p)
+void	UnixTCPSocketClient::send(const Packet& p)
 {
-  this->send(p->getBuff(), p->getSize());
+  this->send(p.getBuffer(), p.getSize());
 }
 
 unsigned int	UnixTCPSocketClient::recv(char* buff, unsigned int size)
