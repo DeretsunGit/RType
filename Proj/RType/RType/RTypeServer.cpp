@@ -173,9 +173,9 @@ void		RTypeServer::leaveRoom(void *data)
 }
 
 void		RTypeServer::sendRoomList()
-{
+{std::cout << "size -> " <<  this->_pack.getSize()<< std::endl;
 	this->_RTypeServerCom.TCProomList(this->_pack, (this->_roomPool));
-	std::cout << "Opcode : "<< static_cast<int>(this->_pack.getBuffer()[0])<< " ; PacketSize : "<< this->_pack.getSize() << std::endl;
+	std::cout << " Opcode : "<< static_cast<int>(this->_pack.getBuffer()[0])<< " ; PacketSize : "<< this->_pack.getSize() << std::endl;
 	this->_currentClient->getTCPSock()->send(this->_pack);
 }
 

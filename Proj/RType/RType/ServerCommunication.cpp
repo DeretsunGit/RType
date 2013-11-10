@@ -6,9 +6,11 @@ template<class T>
 void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 {
 	s_room_list block;
+	
 	packet.setSize(0);
 	block.opcode = Opcodes::roomList;
 	block.datasize = static_cast<short>(sizeof(s_room_list_content) * (rooms.size() + 1));
+	std::cout << (static_cast<short>(sizeof(s_room_list_content) * (rooms.size() + 1))) << std::endl;
 	std::list<Room *>::const_iterator ite = rooms.begin();
 	int start = HEADSIZE;
 	packet.set(reinterpret_cast<char*>(&block), 0, HEADSIZE);
@@ -35,7 +37,8 @@ template<class T>
 void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 {
 	s_room_state block;
-
+	
+	packet.setSize(0);
 	block.opcode = Opcodes::roomState;
 	block.datasize = sizeof(s_room_state) - HEADSIZE;
 	block.difficulty = room.getDifficulty();
@@ -61,7 +64,8 @@ template<class T>
 void ServerCommunication<T>::TCPwrongMap(Packet& packet)
 {
 	s_wrong_map block;
-
+	
+	packet.setSize(0);
 	block.opcode = Opcodes::wrongMap;
 
 	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_wrong_map));
@@ -71,7 +75,8 @@ template<class T>
 void ServerCommunication<T>::TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport) // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
 {
 	s_start_loading block;
-
+	
+	packet.setSize(0);
 	block.opcode = Opcodes::startLoading;
 	block.datasize = static_cast<short>((sizeof(s_ressource) * filenames.size()) + sizeof(unsigned short));
 	block.port = UDPport;
@@ -101,7 +106,8 @@ template<class T>
 void ServerCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size)
 {
 	s_file_trunk block;
-
+	
+	packet.setSize(0);
 	block.opcode = Opcodes::fileTrunk;
 	block.datasize = static_cast<short>(sizeof(char) * (32 + size));
 	memcpy(block.filename, filename, strlen(filename));
@@ -114,7 +120,8 @@ template<class T>
 void ServerCommunication<T>::TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<short[4]>& coords)
 {
 	s_assoc_sprites block;
-
+	
+	packet.setSize(0);
 	block.opcode = Opcodes::assocSprite;
 	block.datasize = static_cast<short>((sizeof(char) * 128) + (sizeof(s_sprite) * idSprites.size()));
 	memcpy(block.filename, filename, strlen(filename));
@@ -143,7 +150,8 @@ template<class T>
 void ServerCommunication<T>::UDPok(Packet& packet)
 {
 	s_udp_ok block;
-
+	
+	packet.setSize(0);
 	block.opcode = Opcodes::UDPOkay;
 
 	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_udp_ok));
@@ -153,7 +161,8 @@ template<class T>
 void ServerCommunication<T>::TCPsendError(Packet& packet, char errorCode, const char* errorMsg)
 {
 	s_send_error block;
-
+	
+	packet.setSize(0);
 	block.opcode = Opcodes::sendError;
 	block.datasize = sizeof(s_send_error) - HEADSIZE;
 	block.errorCode = errorCode;
@@ -166,7 +175,8 @@ template<class T>
 void ServerCommunication<T>::UDPscreenState(Packet& packet, int score, std::list<Element>& elements) // elements pour idSprite et CoordSprite
 {
 	s_screen_state block;
-
+	
+	packet.setSize(0);
 	block.opcode = Opcodes::screenState;
 	block.datasize = static_cast<short>(sizeof(int) + (sizeof(s_sprite) * elements.size()));
 	block.score = score;
@@ -194,7 +204,8 @@ template<class T>
 void ServerCommunication<T>::UDPendOfGame(Packet& packet, int score)
 {
 	s_end_of_game block;
-
+	
+	packet.setSize(0);
 	block.opcode = Opcodes::endOfGame;
 	block.score = score;
 
@@ -205,7 +216,8 @@ template<class T>
 void ServerCommunication<T>::UDPpause(Packet& packet)
 {
 	s_pause block;
-
+	
+	packet.setSize(0);
 	block.opcode = 0x19;
 	
 	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_pause));
@@ -215,7 +227,8 @@ template<class T>
 void ServerCommunication<T>::UDPspawn(Packet& packet)
 {
 	s_spawn block;
-
+	
+	packet.setSize(0);
 	block.opcode = 0x1A;
 	
 	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_spawn));
@@ -225,7 +238,8 @@ template<class T>
 void ServerCommunication<T>::UPDdeath(Packet& packet)
 {
 	s_death block;
-
+	
+	packet.setSize(0);
 	block.opcode = 0x1B;
 	
 	packet.set(reinterpret_cast<char*>(&block), 0, sizeof(s_death));
@@ -245,6 +259,7 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 		if (readSize != 2)
 		{
 			socket.putback(reinterpret_cast<char*>(&block.datasize), readSize);
+			std::cout << block.datasize << std::endl;
 			return false;
 		}
 		readSize = socket.recv(reinterpret_cast<char*>(reinterpret_cast<char *>(&block) + HEADSIZE), sizeof(s_say_hello) - HEADSIZE);
