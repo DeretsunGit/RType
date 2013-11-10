@@ -276,19 +276,20 @@ public:
 	void interpretCommand(IReadableSocket& socket) const
 	{
 	  typename CommandMap::const_iterator ite;
-		char opcode;
+	  char opcode;
 
-		if (socket.readable())
-		{
-			socket.recv(&opcode, 1);
-			if ((ite = _commandMap.find(opcode)) != _commandMap.end())
-			{
-				if ((this->*(ite->second))(socket) == false)
-					socket.putback(&opcode, 1);
-			}
-			else if (_handler != NULL && _defaultCallback != NULL)
-			  (this->_handler->*_defaultCallback)(opcode, socket);
-		}
+	  if (socket.readable())
+	  {
+		  socket.recv(&opcode, 1);
+		  std::cout << "Received opcode: " << static_cast<int>(opcode) << std::endl;
+		  if ((ite = _commandMap.find(opcode)) != _commandMap.end())
+		  {
+			  if ((this->*(ite->second))(socket) == false)
+				  socket.putback(&opcode, 1);
+		  }
+		  else if (_handler != NULL && _defaultCallback != NULL)
+		    (this->_handler->*_defaultCallback)(opcode, socket);
+	  }
 	}
 
 	/* CLIENT TO SERVER */
