@@ -179,12 +179,18 @@ struct s_inputs
 	bool shield;
 };
 
+struct s_element
+{
+	unsigned char idSprite;
+	t_coord coord;
+};
+
 struct s_screen_state
 {
 	char opcode;
 	short datasize;
 	int score;
-	s_sprite *sprites;
+	s_element *elements;
 };
 
 struct s_end_of_game

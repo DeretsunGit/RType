@@ -229,13 +229,11 @@ void			Debugger::handleScreenState(void *data)
   std::cout << "--- SCREEN STATE ---" << std::endl;
   std::cout << "Score: " << state->score << std::endl;
   std::cout << "Elements" << std::endl << '{' << std::endl;
-  while (state->sprites[i].idSprite)
+  while (state->elements[i].idSprite)
     {
-      std::cout << "\tSprite " << state->sprites[i].idSprite << " at ("
-		<< state->sprites[i].coord[0] << ", "
-		<< state->sprites[i].coord[1] << ", "
-		<< state->sprites[i].coord[2] << ", "
-		<< state->sprites[i].coord[3] << ')' << std::endl;
+      std::cout << "\tSprite " << state->elements[i].idSprite << " at ("
+		<< state->elements[i].coord._posX << ", "
+		<< state->elements[i].coord._posY << ')' << std::endl;
       ++i;
     }
   std::cout << '}' << std::endl;

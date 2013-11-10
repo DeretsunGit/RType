@@ -22,6 +22,9 @@ void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& room
 		start += sizeof(s_room_list_content);
 		++ite;
 	}
+	s_room_list_content end;
+	end.roomId = 0;
+	packet.set(reinterpret_cast<char*>(&end), start, sizeof(s_room_list_content));
 }
 
 template<class T>
@@ -66,7 +69,7 @@ void ServerCommunication<T>::TCPstartLoading(Packet& packet, std::list<std::stri
 	s_start_loading block;
 
 	block.opcode = 0x12;
-	block.datasize = (sizeof(s_ressource) * filenames.size()) + sizeof(unsigned short);
+	block.datasize = static_cast<short>((sizeof(s_ressource) * filenames.size()) + sizeof(unsigned short));
 	block.port = UDPport;
 
 	packet.set(reinterpret_cast<char*>(&block), 0, HEADSIZE + sizeof(unsigned short));
@@ -85,6 +88,9 @@ void ServerCommunication<T>::TCPstartLoading(Packet& packet, std::list<std::stri
 		++f_ite;
 		++m_ite;
 	}
+	s_ressource end;
+	end.filename[0] = 0;
+	packet.set(reinterpret_cast<char*>(&end), start, sizeof(s_ressource));
 }
 
 template<class T>
@@ -93,7 +99,7 @@ void ServerCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filena
 	s_file_trunk block;
 
 	block.opcode = 0x13;
-	block.datasize = sizeof(char) * (32 + size);
+	block.datasize = static_cast<short>(sizeof(char) * (32 + size));
 	memcpy(block.filename, filename, strlen(filename));
 	memcpy(block.data, data, size);
 
@@ -106,7 +112,7 @@ void ServerCommunication<T>::TCPassocSprites(Packet& packet, const char* filenam
 	s_assoc_sprites block;
 
 	block.opcode = 0x14;
-	block.datasize = (sizeof(char) * 128) + (sizeof(s_sprite) * idSprites.size());
+	block.datasize = static_cast<short>((sizeof(char) * 128) + (sizeof(s_sprite) * idSprites.size()));
 	memcpy(block.filename, filename, strlen(filename));
 
 	packet.set(reinterpret_cast<char*>(&block), 0, HEADSIZE + (sizeof(char) * 128));
@@ -124,6 +130,9 @@ void ServerCommunication<T>::TCPassocSprites(Packet& packet, const char* filenam
 		++id_ite;
 		++coord_ite;
 	}
+	s_sprite end;
+	end.idSprite = 0;
+	packet.set(reinterpret_cast<char*>(&end), start, sizeof(s_sprite));
 }
 
 template<class T>
@@ -155,7 +164,7 @@ void ServerCommunication<T>::UDPscreenState(Packet& packet, int score, std::list
 	s_screen_state block;
 
 	block.opcode = 0x17;
-	block.datasize = sizeof(int) + (sizeof(s_sprite) * elements.size());
+	block.datasize = static_cast<short>(sizeof(int) + (sizeof(s_sprite) * elements.size()));
 	block.score = score;
 
 	packet.set(reinterpret_cast<char*>(&block), 0, HEADSIZE + sizeof(int));
@@ -165,13 +174,16 @@ void ServerCommunication<T>::UDPscreenState(Packet& packet, int score, std::list
 
 	while (ite != elements.end())
 	{
-		s_sprite sprite;
-		sprite.idSprite = ite->getSpriteId();
-		//sprite.coord = ite-> POUR L'INSTANT COORD NON SET CAR TABLEAU DE 4 SHORT NON DEFINI PRECISEMENT DANS ELEMENT
-		packet.set(reinterpret_cast<char*>(&sprite), start, sizeof(s_sprite));
+		s_element element;
+		element.idSprite = ite->getSpriteId();
+		element.coord = ite->getPos();
+		packet.set(reinterpret_cast<char*>(&element), start, sizeof(s_element));
 		++ite;
-		start += sizeof(s_sprite);
+		start += sizeof(s_element);
 	}
+	s_element end;
+	end.idSprite = 0;
+	packet.set(reinterpret_cast<char*>(&end), start, sizeof(s_element));
 }
 
 template<class T>

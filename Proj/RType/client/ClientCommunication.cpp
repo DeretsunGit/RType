@@ -90,7 +90,7 @@ void ClientCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filena
 	  s_file_trunk block;
 
 	  block.opcode = 0x07;
-	  block.datasize = sizeof(char) * (32 + size);
+	  block.datasize = static_cast<short>(sizeof(char) * (32 + size));
 	  memcpy(block.filename, filename, strlen(filename));
 	  memcpy(block.data, data, size);
 
@@ -418,7 +418,7 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 	s_screen_state block;
 	block.opcode = 0x17;
 	int readSize = 0;
-	int nbSprites = 0;
+	int nbElements = 0;
 	int i = 0;
 
 	if (socket.readable() && (_handler && _callableMap.find(block.opcode) != _callableMap.end()))
@@ -436,27 +436,27 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&block.datasize), 2);
 			return false;
 		}
-		nbSprites = (block.datasize - sizeof(int)) / sizeof(s_sprite);
-		block.sprites = new s_sprite[nbSprites];
+		nbElements = (block.datasize - sizeof(int)) / sizeof(s_element);
+		block.elements = new s_element[nbElements];
 		readSize = 0;
-		while (i < nbSprites)
+		while (i < nbElements)
 		{
-			readSize += socket.recv(reinterpret_cast<char*>(&block.sprites[i]), sizeof(s_sprite));
-			if (readSize != sizeof(s_sprite))
+			readSize += socket.recv(reinterpret_cast<char*>(&block.elements[i]), sizeof(s_element));
+			if (readSize != sizeof(s_element))
 			{
-				socket.putback(reinterpret_cast<char*>(&block.sprites[i]), readSize);
+				socket.putback(reinterpret_cast<char*>(&block.elements[i]), readSize);
 				while (--i >= 0)
-					socket.putback(reinterpret_cast<char*>(&block.sprites[i]), sizeof(s_sprite));
+					socket.putback(reinterpret_cast<char*>(&block.elements[i]), sizeof(s_element));
 				socket.putback(reinterpret_cast<char*>(&block.score), sizeof(int));
 				socket.putback(reinterpret_cast<char*>(&block.datasize), 2);
-				delete block.sprites;
+				delete block.elements;
 				return false;
 			}
 			readSize = 0;
 			++i;
 		}
 		(_handler->*_callableMap.at(block.opcode))(&block);
-		delete block.sprites;
+		delete block.elements;
 	}
 	return true;
 }
