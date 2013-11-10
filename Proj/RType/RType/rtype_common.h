@@ -9,7 +9,7 @@
 
 # include <Windows.h>
 
-# define	strcpy	strcpy_s
+# define _CRT_SECURE_NO_WARNINGS
 
 #endif
 

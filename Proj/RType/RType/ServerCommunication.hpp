@@ -15,7 +15,7 @@
 //#include "Room.h"
 #include "Player.h"
 
-#define HEADSIZE sizeof(char) + sizeof(short) // taille du "header" opcode + datasize
+#define HEADSIZE (sizeof(char) + sizeof(short)) // taille du "header" opcode + datasize
 
 /* TCP BLOCK STRUCTURES DEFINITION */
 struct s_say_hello

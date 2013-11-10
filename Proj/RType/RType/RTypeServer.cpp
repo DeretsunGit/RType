@@ -28,8 +28,8 @@ RTypeServer::~RTypeServer()
 void		RTypeServer::callBackError(char opcode, IReadableSocket& clientSock)
 {
 	// faire un fichier qui resume les opcodes d'erreur
-	std::cout << "Impossible Action :" << std::hex << opcode;
-	std::cout << "can't be done while _isWaiting = true" << std::endl;
+	std::cout << "Impossible Action : -" << std::hex << opcode;
+	std::cout << "- can't be done while _isWaiting = true" << std::endl;
 	this->sendError(60, "You can't perform this action by now.");
 }
 
@@ -94,7 +94,7 @@ void		RTypeServer::sayHello(void *data)
 {
 	std::cout << "5 on " << DEBUGSTATE << " RTypeServer Client said hello." << std::endl;
 	std::string		magic((reinterpret_cast<s_say_hello *>(data))->magic);
-	if (magic.compare("KOUKOU") == 0)
+	if (magic.compare("KOUKOU") != 0)
 	{
 		this->_currentClient->setDelete(true);
 	}

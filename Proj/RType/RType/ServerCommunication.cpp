@@ -243,10 +243,10 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 			socket.putback(reinterpret_cast<char*>(&block.datasize), readSize);
 			return false;
 		}
-		readSize += socket.recv(reinterpret_cast<char*>(block.magic), sizeof(s_say_hello) - HEADSIZE);
-		if (readSize != block.datasize || readSize != sizeof(s_say_hello) - HEADSIZE)
+		readSize = socket.recv(reinterpret_cast<char*>(reinterpret_cast<char *>(&block) + HEADSIZE), sizeof(s_say_hello) - HEADSIZE);
+		if (readSize != block.datasize && readSize != sizeof(s_say_hello) - HEADSIZE)
 		{
-			socket.putback(reinterpret_cast<char*>(&block + 1), readSize);
+			socket.putback(reinterpret_cast<char*>(reinterpret_cast<char *>(&block) + 1), readSize);
 			return false;
 		}
 		(_handler->*_callableMap[block.opcode])(&block);
