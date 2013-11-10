@@ -21,7 +21,7 @@ struct s_say_hello
 {
 	char opcode;
 	short datasize;
-	char magic[6];
+	char magic[7];
 	char nickname[32];
 	short resolution[2];
 };
