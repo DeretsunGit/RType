@@ -33,9 +33,9 @@ void	MenuManager::init(void)
 	Menu::eMenuActions	mainact[] = {Menu::STARTGAME, Menu::QUIT, Menu::OPENSETTINGS, Menu::QUIT, Menu::QUIT};
 	eSprites sett[] = {SETT_RESO, SETT_NICK, SETT_SOUN, SETT_SRVL, BACK_MAIN};
 	Menu::eMenuActions	settact[] = {Menu::QUIT, Menu::QUIT, Menu::QUIT, Menu::QUIT, Menu::OPENMAIN};
-	this->_menus.insert(std::make_pair("mainmenu", new Menu(5, main, mainact)));
-	this->_menus.insert(std::make_pair("settings", new Menu(5, sett, settact)));
-	this->_activeMenu = this->_menus.find("mainmenu")->second;
+//	this->_menus.insert(std::make_pair("mainmenu", new Menu(5, main, mainact)));
+//	this->_menus.insert(std::make_pair("settings", new Menu(5, sett, settact)));
+	//this->_activeMenu = this->_menus.find("mainmenu")->second;
 	this->menuLoop();
 }
 
@@ -77,7 +77,8 @@ int		MenuManager::menuLoop(void)
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down)
 				this->_activeMenu->incActive();
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return)
-				this->triggerMenuAction(this->_activeMenu->getActiveMenuAction());
+				;
+				//this->triggerMenuAction(this->_activeMenu->getActiveMenuAction());
 		}
 		this->_window->clear();
 		this->_window->draw(logo);
