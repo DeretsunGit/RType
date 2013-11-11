@@ -51,31 +51,13 @@ void ServerCommunication<T>::TCPsendError(Packet& packet, char errorCode, const 
 }
 
 template<class T>
-void ServerCommunication<T>::UDPscreenState(Packet& packet, int score, std::list<Element>& elements) // elements pour idSprite et CoordSprite
+void ServerCommunication<T>::UDPscreenState(Packet& packet, unsigned int score, std::list<Element>& elements) // elements pour idSprite et CoordSprite
 {
 
 }
 
 template<class T>
-void ServerCommunication<T>::UDPendOfGame(Packet& packet, int score)
-{
-
-}
-
-template<class T>
-void ServerCommunication<T>::UDPpause(Packet& packet)
-{
-
-}
-
-template<class T>
-void ServerCommunication<T>::UDPspawn(Packet& packet)
-{
-
-}
-
-template<class T>
-void ServerCommunication<T>::UPDdeath(Packet& packet)
+void ServerCommunication<T>::UDPendOfGame(Packet& packet, unsigned int score)
 {
 
 }
@@ -84,7 +66,37 @@ void ServerCommunication<T>::UPDdeath(Packet& packet)
 template<class T>
 bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 { 
-	return true;
+	s_say_hello block;
+	char nickname[32];
+	char magic[7];
+	unsigned int readsize;
+
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(nickname, 32)) != 32)
+		{
+			socket.putback(nickname, readsize);
+			return false;
+		}
+		if ((readsize = socket.recv(magic, 7)) != 7)
+		{
+			socket.putback(magic, readsize);
+			socket.putback(nickname, 32);
+			return false;
+		}
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&block.resolution), (2 * sizeof(unsigned short)))) != (2 * sizeof(unsigned short)))
+		{
+			socket.putback(reinterpret_cast<char*>(&block.resolution), readsize);
+			socket.putback(magic, 7);
+			socket.putback(nickname, 32);
+			return false;
+		}
+		block.nickname = nickname;
+		block.magic = magic;
+		(_handler->*_callableMap[Opcodes::sayHello])(&block);
+		return true;
+	}
+	return false;
 }
 
 template<class T>

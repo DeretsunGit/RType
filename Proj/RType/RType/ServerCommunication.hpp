@@ -21,6 +21,7 @@
 struct s_say_hello
 {
 	char *nickname;
+	char *magic;
 	unsigned short resolution[2];
 };
 
@@ -117,9 +118,6 @@ public:
 	void TCPsendError(Packet& packet, char errorCode, const char* errorMsg);
 	void UDPscreenState(Packet& packet, unsigned int score, std::list<Element>& elements); // elements pour idSprite et CoordSprite
 	void UDPendOfGame(Packet& packet, unsigned int score);
-	void UDPpause(Packet& packet);
-	void UDPspawn(Packet& packet);
-	void UPDdeath(Packet& packet);
 	/* CLIENT TO SERVER */
 	bool TCPsayHello(IReadableSocket& socket);
 	bool TCPsetRoom(IReadableSocket& socket);

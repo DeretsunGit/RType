@@ -10,9 +10,9 @@
 
 #include	<algorithm>
 #include	<cstring>
-#ifdef _WIN32
-#include	<WinSock2.h>
-#else
+/*#ifdef _WIN32
+#include	<WinSock2.h>*/
+#ifndef _WIN32
 #include	<arpa/inet.h>
 #endif
 #include	"ClientCommunication.hpp"
