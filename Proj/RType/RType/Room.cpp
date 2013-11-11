@@ -152,12 +152,15 @@ void	Room::saveMap(void *data)
 void		Room::sendError(char errorCode, const char *message)
 {
 	this->_RoomCom.TCPsendError(this->_pack, errorCode, message);
+	this->_currentClient->getTCPSock()->send(this->_pack);
 }
 
 void		Room::startLoading()
 {
 	this->_udpSock = new UDPSocketServer(0);
 	this->_port = this->_udpSock->getPort();
+//	this->_RoomCom.sendStartLoading(this->_pack, errorCode, message);
+//	this->_currentClient->getTCPSock()->send(this->_pack);
 }
 
 #include <iostream>
@@ -253,11 +256,9 @@ char	Room::getDifficulty() const
 	return (this->_difficulty);
 }
 
-bool	Room::setName(const char *newName)
+void	Room::setName(const char *newName)
 {
 	this->_name = newName;
-	return (true);
-//	return (temp.size() <= 32 ? true : false);
 }
 
 const std::string& Room::getMap() const

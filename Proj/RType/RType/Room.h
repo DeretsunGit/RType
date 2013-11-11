@@ -55,6 +55,9 @@ public:
 	void	startLoading();
 
 	// send gestion
+	void	sendWrongMap();
+	void	sendStartLoading();
+	void	sendUDPok();
 	void	sendError(char, const char *);
 
 	// Client Gestion
@@ -73,7 +76,7 @@ public:
 	const std::string&		getMap() const;
 	const std::vector<Player*>&		getPlayers() const;
 
-	bool	setName(const char *);
+	void	setName(const char *);
 
 	//Packet* TCPsendRoomList(const std::list<Room>& rooms) const;
 };
