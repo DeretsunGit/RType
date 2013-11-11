@@ -5,19 +5,66 @@
 template<class T>
 void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 {
+	char opcode = Opcodes::roomList;
+	unsigned short datasize = htons(static_cast<short>(rooms.size()) * (sizeof(char) * 34));
+	char name[32], id = 0, nbplayer = 0;
+	std::list<Room *>::const_iterator ite = rooms.begin();
 
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(short));
+
+	while (ite != rooms.end())
+	{
+		memset(name, 0, 32);
+		strncpy(name, (*ite)->getName().c_str(), 32);
+		id = (*ite)->getId();
+		nbplayer = (*ite)->getNbPlayer();
+		packet.write(name, 32 * sizeof(char));
+		packet.write(&id, sizeof(char));
+		packet.write(&nbplayer, sizeof(char));
+		++ite;
+	}
 }
 
 template<class T>
 void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 {
+	char opcode = Opcodes::roomState;
+	unsigned short datasize = htons(((32 + (4 * 32)) * sizeof(char)) + (4 * sizeof(bool)));
+	char name[32];
+	char players[4][32];
+	std::vector<Player*>::const_iterator ite;
+	int i = 0;
 
+	strncpy(name, room.getName().c_str(), 32);
+	
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(short));
+	packet.write(name, 32 * sizeof(char));
+
+	ite = room.getPlayers().begin();
+	while (ite != room.getPlayers().end() && i < 4)
+	{
+		strncpy(players[i], (*ite)->getName().c_str(), 32);
+		++ite;
+		++i;
+	}
+	while (i < 4)
+	{
+		players[i][0] = 0;
+		++i;
+	}
+	packet.write(players[0], (4 * 32) * sizeof(char));
 }
 
 template<class T>
 void ServerCommunication<T>::TCPwrongMap(Packet& packet)
 {
+	char opcode = Opcodes::wrongMap;
+	unsigned short datasize = htons(0);
 
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(short));
 }
 
 template<class T>
