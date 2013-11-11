@@ -12,220 +12,30 @@
 #include <map>
 #include "IReadableSocket.h"
 #include "Packet.hpp"
-//#include "Room.h"
 #include "Player.h"
 #include "Opcodes.h"
 
 #define HEADSIZE (sizeof(char) + sizeof(short)) // taille du "header" opcode + datasize
 
 /* TCP BLOCK STRUCTURES DEFINITION */
-#pragma pack(push, 1)
 struct s_say_hello
 {
-	char opcode;
-	short datasize;
-	char magic[7];
-	char nickname[32];
-	short resolution[2];
-};
-#pragma pack(pop)
-
-#pragma pack(push, 1)
-struct s_room_list_content
-{
-	char roomName[32];
-	char roomId;
-	char nbPlayer;
-};
-#pragma pack(pop)
-
-struct s_room_list
-{
-	char opcode;
-	short datasize;
-	s_room_list_content* rooms;
-};
-
-struct s_set_room
-{
-	char opcode;
-	short datasize;
-	char roomName[32];
-};
-
-struct s_select_room
-{
-	char opcode;
-	char roomId;
-};
-
-struct s_leave_room
-{
-	char opcode;
-};
-
-struct s_room_state
-{
-	char opcode;
-	short datasize;
-	char roomName[32];
-	char playerNames[4][32];
-	bool playerStates[4];
-	char difficulty;
-	bool mapStatus; // random or file
-	char map[128]; // map name
-};
-
-struct s_change_difficulty
-{
-	char opcode;
-	char difficulty;
+	char *nickname;
+	unsigned short resolution[2];
 };
 
 struct s_set_map
 {
-	char opcode;
-	short datasize;
-	bool mapStatus;
-	char filename[128];
-};
-
-struct s_wrong_map
-{
-	char opcode;
-};
-
-struct s_set_ready
-{
-	char opcode;
-};
-
-struct s_ressource
-{
-	char filename[128];
-	char md5[32];
-};
-
-struct s_start_loading
-{
-	char opcode;
-	short datasize;
-	unsigned short port;
-	struct s_ressource *ressources;
-};
-
-struct s_download_ressource
-{
-	char opcode;
-	short datasize;
-	char filename[128];
+	bool status;
+	char* filename;
 };
 
 struct s_file_trunk
 {
-	char opcode;
-	short datasize;
-	char filename[128];
-	char data[1024];
+	char* filename;
+	unsigned int size;
+	char* data;
 };
-
-struct s_sprite
-{
-	char idSprite;
-	short coord[4];
-};
-
-struct s_assoc_sprites
-{
-	char opcode;
-	short datasize;
-	char filename[128];
-	s_sprite *sprites;
-};
-
-struct s_lets_play
-{
-	char opcode;
-};
-
-struct s_save_map
-{
-	char opcode;
-	short datasize;
-	char mapName[128];
-};
-
-struct s_send_error
-{
-	char opcode;
-	short datasize;
-	char errorCode;
-	char errorDesc[256];
-};
-
-/* UPD BLOCK STRUCTURES DEFINITION */
-
-struct s_udp_ready
-{
-	char opcode;
-};
-
-struct s_udp_ok
-{
-	char opcode;
-};
-
-struct s_inputs
-{
-	char opcode;
-	char x;
-	char y;
-	bool fire;
-	bool shield;
-};
-
-struct s_element
-{
-	unsigned char idSprite;
-	t_coord coord;
-};
-
-struct s_screen_state
-{
-	char opcode;
-	short datasize;
-	int score;
-	s_element *elements;
-};
-
-struct s_end_of_game
-{
-	char opcode;
-	int score;
-};
-
-/* NOT INCLUDED UDP BLOCKS */
-
-struct s_pause
-{
-	char opcode;
-};
-
-struct s_pause_ok
-{
-	char opcode;
-};
-
-struct s_spawn
-{
-	char opcode;
-};
-
-struct s_death
-{
-	char opcode;
-};
-
 /* END OF BLOCK STRUCTURES DEFINITION */
 
 class Room;
@@ -259,7 +69,6 @@ public:
 		_commandMap[Opcodes::letsPlay] = &ServerCommunication::TCPletsPlay;
 		_commandMap[Opcodes::saveMap] = &ServerCommunication::TCPsaveMap;
 		_commandMap[Opcodes::inputs] = &ServerCommunication::UDPinputs;
-		//_commandMap[] = &ServerCommunication::UDPpauseOk;
 	}
 
 	~ServerCommunication() {}
@@ -297,9 +106,6 @@ public:
 		}
 	}
 
-	// les fonctions ayant disparues se trouvent dans ServerCommunication.cpp .
-	//pas mal de problemes d'include nous ont forcés a faire ca.
-
 	/* SERVER TO CLIENT */
 	void TCProomList(Packet& packet, std::list<Room *>& rooms); // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 	void TCProomState(Packet& packet, Room& room);
@@ -309,8 +115,8 @@ public:
 	void TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<short[4]>& coords);
 	void UDPok(Packet& packet);
 	void TCPsendError(Packet& packet, char errorCode, const char* errorMsg);
-	void UDPscreenState(Packet& packet, int score, std::list<Element>& elements); // elements pour idSprite et CoordSprite
-	void UDPendOfGame(Packet& packet, int score);
+	void UDPscreenState(Packet& packet, unsigned int score, std::list<Element>& elements); // elements pour idSprite et CoordSprite
+	void UDPendOfGame(Packet& packet, unsigned int score);
 	void UDPpause(Packet& packet);
 	void UDPspawn(Packet& packet);
 	void UPDdeath(Packet& packet);

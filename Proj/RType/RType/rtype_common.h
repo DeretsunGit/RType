@@ -38,6 +38,6 @@
 
 typedef struct s_coord
 {
-	short _posX;
-	short _posY;
+	unsigned short _posX;
+	unsigned short _posY;
 } t_coord;

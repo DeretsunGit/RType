@@ -18,211 +18,49 @@
 #define HEADSIZE (sizeof(char) + sizeof(short)) // taille du "header" opcode + datasize
 
 /* TCP BLOCK STRUCTURES DEFINITION */
-#pragma pack(push, 1)
-struct s_say_hello
+struct s_room_info
 {
-	char opcode;
-	short datasize;
-	char magic[7];
-	char nickname[32];
-	short resolution[2];
-};
-#pragma pack(pop)
-
-#pragma pack(push, 1)
-struct s_room_list_content
-{
-	char roomName[32];
-	char roomId;
+	char* name;
+	char id;
 	char nbPlayer;
 };
-#pragma pack(pop)
 
-struct s_room_list
+struct s_room_state_info
 {
-	char opcode;
-	short datasize;
-	s_room_list_content* rooms;
-};
-
-struct s_set_room
-{
-	char opcode;
-	short datasize;
-	char roomName[32];
-};
-
-struct s_select_room
-{
-	char opcode;
-	char roomId;
-};
-
-struct s_leave_room
-{
-	char opcode;
-};
-
-struct s_room_state
-{
-	char opcode;
-	short datasize;
-	char roomName[32];
-	char playerNames[4][32];
-	bool playerStates[4];
-	char difficulty;
-	bool mapStatus; // random or file
-	char map[128]; // map name
-};
-
-struct s_change_difficulty
-{
-	char opcode;
-	char difficulty;
-};
-
-struct s_set_map
-{
-	char opcode;
-	short datasize;
-	bool mapStatus;
-	char filename[128];
-};
-
-struct s_wrong_map
-{
-	char opcode;
-};
-
-struct s_set_ready
-{
-	char opcode;
-};
-
-struct s_ressource
-{
-	char filename[128];
-	char md5[32];
+	char* name;
+	char players[4][32];
+	bool playerState[4];
 };
 
 struct s_start_loading
 {
-	char opcode;
-	short datasize;
-	unsigned short port;
-	struct s_ressource *ressources;
+	unsigned short udp;
+	std::list<std::pair<char[128], char[32]> > files;
 };
 
-struct s_download_ressource
+struct s_assoc_sprite
 {
-	char opcode;
-	short datasize;
-	char filename[128];
+	char* file;
+	std::list<std::pair<char, short[4]> > sprites;
 };
 
 struct s_file_trunk
 {
-	char opcode;
-	short datasize;
-	char filename[128];
-	char data[1024];
+	char* file;
+	unsigned int size;
+	char* data;
 };
 
-struct s_sprite
+struct s_error
 {
-	unsigned char idSprite;
-	short coord[4];
-};
-
-struct s_assoc_sprites
-{
-	char opcode;
-	short datasize;
-	char filename[128];
-	s_sprite *sprites;
-};
-
-struct s_lets_play
-{
-	char opcode;
-};
-
-struct s_save_map
-{
-	char opcode;
-	short datasize;
-	char mapName[128];
-};
-
-struct s_send_error
-{
-	char opcode;
-	short datasize;
-	char errorCode;
-	char errorDesc[256];
-};
-
-/* UPD BLOCK STRUCTURES DEFINITION */
-
-struct s_udp_ready
-{
-	char opcode;
-};
-
-struct s_udp_ok
-{
-	char opcode;
-};
-
-struct s_inputs
-{
-	char opcode;
-	char x;
-	char y;
-	bool fire;
-	bool shield;
-};
-
-struct s_element
-{
-	unsigned char idSprite;
-	t_coord coord;
+	char code;
+	char* msg;
 };
 
 struct s_screen_state
 {
-	char opcode;
-	short datasize;
-	int score;
-	s_element *elements;
-};
-
-struct s_end_of_game
-{
-	char opcode;
-	int score;
-};
-
-/* NOT INCLUDED UDP BLOCKS */
-
-struct s_pause
-{
-	char opcode;
-};
-
-struct s_pause_ok
-{
-	char opcode;
-};
-
-struct s_spawn
-{
-	char opcode;
-};
-
-struct s_death
-{
-	char opcode;
+	unsigned int score;
+	std::list<std::pair<char, t_coord> > elements;
 };
 
 /* END OF BLOCK STRUCTURES DEFINITION */
@@ -255,9 +93,6 @@ public:
 		_commandMap[Opcodes::sendError] = &ClientCommunication::TCPsendError;
 		_commandMap[Opcodes::screenState] = &ClientCommunication::UDPscreenState;
 		_commandMap[Opcodes::endOfGame] = &ClientCommunication::UDPendOfGame;
-		//_commandMap[] = &ClientCommunication::UDPpause;
-		//_commandMap[0x1A] = &ClientCommunication::UDPspawn;
-		//_commandMap[0x1B] = &ClientCommunication::UPDdeath;
 	}
 
 	~ClientCommunication() {}
@@ -296,7 +131,7 @@ public:
 	}
 
 	/* CLIENT TO SERVER */
-  void TCPsayHello(Packet& packet, const char* nickname, short resolution[2]);
+  void TCPsayHello(Packet& packet, const char* nickname, unsigned short resolution[2]);
   void TCPsetRoom(Packet& packet, const char* roomName);
   void TCPselectRoom(Packet& packet, const char roomId);
   void TCPleaveRoom(Packet& packet);
@@ -308,7 +143,7 @@ public:
   void UDPReady(Packet& packet);
   void TCPletsPlay(Packet& packet);
   void TCPsaveMap(Packet& packet, const char* mapName);
-  void UDPinputs(Packet& packet, s_inputs& inputs);
+//  void UDPinputs(Packet& packet, s_inputs& inputs);
   void UDPpauseOk(Packet& packet);
 
 
