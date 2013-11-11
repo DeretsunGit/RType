@@ -8,39 +8,49 @@
 #pragma once
 
 #include <string>
+#include <list>
 #include <cstring>
 
 class Packet
 {
 public:
-  Packet(int size, char* data)
-  {
-    set(data, 0, size);
-  }
 
   Packet()
   {
     _size = 0;
+	_ite = _buffer.begin();
   }
 
   ~Packet()
   {
+	  while (!_buffer.empty())
+	  {
+			delete _buffer.back();
+			_buffer.pop_back();
+	  }
   }
 
-  bool set(const char* data, int start, int size)
+  void write(const char* data, unsigned int size)
   {
-    if (data == 0)
-      return (false);
+	while (size > 0)
+	{
+		if (_ite == _buffer.end())
+		{
+			_buffer.push_back(new char[1024]);
+			_ite = --_buffer.end();
+		}
 
-    _size += size;
-    memcpy(&_buff[start], data, size);
-
-    return (true);
+		unsigned int sizetocpy = std::min<unsigned int>(1024 - (_size % 1024), size);
+		
+		memcpy((*_ite), data, sizetocpy);
+		size -= sizetocpy;
+		_size += sizetocpy;
+	}
   }
 
-  const char* getBuffer() const
+  const std::list<char*>& getBuffer() const
   {
-    return (this->_buff);
+    return (this->_buffer);
   }
 
   int getSize() const
@@ -53,9 +63,14 @@ public:
     _size = size;
   }
 
+  void reset()
+  {
+	  _size = 0;
+	  _ite = _buffer.begin();
+  }
 
 private:
   int _size;
-  char _buff[1060];
-
+  std::list<char*> _buffer;
+  std::list<char*>::iterator _ite;
 };
