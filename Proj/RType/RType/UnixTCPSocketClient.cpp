@@ -64,7 +64,17 @@ void	UnixTCPSocketClient::send(const char* buff, unsigned int size)
 
 void	UnixTCPSocketClient::send(const Packet& p)
 {
-  this->send(p.getBuffer(), p.getSize());
+  unsigned int			    size(p.getSize());
+  std::list<char*>::const_iterator  it(p.getBuffer().begin());
+  unsigned int			    sent;
+
+  while (size >= 0)
+  {
+    sent = std::min<unsigned int>(size, 1024);
+    this->send(*it, sent);
+    size -= sent;
+    ++it;
+  }
 }
 
 unsigned int	UnixTCPSocketClient::recv(char* buff, unsigned int size)

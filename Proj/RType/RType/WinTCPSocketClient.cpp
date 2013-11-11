@@ -64,7 +64,17 @@ void	      WinTCPSocketClient::putback(const char* buff, unsigned int size)
 
 void  WinTCPSocketClient::send(const Packet& p)
 {
-  this->send(p.getBuffer(), p.getSize());
+  unsigned int			    size(p.getSize());
+  std::list<char*>::const_iterator  it(p.getBuffer().begin());
+  unsigned int			    sent;
+
+  while (size >= 0)
+  {
+    sent = std::min<unsigned int>(size, 1024);
+    this->send(*it, sent);
+    size -= sent;
+    ++it;
+  }
 }
 
 void WinTCPSocketClient::send(const char *buff, unsigned int size)

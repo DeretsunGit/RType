@@ -90,7 +90,7 @@ void ClientCommunication<T>::TCPsetMap(Packet& packet, bool mapStatus, const cha
 
 	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
-	packet.write(&mapStatus, sizeof(bool));
+	packet.write(reinterpret_cast<char*>(&mapStatus), sizeof(bool));
 	packet.write(name, 128 * sizeof(char));
 }
 
@@ -113,7 +113,7 @@ void ClientCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filena
 template<typename T>
 void ClientCommunication<T>::TCPsetReady(Packet& packet)
 {
-	char ocpode = Opcodes::setReady;
+	char opcode = Opcodes::setReady;
 	unsigned short datasize = htons(0);
 
 	packet.write(&opcode, sizeof(char));
@@ -168,11 +168,11 @@ void ClientCommunication<T>::TCPsaveMap(Packet& packet, const char* mapName)
 	packet.write(map, 128 * sizeof(char));
 }
 
-/*template<typename T>
+template<typename T>
 void ClientCommunication<T>::UDPinputs(Packet& packet, s_inputs& inputs)
 {
 
-}*/
+}
 
 template<typename T>
 void ClientCommunication<T>::UDPpauseOk(Packet& packet)
@@ -257,3 +257,4 @@ bool ClientCommunication<T>::UPDdeath(IReadableSocket& socket) const
 {
 		return true;
 }
+

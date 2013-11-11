@@ -116,45 +116,46 @@ void	Debugger::defaultHandler(char opcode, IReadableSocket& sock)
   throw std::exception();
 }
 
-void		Debugger::handleRoomList(void *data)
+void			  Debugger::handleRoomList(void *data)
 {
-  s_room_list*	list(static_cast<s_room_list*>(data));
-  unsigned int	i(0);
+  std::list<s_room_info>*  list(static_cast<std::list<s_room_info>*>(data));
+  std::list<s_room_info>::iterator  it(list->begin());
+  std::list<s_room_info>::iterator  end(list->end());
 
   std::cout << "--- ROOM LIST ---" << std::endl;
-  while (list->rooms[i].roomId)
+  while (it != end)
     {
-      std::cout << "{ Name = \"" << list->rooms[i].roomName << "\", Id = "
-		<< static_cast<int>(list->rooms[i].roomId) << ", nbPlayer = "
-		<< static_cast<int>(list->rooms[i].nbPlayer) << " }" << std::endl;
-      ++i;
+      std::cout << "{ Name = \"" << it->name << "\", Id = "
+		<< static_cast<int>(it->id) << ", nbPlayer = "
+		<< static_cast<int>(it->nbPlayer) << " }" << std::endl;
+      ++it;
     }
   std::cout << "--- END ROOM LIST ---" << std::endl;
 }
 
 void		Debugger::handleRoomState(void *data)
 {
-  s_room_state*	state(static_cast<s_room_state*>(data));
+  s_room_state_info*	state(static_cast<s_room_state_info*>(data));
   unsigned int	i(0);
 
   std::cout << "--- ROOM STATE ---" << std::endl;
-  std::cout << "Name: \"" << state->roomName << '"' << std::endl;
+  std::cout << "Name: \"" << state->name << '"' << std::endl;
   std::cout << "Players:" << std::endl << '{' << std::endl;
   while (i < 4)
     {
-      std::cout << "\tName: \"" << state->playerNames[i]
-		<< "\", State: " << (state->playerStates[i]
+      std::cout << "\tName: \"" << state->players[i]
+		<< "\", State: " << (state->playerState[i]
 				     ? "Ready" : "Waiting") << std::endl;
       ++i;
     }
   std::cout << '}' << std::endl;
-  std::cout << "Difficulty: " << static_cast<int>(state->difficulty)
+/*  std::cout << "Difficulty: " << static_cast<int>(state->difficulty)
 	    << std::endl;
   std::cout << "Map: " << (state->mapStatus
 			   ? "File" : "Random");
   if (state->mapStatus)
     std::cout << " (\"" << state->map << "\")";
-  std::cout << std::endl;
+  std::cout << std::endl;*/
   std::cout << "--- END ROOM STATE ---" << std::endl;
 }
 
@@ -166,15 +167,16 @@ void	Debugger::handleWrongMap(void *)
 void			Debugger::handleStartLoading(void *data)
 {
   s_start_loading*	loader(static_cast<s_start_loading*>(data));
-  unsigned		i(0);
+  std::list<std::pair<char[128], char[32]> >::iterator	it(loader->files.begin());
+  std::list<std::pair<char[128], char[32]> >::iterator	end(loader->files.end());
 
   std::cout << "--- START LOADING ---" << std::endl;
-  std::cout << "UDP port: " << loader->port << std::endl;
-  while (*loader->ressources[i].filename)
+  std::cout << "UDP port: " << loader->udp << std::endl;
+  while (it != end)
     {
-      std::cout << "Ressource: \"" << loader->ressources[i].filename
-		<< "\" (" << loader->ressources[i].md5 << ')' << std::endl;
-      ++i;
+      std::cout << "Ressource: \"" << it->first << "\" (";
+      std::cout.write(it->second, 32) << ')' << std::endl;
+      ++it;
     }
   std::cout << "--- END START LOADING ---" << std::endl;
 }
@@ -184,27 +186,28 @@ void		Debugger::handleFileTrunk(void *data)
   s_file_trunk*	trunk(static_cast<s_file_trunk*>(data));
 
   std::cout << "--- FILE TRUNK ---" << std::endl;
-  std::cout << "Filename: \"" << trunk->filename << '"' << std::endl;
+  std::cout << "Filename: \"" << trunk->file << '"' << std::endl;
   std::cout << "FileContent: [";
-  std::cout.write(trunk->data, trunk->datasize) << ']' << std::endl;
+  std::cout.write(trunk->data, trunk->size) << ']' << std::endl;
   std::cout << "--- END FILE TRUNK ---" << std::endl;
 }
 
 void			Debugger::handleAssocSprites(void *data)
 {
-  s_assoc_sprites*	assoc(static_cast<s_assoc_sprites*>(data));
-  unsigned int		i(0);
+  s_assoc_sprite*	assoc(static_cast<s_assoc_sprite*>(data));
+  std::list<std::pair<char, unsigned short[4]> >::iterator  it(assoc->sprites.begin());
+  std::list<std::pair<char, unsigned short[4]> >::iterator  end(assoc->sprites.end());
 
   std::cout << "--- ASSOC SPRITES ---" << std::endl;
-  std::cout << "Filename: \"" << assoc->filename << '"' << std::endl;
-  while (assoc->sprites[i].idSprite)
+  std::cout << "Filename: \"" << assoc->file << '"' << std::endl;
+  while (it != end)
     {
-      std::cout << "Sprite " << assoc->sprites[i].idSprite << ": ("
-		<< assoc->sprites[i].coord[0] << ", "
-		<< assoc->sprites[i].coord[1] << ", "
-		<< assoc->sprites[i].coord[2] << ", "
-		<< assoc->sprites[i].coord[3] << ')' << std::endl;
-      ++i;
+      std::cout << "Sprite " << it->first << ": ("
+		<< it->second[0] << ", "
+		<< it->second[1] << ", "
+		<< it->second[2] << ", "
+		<< it->second[3] << ')' << std::endl;
+      ++it;
     }
   std::cout << "--- END ASSOC SPRITES ---" << std::endl;
 }
@@ -216,49 +219,52 @@ void	Debugger::handleUDPOkay(void *)
 
 void		Debugger::handleSendError(void *data)
 {
-  s_send_error*	err(static_cast<s_send_error*>(data));
+  s_error*	err(static_cast<s_error*>(data));
 
   std::cout << "--- SEND ERROR ---" << std::endl;
-  std::cout << "Error " << static_cast<int>(err->errorCode) << ": "
-	    << err->errorDesc << std::endl;
+  std::cout << "Error " << static_cast<int>(err->code) << ": "
+	    << err->msg << std::endl;
   std::cout << "--- END SEND ERROR ---" << std::endl;
 }
 
 void			Debugger::handleScreenState(void *data)
 {
   s_screen_state*	state(static_cast<s_screen_state*>(data));
-  unsigned int		i(0);
+  std::list<std::pair<unsigned char, t_coord> >::iterator  it(state->elements.begin());
+  std::list<std::pair<unsigned char, t_coord> >::iterator  end(state->elements.end());
 
   std::cout << "--- SCREEN STATE ---" << std::endl;
   std::cout << "Score: " << state->score << std::endl;
   std::cout << "Elements" << std::endl << '{' << std::endl;
-  while (state->elements[i].idSprite)
+  while (it != end)
     {
-      std::cout << "\tSprite " << state->elements[i].idSprite << " at ("
-		<< state->elements[i].coord._posX << ", "
-		<< state->elements[i].coord._posY << ')' << std::endl;
-      ++i;
+      std::cout << "\tSprite " << static_cast<int>(it->first) << " at ("
+		<< it->second._posX << ", "
+		<< it->second._posY << ')' << std::endl;
+      ++it;
     }
   std::cout << '}' << std::endl;
   std::cout << "--- END SCREEN STATE ---" << std::endl;
 }
 
-void	Debugger::handleEndOfGame(void *)
+void	Debugger::handleEndOfGame(void *data)
 {
   std::cout << "--- END OF GAME ---" << std::endl;
+  std::cout << "Score: " << *static_cast<unsigned int*>(data) << std::endl;
+  std::cout << "--- END END OF GAME ---" << std::endl;
 }
 
-void		Debugger::sendSayHello(const Args& a)
+void		  Debugger::sendSayHello(const Args& a)
 {
-  short		res[2];
-  Packet	p;
+  unsigned short  res[2];
+  Packet	  p;
 
   if (a.size() != 4)
     std::cout << "Usage: sayHello nickname resWidth resHeight" << std::endl;
   else
     {
-      res[0] = stringTo<short>(a[2]);
-      res[1] = stringTo<short>(a[3]);
+      res[0] = stringTo<unsigned short>(a[2]);
+      res[1] = stringTo<unsigned short>(a[3]);
       this->_TCPcomm.TCPsayHello(p, a[1].c_str(), res);
       std::cout << "Size du packet: " << p.getSize() << std::endl;
       this->_tcp.send(p);

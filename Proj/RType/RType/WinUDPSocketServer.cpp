@@ -81,7 +81,17 @@ void  WinUDPSocketServer::sendTo(const char* buff, unsigned int size, const in_a
 
 void  WinUDPSocketServer::sendTo(const Packet& p, const in_addr& to)
 {
-  this->sendTo(p.getBuffer(), p.getSize(), to);
+  unsigned int			    size(p.getSize());
+  std::list<char*>::const_iterator  it(p.getBuffer().begin());
+  unsigned int			    sent;
+
+  while (size >= 0)
+  {
+    sent = std::min<unsigned int>(size, 1024);
+    this->sendTo(*it, sent, to);
+    size -= sent;
+    ++it;
+  }
 }
 
 void	WinUDPSocketServer::broadcast(const char* buff, unsigned int size)
@@ -105,7 +115,7 @@ void	WinUDPSocketServer::broadcast(const Packet& packet)
 
   while (it != end)
     {
-      it->second._output.writeSome(packet.getBuffer(), packet.getSize());
+      this->sendTo(packet, reinterpret_cast<const in_addr&>(it->first));
       ++it;
     }
 }

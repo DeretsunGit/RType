@@ -77,7 +77,17 @@ void  UnixUDPSocketServer::sendTo(const char* buff, unsigned int size, const in_
 
 void  UnixUDPSocketServer::sendTo(const Packet& p, const in_addr& to)
 {
-  this->sendTo(p.getBuffer(), p.getSize(), to);
+  unsigned int			    size(p.getSize());
+  std::list<char*>::const_iterator  it(p.getBuffer().begin());
+  unsigned int			    sent;
+
+  while (size >= 0)
+  {
+    sent = std::min<unsigned int>(size, 1024);
+    this->sendTo(*it, sent, to);
+    size -= sent;
+    ++it;
+  }
 }
 
 void			UnixUDPSocketServer::broadcast(const char* buff,
@@ -102,7 +112,7 @@ void			UnixUDPSocketServer::broadcast(const Packet& p)
 
   while (it != end)
     {
-      it->second._output.writeSome(p.getBuffer(), p.getSize());
+      this->sendTo(p, reinterpret_cast<const u_long&>(it->first));
       ++it;
     }
 }

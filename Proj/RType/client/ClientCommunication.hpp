@@ -41,7 +41,7 @@ struct s_start_loading
 struct s_assoc_sprite
 {
 	char* file;
-	std::list<std::pair<char, short[4]> > sprites;
+	std::list<std::pair<char, unsigned short[4]> > sprites;
 };
 
 struct s_file_trunk
@@ -60,7 +60,16 @@ struct s_error
 struct s_screen_state
 {
 	unsigned int score;
-	std::list<std::pair<char, t_coord> > elements;
+	std::list<std::pair<unsigned char, t_coord> > elements;
+};
+
+struct s_inputs
+{
+  // TODO
+  unsigned short  x;
+  unsigned short  y;
+  char		  fire;
+  char		  shield;
 };
 
 /* END OF BLOCK STRUCTURES DEFINITION */
@@ -143,7 +152,7 @@ public:
   void UDPReady(Packet& packet);
   void TCPletsPlay(Packet& packet);
   void TCPsaveMap(Packet& packet, const char* mapName);
-//  void UDPinputs(Packet& packet, s_inputs& inputs);
+  void UDPinputs(Packet& packet, s_inputs& inputs);
   void UDPpauseOk(Packet& packet);
 
 
