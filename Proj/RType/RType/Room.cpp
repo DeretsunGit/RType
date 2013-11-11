@@ -86,16 +86,20 @@ void	Room::leaveRoom(void *data)
 
 void	Room::setMap(void *data)
 {
+	s_set_map *dataStruct = (reinterpret_cast<s_set_map *>(data));
+	
 	this->_m.lock();
-	this->_script->setRandom((reinterpret_cast<s_set_map *>(data))->mapStatus);
-	this->_map->replace(0, std::string::npos, (reinterpret_cast<s_set_map *>(data))->filename);
+	this->_script->setRandom(dataStruct->status);
+	this->_map->replace(0, std::string::npos, (dataStruct->filename));
 	this->_m.unlock();
 }
 
 void	Room::changeDifficulty(void *data)
 {
+//	s_change_difficulty *dataStruct = (reinterpret_cast<s_change_difficulty *>(data));
+
 	this->_m.lock();
-	this->_difficulty = (reinterpret_cast<s_change_difficulty *>(data))->difficulty;
+//	this->_difficulty = dataStruct->difficulty;
 	this->_m.unlock();
 }
 
@@ -107,6 +111,7 @@ void	Room::getFileTrunk(void *data)
 void	Room::setReady(void *data)
 {
 	this->_m.lock();
+
 	int i = 0;
 	std::vector<Player*>::iterator ite = _party.begin();
 

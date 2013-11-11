@@ -65,7 +65,7 @@ bool		RTypeServer::serverLoop()
 		}
 		this->CheckClientAnswer();
 	}
-	std::cout << "3 on " << DEBUGSTATE << "F inished..." << std::endl;
+	std::cout << "3 on " << DEBUGSTATE << "Finished..." << std::endl;
 
 	return (1);
 }
@@ -94,16 +94,17 @@ void		RTypeServer::CheckClientAnswer()
 void		RTypeServer::sayHello(void *data)
 {
 	std::cout << "5 on " << DEBUGSTATE << " RTypeServer Client said hello." << std::endl;
-	std::string		magic((reinterpret_cast<s_say_hello *>(data))->magic);
+	s_say_hello *dataStruct = (reinterpret_cast<s_say_hello *>(data));
+	std::string		magic(dataStruct->magic);
+	
 	if (magic.compare("KOUKOU") != 0)
 	{
 		this->_currentClient->setDelete(true);
 	}
 	else
 	{
-		this->_currentClient->setName((reinterpret_cast<s_say_hello *>(data))->nickname);
-		this->_currentClient->setResolution((reinterpret_cast<s_say_hello *>(data))->resolution[1],
-											(reinterpret_cast<s_say_hello *>(data))->resolution[2]);
+		this->_currentClient->setName(dataStruct->nickname);
+		this->_currentClient->setResolution(dataStruct->resolution[1], dataStruct->resolution[2]);
 		this->sendRoomList();
 	}
 	std::cout << "5 on " << DEBUGSTATE << " Finished..." << std::endl;
@@ -112,42 +113,44 @@ void		RTypeServer::sayHello(void *data)
 void		RTypeServer::setRoom(void *data)
 {
 	std::cout << "6 on " << DEBUGSTATE << " RTypeServer Room set." << std::endl;
-
+	//s_set_room *dataStruct = (reinterpret_cast<s_set_room *>(data));
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
 			if ((*it_room)->getNbPlayer() == 0)
 			{
-				(*it_room)->setName((reinterpret_cast<s_set_room *>(data))->roomName);
+		//		(*it_room)->setName(dataStruct->roomName);
 				(*it_room)->addClient(this->_currentClient);
 				(*it_room)->getThread()->start();
 				this->_currentClient->setWaiting(false);
-				std::cout << "6 on " << DEBUGSTATE << " Finished : " << *(this->_currentClient->getName()) << " Joined Room " << ((*it_room)->getName()) << " of id : " << static_cast<int>((*it_room)->getId()) << std::endl;
+				std::cout << "6 on " << DEBUGSTATE << " Finished : " <<
+					*(this->_currentClient->getName()) << " Joined Room " <<
+					((*it_room)->getName()) << " of id : " <<
+					static_cast<int>((*it_room)->getId()) << std::endl;
 				return;
 			}
 		}
 				std::cout << "6 on " << DEBUGSTATE << " Badly finished..." << std::endl;
-
 	return;
 }
 
 void		RTypeServer::selectRoom(void *data)
 {
-				std::cout << "7 on " << DEBUGSTATE << " RTypeServer new client in Room." << std::endl;
-
+	std::cout << "7 on " << DEBUGSTATE << " RTypeServer new client in Room." << std::endl;
+	//s_select_room *dataStruct = (reinterpret_cast<s_select_room *>(data));
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
-			if ((*it_room)->getId() == (reinterpret_cast<s_select_room *>(data))->roomId)
+/*			if ((*it_room)->getId() == (dataStruct->roomId)
 			{
 				(*it_room)->addClient(this->_currentClient);
 				this->_currentClient->setWaiting(false);
 				std::cout << "7 on " << DEBUGSTATE << " Finished..." << std::endl;
 
 				return;
-			}
+			}*/
 		}
 	std::cout << "7 on " << DEBUGSTATE << " Badly finished..." << std::endl;
 	return;
@@ -159,23 +162,24 @@ void		RTypeServer::leaveRoom(void *data)
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
+	{
+		if ((*it_room)->removeClient(this->_currentClient->getId()))
 		{
-			if ((*it_room)->removeClient(this->_currentClient->getId()))
-			{
-				this->_currentClient->setWaiting(true);
-				std::cout << "8 on " << DEBUGSTATE << "	Finished..." << std::endl;
-				return;
-			}
+			this->_currentClient->setWaiting(true);
+			std::cout << "8 on " << DEBUGSTATE << "	Finished..." << std::endl;
+			return;
 		}
+	}
 	std::cout << "8 on " << DEBUGSTATE << " Badly finished..." << std::endl;
-
 	return;
 }
 
 void		RTypeServer::sendRoomList()
-{std::cout << "size -> " <<  this->_pack.getSize()<< std::endl;
+{
+	std::cout << "size -> " <<  this->_pack.getSize()<< std::endl;
 	this->_RTypeServerCom.TCProomList(this->_pack, (this->_roomPool));
-	std::cout << " Opcode : "<< static_cast<int>(this->_pack.getBuffer()[0])<< " ; PacketSize : "<< this->_pack.getSize() << std::endl;
+	std::cout << " Opcode : "<< static_cast<int>(this->_pack.getBuffer().front()[0])<< 
+		" ; PacketSize : "<< this->_pack.getSize() << std::endl;
 	this->_currentClient->getTCPSock()->send(this->_pack);
 }
 
