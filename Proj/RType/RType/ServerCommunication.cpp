@@ -7,17 +7,18 @@
 template<class T>
 void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 {
-	char opcode = Opcodes::roomList;
+	char opcode = 2;//Opcodes::roomList;
 	unsigned short datasize = htons(static_cast<short>(rooms.size()) * (sizeof(char) * 34));
 	char name[32], id = 0, nbplayer = 0;
 	std::list<Room *>::const_iterator ite = rooms.begin();
 
+	packet.reset();
 	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(short));
 
 	while (ite != rooms.end())
 	{
-		if ((*ite)->getNbPlayer() != 0)
+//		if ((*ite)->getNbPlayer() != 0)
 		{
 			memset(name, 0, 32);
 			strncpy(name, (*ite)->getName().c_str(), 32);
@@ -123,19 +124,27 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 	char magic[7];
 	unsigned short resolution[2];
 	unsigned int readsize;
+	unsigned short dataSize;
 
 
 	if (socket.readable())
 	{
+		if ((readsize = socket.recv(reinterpret_cast<char *>(&dataSize), sizeof(dataSize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
+			return false;
+		}
 		if ((readsize = socket.recv(magic, 7)) != 7)
 		{
 			socket.putback(magic, readsize);
+			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
 			return false;
 		}
 		if ((readsize = socket.recv(nickname, 32)) != 32)
 		{
 			socket.putback(nickname, readsize);
 			socket.putback(magic, 7);
+			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
 			return false;
 		}
 		if ((readsize = socket.recv(reinterpret_cast<char*>(block.resolution), (2 * sizeof(unsigned short)))) != (2 * sizeof(unsigned short)))
@@ -143,6 +152,7 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 			socket.putback(reinterpret_cast<char*>(block.resolution), readsize);
 			socket.putback(nickname, 32);
 			socket.putback(magic, 7);
+			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
 			return false;
 		}
 		

@@ -201,32 +201,52 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 	char*	name;
 	char	id;
 	char	nbPlayer;
+	unsigned short		dataSize;
 	int		readsize;
+	int		total = 0;
+	std::list<s_room_info>	ret;
 
 	if (socket.readable())
 	{
-		if ((readsize = socket.recv(name, 32)) != 32)
+		if ((readsize = socket.recv(reinterpret_cast<char *>(&dataSize), sizeof(dataSize))) != 2)
 		{
-			socket.putback(name, readsize);
+			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
 			return false;
 		}
-		if ((readsize = socket.recv(&id, 1)) != 1)
+		else
+			total += readsize;
+		while (readsize < dataSize)
 		{
-			socket.putback(&id, readsize);
-			socket.putback(name, 32);
-			return false;
-		}
-		if ((readsize = socket.recv(&nbPlayer, 1)) != 1)
-		{
-			socket.putback(&nbPlayer, readsize);
-			socket.putback(&id, 1);
-			socket.putback(name, 32);
-			return false;
+			if ((readsize = socket.recv(name, 32)) != 32)
+			{
+				socket.putback(name, readsize);
+				return false;
+			}
+			else
+				total += readsize;
+			if ((readsize = socket.recv(&id, 1)) != 1)
+			{
+				socket.putback(&id, readsize);
+				socket.putback(name, 32);
+				return false;
+			}
+			else
+				total += readsize;
+			if ((readsize = socket.recv(&nbPlayer, 1)) != 1)
+			{
+				socket.putback(&nbPlayer, readsize);
+				socket.putback(&id, 1);
+				socket.putback(name, 32);
+				return false;
+			}
+			else
+				total += readsize;
 		}
 		block.name = name;
 		block.id = id;
 		block.nbPlayer = nbPlayer;
-		(_handler->*_callableMap.at(Opcodes::roomList))(&block);
+		ret.push_back(block);
+		(_handler->*_callableMap.at(Opcodes::roomList))(reinterpret_cast<void *>(&ret));
 		return true;
 	}
 	return false;

@@ -99,8 +99,10 @@ void		RTypeServer::sayHello(void *data)
 	s_say_hello *dataStruct = (reinterpret_cast<s_say_hello *>(data));
 	std::string		magic(dataStruct->magic);
 	
-	if (magic.compare("KOUKOU") != 0)
+
+	if (magic.compare("KOUKOU\0") != 0)
 	{
+		std::cout << "-" << dataStruct->magic[1] << "-" << std::endl;
 		std::cout << "You will be terminated. destroy ! destroy ! destroy !" << std::endl;
 		this->_currentClient->setDelete(true);
 	}
@@ -181,8 +183,8 @@ void		RTypeServer::sendRoomList()
 {
 	std::cout << "size -> " <<  this->_pack.getSize()<< std::endl;
 	this->_RTypeServerCom.TCProomList(this->_pack, (this->_roomPool));
-	std::cout << " Opcode : "<< static_cast<int>(this->_pack.getBuffer().front()[0])<< 
-		" ; PacketSize : "<< this->_pack.getSize() << std::endl;
+//	std::cout << " Opcode : "<< static_cast<int>(this->_pack.getBuffer().front()[0])<< 
+	//	" ; PacketSize : "<< this->_pack.getSize() << std::endl;
 	this->_currentClient->getTCPSock()->send(this->_pack);
 }
 
