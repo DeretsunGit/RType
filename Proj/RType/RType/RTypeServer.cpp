@@ -29,7 +29,8 @@ RTypeServer::~RTypeServer()
 void		RTypeServer::callBackError(char opcode, IReadableSocket& clientSock)
 {
 	// faire un fichier qui resume les opcodes d'erreur
-	std::cout << "Impossible Action : -" << std::hex << opcode;
+	std::cout << "Impossible Action : -"<<//0x" << std::hex <<
+		static_cast<int>(opcode);
 	std::cout << "- can't be done while _isWaiting = true" << std::endl;
 	this->sendError(60, "You can't perform this action by now.");
 }
@@ -105,7 +106,7 @@ void		RTypeServer::sayHello(void *data)
 	{
 		this->_currentClient->setName(dataStruct->nickname);
 		this->_currentClient->setResolution(dataStruct->resolution[1], dataStruct->resolution[2]);
-		this->sendRoomList();
+	//	this->sendRoomList();
 	}
 	std::cout << "5 on " << DEBUGSTATE << " Finished..." << std::endl;
 }

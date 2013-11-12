@@ -7,6 +7,12 @@
 
 #pragma once
 
+#ifndef _WIN32
+#include	<arpa/inet.h>
+#endif
+#include	<algorithm>
+#include <iostream>
+#include <cstring>
 #include <string>
 #include <list>
 #include <map>
@@ -91,19 +97,26 @@ public:
 
 	void interpretCommand(IReadableSocket& socket)
 	{
-	  typename std::map<char, bool (ServerCommunication::*)(IReadableSocket&) >::const_iterator ite;
-		char opcode;
-
+		typename std::map<char, bool (ServerCommunication::*)(IReadableSocket&) >::const_iterator ite;
+		char opcode = 0;
+		char temp[39];
+		int i = 0;
 		if (socket.readable())
 		{
-			socket.recv(&opcode, 1);
+			socket.recv(temp, 39);
+			while (i < 39)
+			{
+				std::cout << i << " -> " << static_cast<int>(temp[i]) << std::endl;
+				i++;
+			}
+			/*socket.recv(&opcode, 1);
 			if ((ite = _commandMap.find(opcode)) != _commandMap.end())
 			{
 				if ((this->*(ite->second))(socket) == false)
 					socket.putback(&opcode, 1);
 			}
 			else if (_handler != NULL && _defaultCallback != NULL)
-				(this->_handler->*_defaultCallback)(opcode, socket);
+				(this->_handler->*_defaultCallback)(opcode, socket);*/
 		}
 	}
 

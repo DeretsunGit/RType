@@ -266,6 +266,7 @@ void		  Debugger::sendSayHello(const Args& a)
       res[0] = stringTo<unsigned short>(a[2]);
       res[1] = stringTo<unsigned short>(a[3]);
       this->_TCPcomm.TCPsayHello(p, a[1].c_str(), res);
+	  std::cout << "OPcode sended : " << Opcodes::sayHello << ", revEndian : " << std::endl;
       std::cout << "Size du packet: " << p.getSize() << std::endl;
       this->_tcp.send(p);
     }

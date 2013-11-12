@@ -28,10 +28,12 @@ void ClientCommunication<T>::TCPsayHello(Packet& packet, const char* nickname, u
 
 	strncpy(nickname_to_write, nickname, 32);
 
+	packet.reset();
 	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 	packet.write(nickname_to_write, 32 * sizeof(char));
 	packet.write(reinterpret_cast<char*>(&resolution), 2 * (sizeof(unsigned short)));
+	packet.write(&opcode, sizeof(char));
 }
 
 template<typename T>
@@ -183,7 +185,39 @@ void ClientCommunication<T>::UDPpauseOk(Packet& packet)
 template<typename T>
 bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 {
-	return true;
+	s_room_info block;
+	char*	name;
+	char	id;
+	char	nbPlayer;
+	int		readsize;
+
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(name, 32)) != 32)
+		{
+			socket.putback(name, readsize);
+			return false;
+		}
+		if ((readsize = socket.recv(&id, 1)) != 1)
+		{
+			socket.putback(&id, readsize);
+			socket.putback(name, 32);
+			return false;
+		}
+		if ((readsize = socket.recv(&nbPlayer, 1)) != 1)
+		{
+			socket.putback(&nbPlayer, readsize);
+			socket.putback(&id, 1);
+			socket.putback(name, 32);
+			return false;
+		}
+		block.name = name;
+		block.id = id;
+		block.nbPlayer = nbPlayer;
+		(_handler->*_callableMap.at(Opcodes::roomList))(&block);
+		return true;
+	}
+	return false;
 }
 
 template<typename T>

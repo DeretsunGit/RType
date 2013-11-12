@@ -1,5 +1,7 @@
+#include <iostream>
 #include "ServerCommunication.hpp"
 #include "Room.h"
+
 
 	/* SERVER TO CLIENT */
 template<class T>
@@ -15,14 +17,17 @@ void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& room
 
 	while (ite != rooms.end())
 	{
-		memset(name, 0, 32);
-		strncpy(name, (*ite)->getName().c_str(), 32);
-		id = (*ite)->getId();
-		nbplayer = (*ite)->getNbPlayer();
-		packet.write(name, 32 * sizeof(char));
-		packet.write(&id, sizeof(char));
-		packet.write(&nbplayer, sizeof(char));
-		++ite;
+		if ((*ite)->getNbPlayer() != 0)
+		{
+			memset(name, 0, 32);
+			strncpy(name, (*ite)->getName().c_str(), 32);
+			id = (*ite)->getId();
+			nbplayer = (*ite)->getNbPlayer();
+			packet.write(name, 32 * sizeof(char));
+			packet.write(&id, sizeof(char));
+			packet.write(&nbplayer, sizeof(char));
+			++ite;
+		}
 	}
 }
 
@@ -116,7 +121,9 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 	s_say_hello block;
 	char nickname[32];
 	char magic[7];
+	unsigned short resolution[2];
 	unsigned int readsize;
+
 
 	if (socket.readable())
 	{
@@ -138,8 +145,11 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 			socket.putback(nickname, 32);
 			return false;
 		}
-		block.nickname = nickname;
-		block.magic = magic;
+		
+//		block.nickname = ntohs(static_cast<char *>(nickname));
+//		block.magic = ntohs(static_cast<char>(magic));
+		block.nickname = nickname;//htons(static_cast<char *>(nickname));
+		block.magic = magic;//htons(static_cast<char>(magic));
 		(_handler->*_callableMap[Opcodes::sayHello])(&block);
 		return true;
 	}
