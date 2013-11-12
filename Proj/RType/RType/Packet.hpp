@@ -18,7 +18,7 @@ public:
   Packet()
   {
     _size = 0;
-	_ite = _buffer.begin();
+    _ite = _buffer.begin();
   }
 
   ~Packet()
@@ -42,7 +42,7 @@ public:
 
 		unsigned int sizetocpy = std::min<unsigned int>(1024 - (_size % 1024), size);
 		
-		memcpy((*_ite), data, sizetocpy);
+		memcpy(&(*_ite)[_size % 1024], data, sizetocpy);
 		size -= sizetocpy;
 		_size += sizetocpy;
 	}

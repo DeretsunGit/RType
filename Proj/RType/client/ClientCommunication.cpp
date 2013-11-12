@@ -23,17 +23,29 @@ template<typename T>
 void ClientCommunication<T>::TCPsayHello(Packet& packet, const char* nickname, unsigned short resolution[2])
 {
 	char opcode = Opcodes::sayHello;
-	unsigned short datasize = htons((32 * sizeof(char)) + (2 * (sizeof(unsigned short))));
+	unsigned short datasize = htons(sizeof("KOUKOU") + (32 * sizeof(char)) + (2 * (sizeof(unsigned short))));
 	char nickname_to_write[32];
+	unsigned short res[2] = {htons(resolution[0]), htons(resolution[1])};
 
 	strncpy(nickname_to_write, nickname, 32);
 
 	packet.reset();
 	packet.write(&opcode, sizeof(char));
-	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short)); 
+	packet.write("KOUKOU", sizeof("KOUKOU"));
 	packet.write(nickname_to_write, 32 * sizeof(char));
-	packet.write(reinterpret_cast<char*>(&resolution), 2 * (sizeof(unsigned short)));
-	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(res), sizeof(res));
+
+	unsigned int size(packet.getSize());
+	std::list<char*>::const_iterator  it(packet.getBuffer().begin());
+
+	std::cout << "Size: " << size << std::endl;
+	while (size > 0)
+	{
+	  std::cout.write(*it, std::min<unsigned int>(size, 1024));
+	  size -= std::min<unsigned int>(size, 1024);
+	}
+	std::cout.flush();
 }
 
 template<typename T>

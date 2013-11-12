@@ -127,22 +127,22 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 
 	if (socket.readable())
 	{
-		if ((readsize = socket.recv(nickname, 32)) != 32)
-		{
-			socket.putback(nickname, readsize);
-			return false;
-		}
 		if ((readsize = socket.recv(magic, 7)) != 7)
 		{
 			socket.putback(magic, readsize);
-			socket.putback(nickname, 32);
 			return false;
 		}
-		if ((readsize = socket.recv(reinterpret_cast<char*>(&block.resolution), (2 * sizeof(unsigned short)))) != (2 * sizeof(unsigned short)))
+		if ((readsize = socket.recv(nickname, 32)) != 32)
 		{
-			socket.putback(reinterpret_cast<char*>(&block.resolution), readsize);
+			socket.putback(nickname, readsize);
 			socket.putback(magic, 7);
+			return false;
+		}
+		if ((readsize = socket.recv(reinterpret_cast<char*>(block.resolution), (2 * sizeof(unsigned short)))) != (2 * sizeof(unsigned short)))
+		{
+			socket.putback(reinterpret_cast<char*>(block.resolution), readsize);
 			socket.putback(nickname, 32);
+			socket.putback(magic, 7);
 			return false;
 		}
 		
@@ -150,6 +150,8 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 //		block.magic = ntohs(static_cast<char>(magic));
 		block.nickname = nickname;//htons(static_cast<char *>(nickname));
 		block.magic = magic;//htons(static_cast<char>(magic));
+		block.resolution[0] = ntohs(block.resolution[0]);
+		block.resolution[1] = ntohs(block.resolution[1]);
 		(_handler->*_callableMap[Opcodes::sayHello])(&block);
 		return true;
 	}
