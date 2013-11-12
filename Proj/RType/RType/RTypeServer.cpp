@@ -81,13 +81,14 @@ void		RTypeServer::CheckClientAnswer()
 			if ((*it_client)->getDelete() == true)
 			{
 				temp = *it_client;
-				this->_clientList.erase(it_client);
-				delete temp;
+	//			this->_clientList.erase(it_client);
+		//		delete temp;
 			}
 			else if ((*it_client)->getWaiting() == true)
 			{
 				this->_currentClient = (*it_client);
 				this->_RTypeServerCom.interpretCommand(*(this->_currentClient->getTCPSock()));
+				std::cout << "--" << std::endl;
 			}
 		}
 }
@@ -100,13 +101,14 @@ void		RTypeServer::sayHello(void *data)
 	
 	if (magic.compare("KOUKOU") != 0)
 	{
+		std::cout << "You will be terminated. destroy ! destroy ! destroy !" << std::endl;
 		this->_currentClient->setDelete(true);
 	}
 	else
 	{
 		this->_currentClient->setName(dataStruct->nickname);
 		this->_currentClient->setResolution(dataStruct->resolution[1], dataStruct->resolution[2]);
-	//	this->sendRoomList();
+		this->sendRoomList();
 	}
 	std::cout << "5 on " << DEBUGSTATE << " Finished..." << std::endl;
 }
