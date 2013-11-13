@@ -4,6 +4,7 @@
 
 SpriteManager::SpriteManager(void)
 {
+	//segfault, faire une gestion derreur un peu moins inexistante
 	if (!this->_shiptexture.loadFromFile("assets/ship.gif"))
 	{
 		std::cerr << "Error opening texture file" << std::endl;
@@ -19,6 +20,11 @@ SpriteManager::SpriteManager(void)
 		std::cerr << "Error opening texture file" << std::endl;
 		return;
 	}
+	if (!this->_creditstexture.loadFromFile("assets/credits.png"))
+	{
+		std::cerr << "Error opening texture file" << std::endl;
+		return;
+	}
 	this->_sprites.resize(NB_SPRITES);
 	for (int i = SHIP_IDLE ; i <= SHIP_UPMAX ; i++)
 	{
@@ -28,6 +34,7 @@ SpriteManager::SpriteManager(void)
 	{
 		this->_sprites[i].setTexture(this->_menutexture);
 	}
+	this->_sprites[CREDITS].setTexture(this->_creditstexture);
 	this->_sprites[BG_IMG].setTexture(this->_bgtexture);
 	this->_sprites[SHIP_IDLE].setTextureRect(sf::IntRect(167, 3, 32, 14));
 	this->_sprites[SHIP_IDLE].setScale(3, 3);
@@ -40,13 +47,11 @@ SpriteManager::SpriteManager(void)
 	this->_sprites[ENGINE_FAST].setTextureRect(sf::IntRect(167, 18, 32, 32));
 	this->_sprites[ENGINE_MAXI].setTextureRect(sf::IntRect(134, 18, 32, 32));
 	this->_sprites[GAME_LOGO].setTextureRect(sf::IntRect(0, 0, 480, 85));
-	this->_sprites[MENU_JOIN].setTextureRect(sf::IntRect(0, 90, 450, 54));
-	this->_sprites[MENU_CREA].setTextureRect(sf::IntRect(0, 153, 450, 54));
+	this->_sprites[MENU_PLAY].setTextureRect(sf::IntRect(0, 90, 450, 54));
 	this->_sprites[MENU_SETT].setTextureRect(sf::IntRect(0, 213, 450, 54));
 	this->_sprites[MENU_CRED].setTextureRect(sf::IntRect(0, 268, 450, 54));
 	this->_sprites[MENU_QUIT].setTextureRect(sf::IntRect(0, 325, 450, 54));
-	this->_sprites[MENU_JOIN_ON].setTextureRect(sf::IntRect(480, 90, 450, 54));
-	this->_sprites[MENU_CREA_ON].setTextureRect(sf::IntRect(480, 153, 450, 54));
+	this->_sprites[MENU_PLAY_ON].setTextureRect(sf::IntRect(480, 90, 450, 54));
 	this->_sprites[MENU_SETT_ON].setTextureRect(sf::IntRect(480, 213, 450, 54));
 	this->_sprites[MENU_CRED_ON].setTextureRect(sf::IntRect(480, 268, 450, 54));
 	this->_sprites[MENU_QUIT_ON].setTextureRect(sf::IntRect(480, 325, 450, 54));
@@ -65,6 +70,7 @@ SpriteManager::SpriteManager(void)
 
 SpriteManager::~SpriteManager(void)
 {
+
 }
 
 sf::Sprite	SpriteManager::getSpritebyId(int id)
