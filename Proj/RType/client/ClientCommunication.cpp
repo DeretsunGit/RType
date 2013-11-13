@@ -35,17 +35,6 @@ void ClientCommunication<T>::TCPsayHello(Packet& packet, const char* nickname, u
 	packet.write("KOUKOU", sizeof("KOUKOU"));
 	packet.write(nickname_to_write, 32 * sizeof(char));
 	packet.write(reinterpret_cast<char*>(res), sizeof(res));
-
-	unsigned int size(packet.getSize());
-	std::list<char*>::const_iterator  it(packet.getBuffer().begin());
-
-	std::cout << "Size: " << size << std::endl;
-	while (size > 0)
-	{
-	  std::cout.write(*it, std::min<unsigned int>(size, 1024));
-	  size -= std::min<unsigned int>(size, 1024);
-	}
-	std::cout.flush();
 }
 
 template<typename T>
@@ -197,14 +186,11 @@ void ClientCommunication<T>::UDPpauseOk(Packet& packet)
 template<typename T>
 bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 {
-	s_room_info block;
-	char*	name;
-	char	id;
-	char	nbPlayer;
+  s_room_info block;
 	unsigned short		dataSize;
 	int		readsize;
-	int		total = 0;
 	std::list<s_room_info>	ret;
+	int		total(0);
 
 	if (socket.readable())
 	{
@@ -213,39 +199,49 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
 			return false;
 		}
-		else
-			total += readsize;
-		while (readsize < dataSize)
+		while (total < htons(dataSize))
 		{
-			if ((readsize = socket.recv(name, 32)) != 32)
+			if ((readsize = socket.recv(block.name, 32)) != 32)
 			{
-				socket.putback(name, readsize);
+				socket.putback(block.name, readsize);
+				while (!ret.empty())
+				{
+				  socket.putback(reinterpret_cast<char*>(&ret.back()), sizeof(s_room_info));
+				  ret.pop_back();
+				}
+				socket.putback(reinterpret_cast<char *>(&dataSize), sizeof(dataSize));
 				return false;
 			}
-			else
-				total += readsize;
-			if ((readsize = socket.recv(&id, 1)) != 1)
+			total += readsize;
+			if ((readsize = socket.recv(&block.id, 1)) != 1)
 			{
-				socket.putback(&id, readsize);
-				socket.putback(name, 32);
+				socket.putback(&block.id, readsize);
+				socket.putback(block.name, 32);
+				while (!ret.empty())
+				{
+				  socket.putback(reinterpret_cast<char*>(&ret.back()), sizeof(s_room_info));
+				  ret.pop_back();
+				}
+				socket.putback(reinterpret_cast<char *>(&dataSize), sizeof(dataSize));
 				return false;
 			}
-			else
-				total += readsize;
-			if ((readsize = socket.recv(&nbPlayer, 1)) != 1)
+			total += readsize;
+			if ((readsize = socket.recv(&block.nbPlayer, 1)) != 1)
 			{
-				socket.putback(&nbPlayer, readsize);
-				socket.putback(&id, 1);
-				socket.putback(name, 32);
+				socket.putback(&block.nbPlayer, readsize);
+				socket.putback(&block.id, 1);
+				socket.putback(block.name, 32);
+				while (!ret.empty())
+				{
+				  socket.putback(reinterpret_cast<char*>(&ret.back()), sizeof(s_room_info));
+				  ret.pop_back();
+				}
+				socket.putback(reinterpret_cast<char *>(&dataSize), sizeof(dataSize));
 				return false;
 			}
-			else
-				total += readsize;
+			total += readsize;
+			ret.push_back(block);
 		}
-		block.name = name;
-		block.id = id;
-		block.nbPlayer = nbPlayer;
-		ret.push_back(block);
 		(_handler->*_callableMap.at(Opcodes::roomList))(reinterpret_cast<void *>(&ret));
 		return true;
 	}

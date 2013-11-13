@@ -19,16 +19,16 @@ void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& room
 	while (ite != rooms.end())
 	{
 //		if ((*ite)->getNbPlayer() != 0)
-		{
+//		{
 			memset(name, 0, 32);
-			strncpy(name, (*ite)->getName().c_str(), 32);
+			strncpy(name, (*ite)->getName().c_str(), 31);
 			id = (*ite)->getId();
 			nbplayer = (*ite)->getNbPlayer();
 			packet.write(name, 32 * sizeof(char));
 			packet.write(&id, sizeof(char));
 			packet.write(&nbplayer, sizeof(char));
 			++ite;
-		}
+//		}
 	}
 }
 
@@ -122,7 +122,6 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 	s_say_hello block;
 	char nickname[32];
 	char magic[7];
-	unsigned short resolution[2];
 	unsigned int readsize;
 	unsigned short dataSize;
 

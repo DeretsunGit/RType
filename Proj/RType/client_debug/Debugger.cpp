@@ -110,10 +110,10 @@ void	      Debugger::networkThread()
 
 void	Debugger::defaultHandler(char opcode, IReadableSocket& sock)
 {
-  std::cout << "Received unknown opcode (" << static_cast<int>(opcode)
-	    << ") on " << (&sock == this->_udp ? "UDP" : "TCP")
-	    << " socket." << std::endl;
-  throw std::exception();
+//  std::cout << "Received unknown opcode (" << static_cast<int>(opcode)
+//	    << ") on " << (&sock == this->_udp ? "UDP" : "TCP")
+//	    << " socket." << std::endl;
+//  throw std::exception();
 }
 
 void			  Debugger::handleRoomList(void *data)

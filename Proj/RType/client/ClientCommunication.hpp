@@ -20,7 +20,7 @@
 /* TCP BLOCK STRUCTURES DEFINITION */
 struct s_room_info
 {
-	char* name;
+	char name[32];
 	char id;
 	char nbPlayer;
 };

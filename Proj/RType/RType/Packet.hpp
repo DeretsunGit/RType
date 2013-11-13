@@ -10,6 +10,7 @@
 #include <string>
 #include <list>
 #include <cstring>
+#include <iostream>
 
 class Packet
 {
@@ -36,15 +37,20 @@ public:
 	{
 		if (_ite == _buffer.end())
 		{
+		  std::cout << __FILE__ << ':' << __LINE__ << std::endl;
 			_buffer.push_back(new char[1024]);
+		  std::cout << __FILE__ << ':' << __LINE__ << std::endl;
 			_ite = --_buffer.end();
+		  std::cout << __FILE__ << ':' << __LINE__ << std::endl;
 		}
 
 		unsigned int sizetocpy = std::min<unsigned int>(1024 - (_size % 1024), size);
-		
+
 		memcpy(&(*_ite)[_size % 1024], data, sizetocpy);
 		size -= sizetocpy;
 		_size += sizetocpy;
+		if (!(_size % 1024))
+		  ++_ite;
 	}
   }
 

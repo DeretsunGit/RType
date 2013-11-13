@@ -68,7 +68,7 @@ void  WinTCPSocketClient::send(const Packet& p)
   std::list<char*>::const_iterator  it(p.getBuffer().begin());
   unsigned int			    sent;
 
-  while (size > 0)
+  while (size > 0 && it != p.getBuffer().end())
   {
     sent = std::min<unsigned int>(size, 1024);
     this->send(*it, sent);
