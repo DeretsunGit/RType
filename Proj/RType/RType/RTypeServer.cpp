@@ -88,7 +88,7 @@ void		RTypeServer::CheckClientAnswer()
 			{
 				this->_currentClient = (*it_client);
 				this->_RTypeServerCom.interpretCommand(*(this->_currentClient->getTCPSock()));
-				std::cout << "--" << std::endl;
+			//	std::cout << "--" << std::endl;
 			}
 		}
 }
@@ -111,6 +111,7 @@ void		RTypeServer::sayHello(void *data)
 		this->_currentClient->setName(dataStruct->nickname);
 		this->_currentClient->setResolution(dataStruct->resolution[1], dataStruct->resolution[2]);
 		this->sendRoomList();
+		//this->sendError(40, "lol");
 	}
 	std::cout << "5 on " << DEBUGSTATE << " Finished..." << std::endl;
 }
@@ -181,8 +182,8 @@ void		RTypeServer::leaveRoom(void *data)
 
 void		RTypeServer::sendRoomList()
 {
-	std::cout << "size -> " <<  this->_pack.getSize()<< std::endl;
 	this->_RTypeServerCom.TCProomList(this->_pack, (this->_roomPool));
+	std::cout << "size -> " <<  this->_pack.getSize()<< std::endl;
 //	std::cout << " Opcode : "<< static_cast<int>(this->_pack.getBuffer().front()[0])<< 
 	//	" ; PacketSize : "<< this->_pack.getSize() << std::endl;
 	this->_currentClient->getTCPSock()->send(this->_pack);
