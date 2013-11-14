@@ -26,7 +26,7 @@ public:
   {
     while (!_buffer.empty())
       {
-	delete _buffer.back();
+	delete[] _buffer.back();
 	_buffer.pop_back();
       }
   }

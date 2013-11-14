@@ -40,7 +40,7 @@ struct Buffer
 
 	Buffer&	operator=(const Buffer&)
 	{
-		memcpy(_buff, b._buff, size);
+		memcpy(_buff, _buff, size);
 	}
 
 	T	_buff[size];

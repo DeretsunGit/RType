@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Thu Nov 14 10:01:27 2013 julien edmond
-// Last update Thu Nov 14 10:08:42 2013 julien edmond
+// Last update Thu Nov 14 11:18:53 2013 julien edmond
 //
 
 #pragma once
@@ -22,7 +22,7 @@ public:
 
   void	push(const char* addr, unsigned int size)
   {
-    this->push(std::pair<const char*, unsigned int>(addr, size));
+    this->Parent::push(std::pair<const char*, unsigned int>(addr, size));
   }
 
   template<typename T>
@@ -35,13 +35,17 @@ public:
   {
     while (!this->empty())
       {
-	s.putback(s.top().first, s.top().second);
+	s.putback(this->top().first, this->top().second);
 	this->pop();
       }
   }
 
+  ~SocketStack()
+  {}
+
 private:
+  typedef std::stack<std::pair<const char*, unsigned int> > Parent;
+
   SocketStack(const SocketStack&);
   SocketStack&	operator=(const SocketStack&);
-  ~SocketStack();
 };
