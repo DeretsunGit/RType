@@ -195,18 +195,18 @@ void		Debugger::handleFileTrunk(void *data)
 void			Debugger::handleAssocSprites(void *data)
 {
   s_assoc_sprite*	assoc(static_cast<s_assoc_sprite*>(data));
-  std::list<std::pair<char, unsigned short[4]> >::iterator  it(assoc->sprites.begin());
-  std::list<std::pair<char, unsigned short[4]> >::iterator  end(assoc->sprites.end());
+  std::list<std::pair<char, s_shorts> >::iterator  it(assoc->sprites.begin());
+  std::list<std::pair<char, s_shorts> >::iterator  end(assoc->sprites.end());
 
   std::cout << "--- ASSOC SPRITES ---" << std::endl;
   std::cout << "Filename: \"" << assoc->file << '"' << std::endl;
   while (it != end)
     {
       std::cout << "Sprite " << it->first << ": ("
-		<< it->second[0] << ", "
-		<< it->second[1] << ", "
-		<< it->second[2] << ", "
-		<< it->second[3] << ')' << std::endl;
+		<< it->second._v1 << ", "
+		<< it->second._v2 << ", "
+		<< it->second._v3 << ", "
+		<< it->second._v4 << ')' << std::endl;
       ++it;
     }
   std::cout << "--- END ASSOC SPRITES ---" << std::endl;

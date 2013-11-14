@@ -44,6 +44,7 @@ void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 
 	strncpy(name, room.getName().c_str(), 32);
 	
+	packet.reset();
 	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(short));
 	packet.write(name, 32 * sizeof(char));
@@ -69,6 +70,7 @@ void ServerCommunication<T>::TCPwrongMap(Packet& packet)
 	char opcode = Opcodes::wrongMap;
 	unsigned short datasize = htons(0);
 
+	packet.reset();
 	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(short));
 }
@@ -76,43 +78,141 @@ void ServerCommunication<T>::TCPwrongMap(Packet& packet)
 template<class T>
 void ServerCommunication<T>::TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport) // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
 {
+	char opcode = Opcodes::startLoading;
+	unsigned short datasize = htons((sizeof(unsigned short)) + (static_cast<unsigned short>(filenames.size()) * (160 * sizeof(char))));
+	unsigned short udp_to_send = htons(UDPport);
+	char name[128], md5_to_cpy[32];
+	std::list<std::string>::const_iterator f_ite = filenames.begin();
+	std::list<std::string>::const_iterator m_ite = md5.begin();
 
+	packet.reset();
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
+	packet.write(reinterpret_cast<char*>(&udp_to_send), sizeof(unsigned short));
+
+	while (f_ite != filenames.end() && m_ite != md5.end())
+	{
+		memset(name, 0, 128);
+		memset(md5_to_cpy, 0, 128);
+		strncpy(name, f_ite->c_str(), 128);
+		strncpy(md5_to_cpy, m_ite->c_str(), 32);
+		packet.write(name, 128 * sizeof(char));
+		packet.write(md5_to_cpy, 32 * sizeof(char));
+		++f_ite;
+		++m_ite;
+	}
 }
 
 template<class T>
 void ServerCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size)
 {
+	char opcode = Opcodes::fileTrunk;
+	unsigned short datasize = htons((32 + static_cast<unsigned short>(size)) * sizeof(char));
+	char name[32];
 
+	memset(name, 0, 32);
+	packet.reset();
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
+	packet.write(name, 32 * sizeof(char));
+	packet.write(data, static_cast<unsigned short>(size) * sizeof(char));
 }
 
 template<class T>
-void ServerCommunication<T>::TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<short[4]>& coords)
+void ServerCommunication<T>::TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<unsigned short[4]>& coords)
 {
+	char opcode = Opcodes::assocSprite;
+	unsigned short datasize = htons((32 * sizeof(char)) + (static_cast<unsigned short>(idSprites.size()) * (sizeof(char) + (sizeof(unsigned short) * 4))));
+	char name[32], id;
+	unsigned short coord[4];
+	std::list<char>::const_iterator s_ite = idSprites.begin();
+	std::list<unsigned short[4]>::const_iterator c_ite = coords.begin();
 
+	memset(name, 0, 32);
+	packet.reset();
+	strncpy(name, filename, 32);
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
+	packet.write(name, 32 * sizeof(char));
+	while (s_ite != idSprites.end() && c_ite != coords.end())
+	{
+		coord[0] = htons((*c_ite)[0]);
+		coord[1] = htons((*c_ite)[1]);
+		coord[2] = htons((*c_ite)[2]);
+		coord[3] = htons((*c_ite)[3]);
+		id = (*s_ite);
+		packet.write(&id, sizeof(char));
+		packet.write(reinterpret_cast<char*>(coord), 4 * sizeof(unsigned short));
+		++s_ite;
+		++c_ite;
+	}
 }
 
 template<class T>
 void ServerCommunication<T>::UDPok(Packet& packet)
 {
+	char opcode = Opcodes::UDPOkay;
+	unsigned short datasize = htons(0);
 
+	packet.reset();
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 }
 
 template<class T>
 void ServerCommunication<T>::TCPsendError(Packet& packet, char errorCode, const char* errorMsg)
 {
+	char opcode = Opcodes::sendError;
+	unsigned short datasize = htons(sizeof(char) * 257);
+	char msg[256];
 
+	memset(msg, 0, 256);
+	strncpy(msg, errorMsg, 256);
+
+	packet.reset();
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
+	packet.write(&errorCode, sizeof(char));
+	packet.write(msg, 256 * sizeof(char));
 }
 
 template<class T>
 void ServerCommunication<T>::UDPscreenState(Packet& packet, unsigned int score, std::list<Element>& elements) // elements pour idSprite et CoordSprite
 {
+	char opcode = Opcodes::screenState;
+	unsigned short datasize = htons(sizeof(unsigned int) + (static_cast<unsigned short>(elements.size()) * (sizeof(unsigned char) + sizeof(t_coord))));
+	unsigned int score_to_send = htonl(score);
+	char id;
+	t_coord coord;
+	std::list<Element>::const_iterator ite = elements.begin();
 
+	packet.reset();
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
+	packet.write(reinterpret_cast<char*>(&score_to_send), sizeof(unsigned int));
+
+	while (ite != elements.end())
+	{
+		id = ite->getId();
+		coord._posX = htons(ite->getPos()._posX);
+		coord._posY = htons(ite->getPos()._posY);
+		packet.write(&id, sizeof(char));
+		packet.write(reinterpret_cast<char*>(&coord), sizeof(t_coord));
+		++ite;
+	}
 }
 
 template<class T>
 void ServerCommunication<T>::UDPendOfGame(Packet& packet, unsigned int score)
 {
+	char opcode = Opcodes::endOfGame;
+	unsigned short datasize = htons(sizeof(unsigned int));
+	unsigned int score_to_send = htonl(score);
 
+	packet.reset();
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
+	packet.write(reinterpret_cast<char*>(&score_to_send), sizeof(unsigned int));
 }
 
 /* CLIENT TO SERVER */
@@ -136,14 +236,14 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 		if ((readsize = socket.recv(magic, 7)) != 7)
 		{
 			socket.putback(magic, readsize);
-			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
+			socket.putback(reinterpret_cast<char *>(&dataSize), 2);
 			return false;
 		}
 		if ((readsize = socket.recv(nickname, 32)) != 32)
 		{
 			socket.putback(nickname, readsize);
 			socket.putback(magic, 7);
-			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
+			socket.putback(reinterpret_cast<char *>(&dataSize), 2);
 			return false;
 		}
 		if ((readsize = socket.recv(reinterpret_cast<char*>(block.resolution), (2 * sizeof(unsigned short)))) != (2 * sizeof(unsigned short)))
@@ -151,14 +251,12 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 			socket.putback(reinterpret_cast<char*>(block.resolution), readsize);
 			socket.putback(nickname, 32);
 			socket.putback(magic, 7);
-			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
+			socket.putback(reinterpret_cast<char *>(&dataSize), 2);
 			return false;
 		}
 		
-//		block.nickname = ntohs(static_cast<char *>(nickname));
-//		block.magic = ntohs(static_cast<char>(magic));
-		block.nickname = nickname;//htons(static_cast<char *>(nickname));
-		block.magic = magic;//htons(static_cast<char>(magic));
+		block.nickname = nickname;
+		block.magic = magic;
 		block.resolution[0] = ntohs(block.resolution[0]);
 		block.resolution[1] = ntohs(block.resolution[1]);
 		(_handler->*_callableMap[Opcodes::sayHello])(&block);
@@ -170,89 +268,324 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 template<class T>
 bool ServerCommunication<T>::TCPsetRoom(IReadableSocket& socket)
 {
+	unsigned short datasize;
+	unsigned int readsize;
+	char name[32];
+
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		if ((readsize = socket.recv(name, 32)) != 32)
+		{
+			socket.putback(name, readsize);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::setRoom])(name);
 		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::TCPselectRoom(IReadableSocket& socket)
 {
-		return true;
+	unsigned short datasize;
+	unsigned int readsize;
+	char id;
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		if ((readsize = socket.recv(&id, 1)) != 1)
+		{
+			socket.putback(&id, readsize);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+		std::cout << "I select a room" << std::endl;
+		(_handler->*_callableMap[Opcodes::selectRoom])(&id);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::TCPleaveRoom(IReadableSocket& socket)
 {
-		return true;
+	unsigned int readsize;
+	unsigned short datasize;
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::leaveRoom])(NULL);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::TCPchangeDifficulty(IReadableSocket& socket)
 {
-		return true;
+	unsigned short datasize;
+	unsigned int readsize;
+	char difficulty;
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		if ((readsize = socket.recv(&difficulty, 1)) != 1)
+		{
+			socket.putback(&difficulty, readsize);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::changeDifficulty])(&difficulty);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::TCPsetMap(IReadableSocket& socket)
 {
-		return true;
+	s_set_map block;
+	unsigned short datasize;
+	unsigned int readsize;
+	bool status;
+	char file[128];
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&status), 1)) != 1)
+		{
+			socket.putback(reinterpret_cast<char*>(&status), readsize);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+		if ((readsize = socket.recv(file, 128)) != 128)
+		{
+			socket.putback(file, readsize);
+			socket.putback(reinterpret_cast<char*>(&status), 1);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+
+		block.filename = file;
+		block.status = status;
+		(_handler->*_callableMap[Opcodes::changeDifficulty])(&block);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket)
 {
-		return true;
+	s_file_trunk block;
+	unsigned short datasize;
+	unsigned int readsize;
+	unsigned int size;
+	char file[32];
+	char data[1024];
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		if ((readsize = socket.recv(file, 32)) != 32)
+		{
+			socket.putback(file, readsize);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&size), sizeof(size))) != sizeof(size))
+		{
+			socket.putback(reinterpret_cast<char*>(&size), readsize);
+			socket.putback(file, 32);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+		if ((readsize = socket.recv(reinterpret_cast<char*>(data), htonl(size))) != htonl(size))
+		{
+			socket.putback(data, readsize);
+			socket.putback(reinterpret_cast<char*>(&size), sizeof(size));
+			socket.putback(file, 32);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+		
+		block.data = data;
+		block.filename = file;
+		block.size = ntohl(size);
+		(_handler->*_callableMap[Opcodes::fileTrunk])(&block);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::TCPsetReady(IReadableSocket& socket)
 { 
-		return true;
+	unsigned int readsize;
+	unsigned short datasize;
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::setReady])(NULL);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::TCPdownloadRessource(IReadableSocket& socket)
 {
-		return true;
+	unsigned short datasize;
+	unsigned int readsize;
+	char file[128];
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		if ((readsize = socket.recv(file, 128)) != 128)
+		{
+			socket.putback(file, readsize);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::downloadRsrc])(file);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::UDPReady(IReadableSocket& socket)
 {
-		return true;
+	unsigned int readsize;
+	unsigned short datasize;
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::UDPReady])(NULL);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::TCPletsPlay(IReadableSocket& socket)
 {
-		return true;
+	unsigned int readsize;
+	unsigned short datasize;
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::letsPlay])(NULL);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::TCPsaveMap(IReadableSocket& socket)
 { 
-		return true;
+	unsigned short datasize;
+	unsigned int readsize;
+	char map[128];
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		if ((readsize = socket.recv(map, 128)) != 128)
+		{
+			socket.putback(map, readsize);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::saveMap])(map);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::UDPinputs(IReadableSocket& socket)
 {	
-		return true;
+	unsigned short datasize;
+	unsigned int readsize;
+	s_inputs in;
 
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&in), sizeof(in))) != sizeof(in))
+		{
+			socket.putback(reinterpret_cast<char*>(&in), readsize);
+			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::inputs])(&in);
+		return true;
+	}
+	return false;
 }
 
 template<class T>
 bool ServerCommunication<T>::UDPpauseOk(IReadableSocket& socket)
 { 
-		return true;
-
+	return true;
 }

@@ -43,6 +43,15 @@ struct s_file_trunk
 	unsigned int size;
 	char* data;
 };
+
+struct s_inputs
+{
+  // TODO
+  unsigned short  x;
+  unsigned short  y;
+  char		  fire;
+  char		  shield;
+};
 /* END OF BLOCK STRUCTURES DEFINITION */
 
 class Room;
@@ -127,7 +136,7 @@ public:
 	void TCPwrongMap(Packet& packet);
 	void TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport); // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
 	void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size);
-	void TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<short[4]>& coords);
+	void TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<unsigned short[4]>& coords);
 	void UDPok(Packet& packet);
 	void TCPsendError(Packet& packet, char errorCode, const char* errorMsg);
 	void UDPscreenState(Packet& packet, unsigned int score, std::list<Element>& elements); // elements pour idSprite et CoordSprite

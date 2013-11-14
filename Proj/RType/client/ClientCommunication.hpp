@@ -38,10 +38,18 @@ struct s_start_loading
 	std::list<std::pair<char[128], char[32]> > files;
 };
 
+struct s_shorts
+{
+	unsigned short _v1;
+	unsigned short _v2;
+	unsigned short _v3;
+	unsigned short _v4;
+};
+
 struct s_assoc_sprite
 {
 	char* file;
-	std::list<std::pair<char, unsigned short[4]> > sprites;
+	std::list<std::pair<char, s_shorts> > sprites;
 };
 
 struct s_file_trunk

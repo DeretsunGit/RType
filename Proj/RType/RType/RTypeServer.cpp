@@ -111,7 +111,7 @@ void		RTypeServer::sayHello(void *data)
 		this->_currentClient->setName(dataStruct->nickname);
 		this->_currentClient->setResolution(dataStruct->resolution[1], dataStruct->resolution[2]);
 		this->sendRoomList();
-		//this->sendError(40, "lol");
+		this->sendError(40, "lol ya un soucis");
 	}
 	std::cout << "5 on " << DEBUGSTATE << " Finished..." << std::endl;
 }
