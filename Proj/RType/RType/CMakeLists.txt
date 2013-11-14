@@ -27,6 +27,7 @@ add_library(Abstract
 	${CMAKE_BINARY_DIR}/Abstract/WinDynLib.h
 	${CMAKE_BINARY_DIR}/Abstract/ThreadPool.h
 	${CMAKE_BINARY_DIR}/Abstract/ThreadPool.cpp
+	${CMAKE_BINARY_DIR}/Abstract/SocketStack.h
 	Caller.hpp
 	IReadableSocket.h
 	IMutex.h
