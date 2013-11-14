@@ -1,12 +1,10 @@
 #include <sstream>
 #include <iostream>
+#include "Hash.h"
 #include "Opcodes.h"
 #include "SFML/Window.hpp"
 #include "Debugger.h"
 #include "DynLib.h"
-#ifndef _WIN32
-#include <arpa/inet.h>
-#endif
 
 int main(int ac, char** av)
 {
@@ -23,6 +21,10 @@ int main(int ac, char** av)
       std::cerr << "EXCEPTION: " << e.what() << std::endl;
       std::cin.get();
     }
+  }
+  else if (ac == 2)
+  {
+    std::cout << Hash::MD5(av[1]) << std::endl;
   }
   return (0);
 }

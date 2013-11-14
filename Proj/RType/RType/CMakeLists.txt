@@ -28,6 +28,9 @@ add_library(Abstract
 	${CMAKE_BINARY_DIR}/Abstract/ThreadPool.h
 	${CMAKE_BINARY_DIR}/Abstract/ThreadPool.cpp
 	${CMAKE_BINARY_DIR}/Abstract/SocketStack.h
+	${CMAKE_BINARY_DIR}/Abstract/Hash.h
+	${CMAKE_BINARY_DIR}/Abstract/MD5.h
+	${CMAKE_BINARY_DIR}/Abstract/MD5.cpp
 	Caller.hpp
 	IReadableSocket.h
 	IMutex.h

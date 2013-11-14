@@ -223,9 +223,7 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 	  socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
 	  return false;
 	}
-      std::cout << "Readable: " << socket.readable() << std::endl;
       stack.push(dataSize);
-      std::cout << "Readable: " << socket.readable() << std::endl;
       while (total < htons(dataSize))
 	{
 	  ret.push_back(s_room_info());
