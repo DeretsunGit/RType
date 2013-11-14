@@ -168,15 +168,15 @@ void	Debugger::handleWrongMap(void *)
 void			Debugger::handleStartLoading(void *data)
 {
   s_start_loading*	loader(static_cast<s_start_loading*>(data));
-  std::list<std::pair<char[128], char[32]> >::iterator	it(loader->files.begin());
-  std::list<std::pair<char[128], char[32]> >::iterator	end(loader->files.end());
+  std::list<std::pair<Buffer<128>, Buffer<32> > >::iterator	it(loader->files.begin());
+  std::list<std::pair<Buffer<128>, Buffer<32> > >::iterator	end(loader->files.end());
 
   std::cout << "--- START LOADING ---" << std::endl;
   std::cout << "UDP port: " << loader->udp << std::endl;
   while (it != end)
     {
-      std::cout << "Ressource: \"" << it->first << "\" (";
-      std::cout.write(it->second, 32) << ')' << std::endl;
+      //std::cout << "Ressource: \"" << it->first << "\" (";
+      //std::cout.write(it->second, 32) << ')' << std::endl;
       ++it;
     }
   std::cout << "--- END START LOADING ---" << std::endl;

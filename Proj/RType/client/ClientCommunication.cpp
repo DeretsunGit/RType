@@ -364,8 +364,8 @@ bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 				socket.putback(filename, readsize);
 				while (!block.files.empty())
 				{
-					socket.putback(block.files.back().second, 32);
-					socket.putback(block.files.back().first, 128);
+					socket.putback(block.files.back().second.get(), 32);
+					socket.putback(block.files.back().first.get(), 128);
 					block.files.pop_back();
 				}
 				socket.putback(reinterpret_cast<char*>(&(block.udp)), sizeof(block.udp));
@@ -379,8 +379,8 @@ bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 				socket.putback(filename, 128);
 				while (!block.files.empty())
 				{
-					socket.putback(block.files.back().second, 32);
-					socket.putback(block.files.back().first, 128);
+					socket.putback(block.files.back().second.get(), 32);
+					socket.putback(block.files.back().first.get(), 128);
 					block.files.pop_back();
 				}
 				socket.putback(reinterpret_cast<char*>(&(block.udp)), sizeof(block.udp));
@@ -388,7 +388,7 @@ bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 				return false;
 			}
 			total += readsize;
-			block.files.push_back(std::pair<char[128], char[32]>(filename, md5));
+			block.files.push_back(std::pair<Buffer<128>, Buffer<32> >(filename, md5));
 		}
 		block.udp = ntohs(block.udp);
 		(_handler->*_callableMap.at(Opcodes::startLoading))(reinterpret_cast<void*>(&block));
@@ -607,8 +607,8 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 				socket.putback(reinterpret_cast<char*>(&id), readsize);
 				while (!block.elements.empty())
 				{
-					socket.putback(reinterpret_cast<char*>(&(block.elements.back().second)), sizeof(t_coord));
-					socket.putback(reinterpret_cast<char*>(&(block.elements.back().first)), sizeof(char));
+					//socket.putback(reinterpret_cast<char*>(&(block.elements.back().second)), sizeof(t_coord));
+					//socket.putback(reinterpret_cast<char*>(&(block.elements.back().first)), sizeof(char));
 					block.elements.pop_back();
 				}
 				socket.putback(reinterpret_cast<char*>(&(block.score)), sizeof(block.score));
@@ -622,8 +622,8 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 				socket.putback(&id, 1);
 				while (!block.elements.empty())
 				{
-					socket.putback(reinterpret_cast<char*>(&(block.elements.back().second)), sizeof(t_coord));
-					socket.putback(reinterpret_cast<char*>(&(block.elements.back().first)), sizeof(char));
+					//socket.putback(reinterpret_cast<char*>(&(block.elements.back().second)), sizeof(t_coord));
+					//socket.putback(reinterpret_cast<char*>(&(block.elements.back().first)), sizeof(char));
 					block.elements.pop_back();
 				}
 				socket.putback(reinterpret_cast<char*>(&(block.score)), sizeof(unsigned int));
@@ -631,7 +631,7 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 				return false;
 			}
 			total += readsize;
-			std::pair<char, t_coord> tmp (id, coord);
+			std::pair<char, t_coord> tmp(id, coord);
 			block.elements.push_back(tmp);
 		}
 		if (!block.elements.empty())

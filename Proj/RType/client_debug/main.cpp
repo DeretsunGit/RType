@@ -4,7 +4,9 @@
 #include "SFML/Window.hpp"
 #include "Debugger.h"
 #include "DynLib.h"
+#ifndef _WIN32
 #include <arpa/inet.h>
+#endif
 
 int main(int ac, char** av)
 {

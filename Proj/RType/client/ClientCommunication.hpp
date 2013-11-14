@@ -17,6 +17,40 @@
 
 #define HEADSIZE (sizeof(char) + sizeof(short)) // taille du "header" opcode + datasize
 
+template<unsigned int size, typename T = char>
+struct Buffer
+{
+	Buffer()
+	{}
+
+	Buffer(const Buffer& b)
+	{
+		memcpy(_buff, b._buff, size);
+	}
+
+	Buffer(const T* arr)
+	{
+		memcpy(_buff, arr, size);
+	}
+
+	~Buffer()
+	{
+
+	}
+
+	Buffer&	operator=(const Buffer&)
+	{
+		memcpy(_buff, b._buff, size);
+	}
+
+	T* get()
+	{
+		return (_buff);
+	}
+
+	T	_buff[size];
+};
+
 /* TCP BLOCK STRUCTURES DEFINITION */
 struct s_room_info
 {
@@ -35,7 +69,7 @@ struct s_room_state_info
 struct s_start_loading
 {
 	unsigned short udp;
-	std::list<std::pair<char[128], char[32]> > files;
+	std::list<std::pair<Buffer<128>, Buffer<32> > > files;
 };
 
 struct s_shorts
