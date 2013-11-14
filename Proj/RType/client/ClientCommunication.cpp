@@ -17,6 +17,7 @@
 #endif
 #include	"ClientCommunication.hpp"
 #include	"rtype_common.h"
+#include	"SocketStack.h"
 
 /* CLIENT TO SERVER */
 template<typename T>
@@ -209,11 +210,11 @@ void ClientCommunication<T>::UDPpauseOk(Packet& packet)
 template<typename T>
 bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 {
-	s_room_info block;
 	unsigned short		dataSize;
 	int		readsize;
 	std::list<s_room_info>	ret;
 	int		total(0);
+	SocketStack stack;
 
 	if (socket.readable())
 	{
@@ -222,48 +223,33 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
 			return false;
 		}
+		stack.push(dataSize);
 		while (total < htons(dataSize))
 		{
-			if ((readsize = socket.recv(block.name, 32)) != 32)
+			ret.push_back(s_room_info());
+			if ((readsize = socket.recv(ret.back().name, 32)) != 32)
 			{
-				socket.putback(block.name, readsize);
-				while (!ret.empty())
-				{
-				  socket.putback(reinterpret_cast<char*>(&ret.back()), sizeof(s_room_info));
-				  ret.pop_back();
-				}
-				socket.putback(reinterpret_cast<char *>(&dataSize), sizeof(dataSize));
+				socket.putback(ret.back().name, readsize);
+				stack.put_back(socket);
+				return false;
+			}
+			stack.push(ret.back().name);
+			total += readsize;
+			if ((readsize = socket.recv(&ret.back().id, 1)) != 1)
+			{
+				socket.putback(&ret.back().id, readsize);
+				stack.put_back(socket);
+				return false;
+			}
+			stack.push(ret.back().id);
+			total += readsize;
+			if ((readsize = socket.recv(&ret.back().nbPlayer, 1)) != 1)
+			{
+				socket.putback(&ret.back().nbPlayer, readsize);
+				stack.put_back(socket);
 				return false;
 			}
 			total += readsize;
-			if ((readsize = socket.recv(&block.id, 1)) != 1)
-			{
-				socket.putback(&block.id, readsize);
-				socket.putback(block.name, 32);
-				while (!ret.empty())
-				{
-				  socket.putback(reinterpret_cast<char*>(&ret.back()), sizeof(s_room_info));
-				  ret.pop_back();
-				}
-				socket.putback(reinterpret_cast<char *>(&dataSize), sizeof(dataSize));
-				return false;
-			}
-			total += readsize;
-			if ((readsize = socket.recv(&block.nbPlayer, 1)) != 1)
-			{
-				socket.putback(&block.nbPlayer, readsize);
-				socket.putback(&block.id, 1);
-				socket.putback(block.name, 32);
-				while (!ret.empty())
-				{
-				  socket.putback(reinterpret_cast<char*>(&ret.back()), sizeof(s_room_info));
-				  ret.pop_back();
-				}
-				socket.putback(reinterpret_cast<char *>(&dataSize), sizeof(dataSize));
-				return false;
-			}
-			total += readsize;
-			ret.push_back(block);
 		}
 		(_handler->*_callableMap.at(Opcodes::roomList))(reinterpret_cast<void *>(&ret));
 		return true;
@@ -278,6 +264,7 @@ bool ClientCommunication<T>::TCProomState(IReadableSocket& socket) const
 	unsigned short	datasize;
 	unsigned int	readsize;
 	char name[32];
+	SocketStack stack;
 
 	if (socket.readable())
 	{
@@ -286,25 +273,25 @@ bool ClientCommunication<T>::TCProomState(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char *>(&datasize), readsize);
 			return false;
 		}
+		stack.push(datasize);
 		if ((readsize = socket.recv(name, 32)) != 32)
 		{
 			socket.putback(name, readsize);
-			socket.putback(reinterpret_cast<char*>(&datasize), sizeof(datasize));
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(name);
 		if ((readsize = socket.recv(reinterpret_cast<char*>(block.players), sizeof(block.players))) != sizeof(block.players))
 		{
 			socket.putback(reinterpret_cast<char*>(block.players), readsize);
-			socket.putback(name, 32);
-			socket.putback(reinterpret_cast<char*>(&datasize), sizeof(datasize));
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(block.players);
 		if ((readsize = socket.recv(reinterpret_cast<char*>(block.playerState), sizeof(block.playerState))) != sizeof(block.playerState))
 		{
 			socket.putback(reinterpret_cast<char*>(block.playerState), readsize);
-			socket.putback(reinterpret_cast<char*>(block.players), sizeof(block.players));
-			socket.putback(name, 32);
-			socket.putback(reinterpret_cast<char*>(&datasize), sizeof(datasize));
+			stack.put_back(socket);
 			return false;
 		}
 		block.name = name;
@@ -340,6 +327,7 @@ bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 	unsigned short datasize;
 	unsigned int readsize, total;
 	char filename[128], md5[32];
+	SocketStack stack;
 
 	if (socket.readable())
 	{
@@ -348,47 +336,37 @@ bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
 			return false;
 		}
+		stack.push(datasize);
 		if ((readsize = socket.recv(reinterpret_cast<char*>(&(block.udp)), sizeof(block.udp))) != 2)
 		{
 			socket.putback(reinterpret_cast<char*>(&(block.udp)), readsize);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(&(block.udp));
 		total = readsize;
 		while (total != ntohs(datasize))
 		{
 			memset(filename, 0, 128);
 			memset(md5, 0, 32);
-			if ((readsize = socket.recv(filename, 128)) != 128)
-			{
-				socket.putback(filename, readsize);
-				while (!block.files.empty())
-				{
-					socket.putback(block.files.back().second.get(), 32);
-					socket.putback(block.files.back().first.get(), 128);
-					block.files.pop_back();
-				}
-				socket.putback(reinterpret_cast<char*>(&(block.udp)), sizeof(block.udp));
-				socket.putback(reinterpret_cast<char*>(&datasize), sizeof(datasize));
-				return false;
-			}
-			total += readsize;
-			if ((readsize = socket.recv(md5, 32)) != 32)
-			{
-				socket.putback(md5, readsize);
-				socket.putback(filename, 128);
-				while (!block.files.empty())
-				{
-					socket.putback(block.files.back().second.get(), 32);
-					socket.putback(block.files.back().first.get(), 128);
-					block.files.pop_back();
-				}
-				socket.putback(reinterpret_cast<char*>(&(block.udp)), sizeof(block.udp));
-				socket.putback(reinterpret_cast<char*>(&datasize), sizeof(datasize));
-				return false;
-			}
-			total += readsize;
 			block.files.push_back(std::pair<Buffer<128>, Buffer<32> >(filename, md5));
+
+			if ((readsize = socket.recv(block.files.back().first, 128)) != 128)
+			{
+				socket.putback(block.files.back().first, readsize);
+				stack.put_back(socket);
+				return false;
+			}
+			stack.push(block.files.back().first);
+			total += readsize;
+			if ((readsize = socket.recv(block.files.back().second, 32)) != 32)
+			{
+				socket.putback(block.files.back().second, readsize);
+				stack.put_back(socket);
+				return false;
+			}
+			stack.push(block.files.back().second);
+			total += readsize;		
 		}
 		block.udp = ntohs(block.udp);
 		(_handler->*_callableMap.at(Opcodes::startLoading))(reinterpret_cast<void*>(&block));
@@ -406,6 +384,7 @@ bool ClientCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket) const
 	unsigned int size;
 	char file[32];
 	char data[1024];
+	SocketStack stack;
 
 	if (socket.readable())
 	{
@@ -414,25 +393,24 @@ bool ClientCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
 			return false;
 		}
+		stack.push(datasize);
 		if ((readsize = socket.recv(file, 32)) != 32)
 		{
 			socket.putback(file, readsize);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(file);
 		if ((readsize = socket.recv(reinterpret_cast<char*>(&size), sizeof(size))) != sizeof(size))
 		{
 			socket.putback(reinterpret_cast<char*>(&size), readsize);
-			socket.putback(file, 32);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
 		if ((readsize = socket.recv(reinterpret_cast<char*>(data), htonl(size))) != htonl(size))
 		{
 			socket.putback(data, readsize);
-			socket.putback(reinterpret_cast<char*>(&size), sizeof(size));
-			socket.putback(file, 32);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
 		
@@ -451,9 +429,9 @@ bool ClientCommunication<T>::TCPassocSprites(IReadableSocket& socket) const
  	s_assoc_sprite block;
 	unsigned short datasize;
 	unsigned int readsize, total;
-	char filename[32], id;
-	s_shorts coord;
+	char filename[32];
 	std::list<std::pair<char, s_shorts> >::iterator ite;
+	SocketStack stack;
 
 	if (socket.readable())
 	{
@@ -462,46 +440,34 @@ bool ClientCommunication<T>::TCPassocSprites(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
 			return false;
 		}
+		stack.push(datasize);
 		if ((readsize = socket.recv(filename, 32)) != 32)
 		{
 			socket.putback(filename, readsize);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(filename);
 		total = readsize;
 		while (total != datasize)
 		{
-			if ((readsize = socket.recv(&id, 1)) != 1)
+			block.sprites.push_back(std::pair<char, s_shorts>());
+			if ((readsize = socket.recv(&block.sprites.back().first, 1)) != 1)
 			{
-				socket.putback(reinterpret_cast<char*>(&id), readsize);
-				while (!block.sprites.empty())
-				{
-					socket.putback(reinterpret_cast<char*>(&block.sprites.back().second), sizeof(coord));
-					socket.putback(&(block.sprites.back().first), sizeof(char));
-					block.sprites.pop_back();
-				}
-				socket.putback(reinterpret_cast<char*>(filename), 32);
-				socket.putback(reinterpret_cast<char*>(&datasize), sizeof(datasize));
+				socket.putback(reinterpret_cast<char*>(&block.sprites.back().first), readsize);
+				stack.put_back(socket);
 				return false;
 			}
+			stack.push(block.sprites.back().first);
 			total += readsize;
-			if ((readsize = socket.recv(reinterpret_cast<char*>(&coord), sizeof(coord))) != sizeof(coord))
+			if ((readsize = socket.recv(reinterpret_cast<char*>(&block.sprites.back().second), sizeof(s_shorts))) != sizeof(s_shorts))
 			{
-				socket.putback(reinterpret_cast<char*>(&coord), readsize);
-				socket.putback(&id, 1);
-				while (!block.sprites.empty())
-				{
-					socket.putback(reinterpret_cast<char*>(&block.sprites.back().second), sizeof(coord));
-					socket.putback(&(block.sprites.back().first), sizeof(char));
-					block.sprites.pop_back();
-				}
-				socket.putback(reinterpret_cast<char*>(filename), 32);
-				socket.putback(reinterpret_cast<char*>(&datasize), sizeof(datasize));
+				socket.putback(reinterpret_cast<char*>(&block.sprites.back().second), readsize);
+				stack.put_back(socket);
 				return false;
 			}
+			stack.push(block.sprites.back().second);
 			total += readsize;
-			std::pair<char, s_shorts> tmp(id, coord);
-			block.sprites.push_back(tmp);
 		}
 		if (!block.sprites.empty())
 		{
@@ -547,6 +513,7 @@ bool ClientCommunication<T>::TCPsendError(IReadableSocket& socket) const
 	unsigned short datasize;
 	unsigned int readsize;
 	char msg[256];
+	SocketStack stack;
 
 	if (socket.readable())
 	{
@@ -555,20 +522,20 @@ bool ClientCommunication<T>::TCPsendError(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
 			return false;
 		}
+		stack.push(datasize);
 		if ((readsize = socket.recv(&(block.code), sizeof(char))) != sizeof(char))
 		{
 			socket.putback(&(block.code), readsize);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(block.code);
 		if ((readsize = socket.recv(msg, 256)) != 256)
 		{
 			socket.putback(msg, readsize);
-			socket.putback(&(block.code), 1);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
-
 		block.msg = msg;
 		(_handler->*_callableMap.at(Opcodes::sendError))(reinterpret_cast<void*>(&block));
 		return true;
@@ -582,9 +549,8 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 	s_screen_state block;
 	unsigned short datasize;
 	unsigned int readsize, total;
-	char id;
-	t_coord coord;
 	std::list<std::pair<unsigned char, t_coord> >::iterator ite;
+	SocketStack stack;
 
 	if (socket.readable())
 	{
@@ -593,46 +559,34 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
 			return false;
 		}
+		stack.push(datasize);
 		if ((readsize = socket.recv(reinterpret_cast<char*>(&(block.score)), sizeof(block.score))) != sizeof(block.score))
 		{
 			socket.putback(reinterpret_cast<char*>(&(block.score)), readsize);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(block.score);
 		total = readsize;
 		while (total != datasize)
 		{
-			if ((readsize = socket.recv(&id, 1)) != 1)
+			block.elements.push_back(std::pair<char, t_coord>());
+			if ((readsize = socket.recv(&block.elements.back().first, 1)) != 1)
 			{
-				socket.putback(reinterpret_cast<char*>(&id), readsize);
-				while (!block.elements.empty())
-				{
-					//socket.putback(reinterpret_cast<char*>(&(block.elements.back().second)), sizeof(t_coord));
-					//socket.putback(reinterpret_cast<char*>(&(block.elements.back().first)), sizeof(char));
-					block.elements.pop_back();
-				}
-				socket.putback(reinterpret_cast<char*>(&(block.score)), sizeof(block.score));
-				socket.putback(reinterpret_cast<char*>(&datasize), sizeof(datasize));
+				socket.putback(reinterpret_cast<char*>(&block.elements.back().first), readsize);
+				stack.put_back(socket);
 				return false;
 			}
+			stack.push(block.elements.back().first);
 			total += readsize;
-			if ((readsize = socket.recv(reinterpret_cast<char*>(&coord), sizeof(t_coord))) != sizeof(t_coord))
+			if ((readsize = socket.recv(reinterpret_cast<char*>(&block.elements.back().second), sizeof(t_coord))) != sizeof(t_coord))
 			{
-				socket.putback(reinterpret_cast<char*>(&coord), readsize);
-				socket.putback(&id, 1);
-				while (!block.elements.empty())
-				{
-					//socket.putback(reinterpret_cast<char*>(&(block.elements.back().second)), sizeof(t_coord));
-					//socket.putback(reinterpret_cast<char*>(&(block.elements.back().first)), sizeof(char));
-					block.elements.pop_back();
-				}
-				socket.putback(reinterpret_cast<char*>(&(block.score)), sizeof(unsigned int));
-				socket.putback(reinterpret_cast<char*>(&datasize), sizeof(datasize));
+				socket.putback(reinterpret_cast<char*>(&block.elements.back().second), readsize);
+				stack.put_back(socket);
 				return false;
 			}
+			stack.push(block.elements.back().second);
 			total += readsize;
-			std::pair<char, t_coord> tmp(id, coord);
-			block.elements.push_back(tmp);
 		}
 		if (!block.elements.empty())
 		{

@@ -11,7 +11,7 @@
 #pragma once
 
 #include	<stack>
-#include	<pair>
+#include	<utility>
 #include	"IReadableSocket.h"
 
 class	SocketStack: std::stack<std::pair<const char*, unsigned int> >

@@ -43,11 +43,6 @@ struct Buffer
 		memcpy(_buff, b._buff, size);
 	}
 
-	T* get()
-	{
-		return (_buff);
-	}
-
 	T	_buff[size];
 };
 

@@ -82,6 +82,7 @@ add_library(Abstract
 	)
 
 add_executable (Server
+	${CMAKE_BINARY_DIR}/Abstract/SocketStack.h
 	IReadableSocket.h
 	CondVar.h
 	Packet.hpp
@@ -127,6 +128,7 @@ add_executable (Server
 	)
 
 add_executable (Client
+	${CMAKE_BINARY_DIR}/Abstract/SocketStack.h
 	../client/ClientCommunication.hpp
 	../client/ClientCommunication.cpp
 	Packet.hpp
@@ -148,6 +150,7 @@ add_executable (Client
 	)
 
 add_executable (DebugClient
+	${CMAKE_BINARY_DIR}/Abstract/SocketStack.h
 	${CMAKE_BINARY_DIR}/client_debug/main.cpp
 	${CMAKE_BINARY_DIR}/client_debug/Debugger.h
 	${CMAKE_BINARY_DIR}/client_debug/Debugger.cpp
