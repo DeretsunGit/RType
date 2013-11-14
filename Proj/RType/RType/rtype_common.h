@@ -4,6 +4,7 @@
 #include <list>
 #include <iterator>
 #include <iostream>
+#include <sstream>
 
 #ifdef _WIN32
 
@@ -41,3 +42,13 @@ typedef struct s_coord
 	unsigned short _posX;
 	unsigned short _posY;
 } t_coord;
+
+template<typename T>
+T			strTo(const std::string& str)
+{
+  T			sent;
+  std::istringstream	stream(str);
+
+  stream >> sent;
+  return (sent);
+}

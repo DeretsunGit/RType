@@ -1,10 +1,10 @@
+#include <ctime>
 #include "Randomisation.h"
-
 
 template<typename T>
 Randomisation<T>::Randomisation()
 {
-	srand(time(NULL));
+  srand(::time(NULL));
 }
 
 template<typename T>

@@ -81,7 +81,7 @@ void  UnixUDPSocketServer::sendTo(const Packet& p, const in_addr& to)
   std::list<char*>::const_iterator  it(p.getBuffer().begin());
   unsigned int			    sent;
 
-  while (size >= 0)
+  while (size > 0 && it != p.getBuffer().end())
   {
     sent = std::min<unsigned int>(size, 1024);
     this->sendTo(*it, sent, to);
@@ -112,7 +112,7 @@ void			UnixUDPSocketServer::broadcast(const Packet& p)
 
   while (it != end)
     {
-      this->sendTo(p, reinterpret_cast<const u_long&>(it->first));
+      this->sendTo(p, reinterpret_cast<const in_addr&>(it->first));
       ++it;
     }
 }
@@ -172,7 +172,8 @@ void	UnixUDPSocketServer::writeToSock()
     this->_m.lock();
     sin.sin_port = it->second._port;
     len = it->second._output.readSome(buff, READ_SIZE);
-    if (sendto(this->_sock, buff, len, 0, reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin)) == -1)
+    if (sendto(this->_sock, buff, len, 0,
+	       reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin)) == -1)
       this->_map.erase(it);
     this->_m.unlock();
   }
