@@ -85,11 +85,11 @@ void	Script::getPattern()
 		}
 		else
 		{
-			std::cout << line << std::endl;			
+			std::cout << line << std::endl;
 			if (pos2 = line.find(":", pos) != std::string::npos)
 			{
 				temp = line.substr(pos, pos2);
-				(newPattern._id = std::stoi(temp) >= 100) ? newPattern._isTop = true : newPattern._isTop = false;
+				(newPattern._id = strTo<int>(temp) >= 100) ? newPattern._isTop = true : newPattern._isTop = false;
 				pos = pos2 + 1;
 			}
 			else
@@ -97,11 +97,11 @@ void	Script::getPattern()
 			if (pos2 = line.find(":", pos) != std::string::npos)
 			{
 				temp = line.substr(pos, pos2);
-				newPattern._len = std::stoi(temp);
+				newPattern._len = strTo<int>(temp);
 				pos = pos2 + 1;
 			}
 			else
-				std::cout << "Pattern file corrupted." << std::endl;			
+				std::cout << "Pattern file corrupted." << std::endl;
 			while (pos2 = line.find(",", pos) != std::string::npos)
 			{
 				temp = line.substr(pos, pos2);
@@ -120,7 +120,7 @@ bool		Script::getRandom()
 
 void		Script::setScriptFile(std::string *newfile)
 {
-	this->_scriptFile = new std::ifstream(*newfile);
+  this->_scriptFile = new std::ifstream(newfile->c_str());
 }
 
 void		Script::setRandom(bool rand)
