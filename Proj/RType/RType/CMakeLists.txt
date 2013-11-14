@@ -199,4 +199,7 @@ else(WIN32)
 		sfml-window
 		GLEW
 		dl)
+	target_link_libraries(DebugClient
+		crypto
+		)
 endif(WIN32)

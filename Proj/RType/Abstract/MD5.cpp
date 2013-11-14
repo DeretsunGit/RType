@@ -1,4 +1,6 @@
 #include <iomanip>
+#include <cstdlib>
+#include <cstring>
 #include "MD5.h"
 
 Hash::MD5::MD5()
@@ -63,10 +65,11 @@ void	      Hash::MD5::hash(const char* src, unsigned int size)
 }
 
 #else	// _WIN32
+# include <openssl/md5.h>
 
 void  Hash::MD5::hash(const char* src, unsigned int size)
 {
-  
+  ::MD5(reinterpret_cast<const unsigned char*>(src), size, this->_buff);
 }
 
 #endif	// _WIN32
