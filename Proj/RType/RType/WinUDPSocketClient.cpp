@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <winsock2.h>
 #include "WinUDPSocketClient.h"
+#include  "WSAException.h"
 
 #define	READ_SIZE 500
 
@@ -13,16 +14,16 @@ WinUDPSocketClient::WinUDPSocketClient(const char* hostname, unsigned short port
   struct hostent* ent;
 
   if (this->_sock == INVALID_SOCKET)
-    throw std::runtime_error("UDPSocketClient: failed to create socket");
+    throw WSAException("UDPSocketClient: WSASocket");
   if (!(ent = gethostbyname(hostname)))
-    throw std::runtime_error("UDPScoektClient: could not find host");
+    throw WSAException("UDPSocketClient: gethostbyname");
   this->_host = *reinterpret_cast<IN_ADDR*>(ent->h_addr);
 }
 
 WinUDPSocketClient::~WinUDPSocketClient()
 {
   if (closesocket(this->_sock))
-    std::cerr << "UDPSocketClient: failed to close socket" << std::endl;
+    std::cerr << WSAException::GetError("~UDPSocketClient: closesocket") << std::endl;
 }
 
 unsigned int  WinUDPSocketClient::readable() const

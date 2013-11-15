@@ -36,6 +36,7 @@ Hash::MD5::~MD5()
 #ifdef _WIN32
 # include <Windows.h>
 # include <wincrypt.h>
+# include "WinSysException.h"
 
 void	      Hash::MD5::hash(const char* src, unsigned int size)
 {
@@ -47,18 +48,22 @@ void	      Hash::MD5::hash(const char* src, unsigned int size)
       || !CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash)
       || !CryptHashData(hHash, reinterpret_cast<const BYTE *>(src), size, 0))
   {
+    int	code(GetLastError());
+
     if (hProv)
       CryptReleaseContext(hProv, 0);
     if (hHash)
       CryptDestroyHash(hHash);
-    throw std::runtime_error("Crypt failed");
+    throw WinSysException("MD5 Hash", code);
   }
   cbHash = sizeof(this->_buff);
   if (!CryptGetHashParam(hHash, HP_HASHVAL, this->_buff, &cbHash, 0))
   {
+    int	code(GetLastError());
+
     CryptReleaseContext(hProv, 0);
     CryptDestroyHash(hHash);
-    throw std::runtime_error("Crypt failed");
+    throw WinSysException("MD5 Hash", code);
   }
   CryptReleaseContext(hProv, 0);
   CryptDestroyHash(hHash);

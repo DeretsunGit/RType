@@ -18,16 +18,16 @@ UnixUDPSocketClient::UnixUDPSocketClient(const char* hostname, unsigned short po
   struct hostent* ent;
 
   if (this->_sock == -1)
-    throw std::runtime_error("UDPSocketClient: failed to create socket");
+    throw std::runtime_error("UDPSocketClient: failed to create socket"); // UNIXEXCEPT
   if (!(ent = gethostbyname(hostname)))
-    throw std::runtime_error("UDPScoektClient: could not find host");
+    throw std::runtime_error("UDPScoektClient: could not find host"); // UNIXEXCEPT
   this->_host = *reinterpret_cast<IN_ADDR*>(ent->h_addr);
 }
 
 UnixUDPSocketClient::~UnixUDPSocketClient()
 {
   if (close(this->_sock))
-    std::cerr << "UDPSocketClient: failed to close socket" << std::endl;
+    std::cerr << "UDPSocketClient: failed to close socket" << std::endl; // UNIXEXCEPT
 }
 
 unsigned int  UnixUDPSocketClient::readable() const

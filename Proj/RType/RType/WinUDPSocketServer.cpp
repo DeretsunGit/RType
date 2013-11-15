@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <winsock2.h>
 #include "WinUDPSocketServer.h"
+#include  "WSAException.h"
 
 #define READ_SIZE 500
 
@@ -14,22 +15,16 @@ WinUDPSocketServer::WinUDPSocketServer(unsigned short port)
   int			len;
 
   if (_sock == INVALID_SOCKET)
-    throw std::runtime_error("UDPSocketServer: failed to create socket");
+    throw WSAException("UDPSocketServer: WSASocket");
   ZeroMemory(&sin, sizeof(sin));
   sin.sin_addr.S_un.S_addr = INADDR_ANY;
   sin.sin_family = AF_INET;
   sin.sin_port = htons(port);
   if (bind(this->_sock, reinterpret_cast<const sockaddr*>(&sin), sizeof(sin)) == SOCKET_ERROR)
-  {
-    std::cerr << "Kiki " << WSAGetLastError() << std::endl;
-    throw std::runtime_error("UDPSocketServer: failed to create socket");
-  }
+    throw WSAException("UDPSocketServer: bind");
   len = sizeof(sin);
   if (getsockname(this->_sock, reinterpret_cast<sockaddr*>(&sin), &len) == SOCKET_ERROR)
-  {
-    std::cerr << "Prout " << WSAGetLastError() << std::endl;
-    throw std::runtime_error("UDPSocketServer: failed to create socket");
-  }
+    throw WSAException("UDPSocketServer: getsockname");
   this->_port = ntohs(sin.sin_port);
 }
 

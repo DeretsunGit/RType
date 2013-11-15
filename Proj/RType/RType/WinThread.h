@@ -14,6 +14,7 @@
 # include	<Windows.h>
 # include	"Caller.hpp"
 # include	"IThread.h"
+# include	"WinSysException.h"
 
 class WinThread: public IThread
 {
@@ -22,32 +23,28 @@ public:
   WinThread(Obj& o, void (Obj::*m)())
     : _call(new MthdPtrCaller<Obj>(o, m)), _launched(false)
   {
-    if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, this->_call, CREATE_SUSPENDED, &this->_id)))
-      throw std::runtime_error("Thread creation failed");
+    this->createThread();
   }
 
   template<typename Obj, typename Param>
   WinThread(Obj& o, void (Obj::*m)(Param), Param p)
     : _call(new MthdPtrCaller2<Obj, Param>(o, m, p)), _launched(false)
   {
-    if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, this->_call, CREATE_SUSPENDED, &this->_id)))
-      throw std::runtime_error("Thread creation failed");
+    this->createThread();
   }
 
   template<typename Callable>
   WinThread(Callable& c)
     : _call(getCaller(c)), _launched(false)
   {
-    if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, this->_call, CREATE_SUSPENDED, &this->_id)))
-      throw std::runtime_error("Thread creation failed");
+    this->createThread();
   }
 
   template<typename Callable, typename Param>
   WinThread(Callable c, Param p)
     : _call(new Caller<Callable, Param>(c, p)), _launched(false)
   {
-    if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, this->_call, CREATE_SUSPENDED, &this->_id)))
-      throw std::runtime_error("Thread creation failed");
+    this->createThread();
   }
 
   WinThread(const WinThread&);
@@ -61,6 +58,7 @@ public:
   bool	isLaunched() const;
 
 private:
+  void	      createThread();
   WinThread();
 
   HANDLE	_th;

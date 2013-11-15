@@ -14,23 +14,23 @@ UnixUDPSocketServer::UnixUDPSocketServer(unsigned short port)
   socklen_t		len;
 
   if (this->_sock == -1)
-    throw std::runtime_error("UDPSocketServer: failed to create socket");
+    throw std::runtime_error("UDPSocketServer: failed to create socket"); // UNIXEXCEPT
   memset(&sin, 0, sizeof(sin));
   sin.sin_addr.s_addr = INADDR_ANY;
   sin.sin_family = AF_INET;
   sin.sin_port = htons(port);
   if (bind(this->_sock, reinterpret_cast<const sockaddr*>(&sin), sizeof(sin)) == -1)
-    throw std::runtime_error("UDPSocketServer: failed to create socket");
+    throw std::runtime_error("UDPSocketServer: failed to create socket"); // UNIXEXCEPT
   len = sizeof(sin);
   if (getsockname(this->_sock, reinterpret_cast<sockaddr*>(&sin), &len) == -1)
-    throw std::runtime_error("UDPSocketServer: failed to create socket");
+    throw std::runtime_error("UDPSocketServer: failed to create socket"); // UNIXEXCEPT
   this->_port = ntohs(sin.sin_port);
 }
 
 UnixUDPSocketServer::~UnixUDPSocketServer()
 {
   if (close(this->_sock))
-    std::cerr << "UDPSocketServer: close failed" << std::endl;
+    std::cerr << "UDPSocketServer: close failed" << std::endl; // UNIXEXCEPT
 }
 
 unsigned int		  UnixUDPSocketServer::readableFor(const in_addr& from) const

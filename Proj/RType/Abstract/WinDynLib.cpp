@@ -13,18 +13,19 @@
 # include	<iostream>
 # include	<stdexcept>
 # include	"WinDynLib.h"
+# include	"WinSysException.h"
 
 WinDynLib::WinDynLib(const char* libName)
   : _handler(LoadLibrary(libName))
 {
   if (!this->_handler)
-    throw std::runtime_error("DynLib: LoadLibrary failed");
+    throw WinSysException("DynLib");
 }
 
 WinDynLib::~WinDynLib()
 {
   if (FreeLibrary(this->_handler))
-    std::cerr << "DynLib: FreeLibrary failed" << std::endl;
+    std::cerr << WinSysException::GetError("~DynLib: FreeLibrary") << std::endl;
 }
 
 #endif		// _WIN32

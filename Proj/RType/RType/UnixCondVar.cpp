@@ -14,7 +14,7 @@
 UnixCondVar::UnixCondVar()
 {
   if (pthread_cond_init(&this->_cond, NULL))
-    throw std::runtime_error("Conditional variable creation failed");
+    throw std::runtime_error("Conditional variable creation failed"); // UNIXEXCEPT
 }
 
 UnixCondVar::~UnixCondVar()

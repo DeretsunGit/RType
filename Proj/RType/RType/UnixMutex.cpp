@@ -15,7 +15,7 @@
 UnixMutex::UnixMutex()
 {
   if (pthread_mutex_init(&this->_mutex, NULL))
-    throw std::runtime_error("Mutex creation failed");
+    throw std::runtime_error("Mutex creation failed"); // UNIXEXCEPT
 }
 
 UnixMutex::~UnixMutex()

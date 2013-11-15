@@ -25,21 +25,21 @@ UnixTCPSocketServer::UnixTCPSocketServer(unsigned short port)
   struct sockaddr_in	sin;
 
   if (this->_sock == -1)
-    throw std::runtime_error("TCPSocketServer: cannot create socket");
+    throw std::runtime_error("TCPSocketServer: cannot create socket"); // UNIXEXCEPT
   sin.sin_family = AF_INET;
   sin.sin_port = htons(port);
   sin.sin_addr.s_addr = INADDR_ANY;
   if (bind(this->_sock, reinterpret_cast<const struct sockaddr*>(&sin),
 	   sizeof(sin)) == -1)
-    throw std::runtime_error("TCPSocketServer: bind failed");
+    throw std::runtime_error("TCPSocketServer: bind failed"); // UNIXEXCEPT
   if (listen(this->_sock, 20) == -1)
-    throw std::runtime_error("TCPSocketServer: listen failed");
+    throw std::runtime_error("TCPSocketServer: listen failed"); // UNIXEXCEPT
 }
 
 UnixTCPSocketServer::~UnixTCPSocketServer()
 {
   if (close(this->_sock))
-    std::cerr << "TCPSocketServer: close failed" << std::endl;
+    std::cerr << "TCPSocketServer: close failed" << std::endl; // UNIXEXCEPT
   this->_m.lock();
   while (this->_clients.size())
     {

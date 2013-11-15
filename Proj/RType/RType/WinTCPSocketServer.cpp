@@ -6,73 +6,63 @@
 
 # include "WinTCPSocketServer.h"
 # include "SocketPool.h"
+# include "WSAException.h"
 
 WinTCPSocketServer::WinTCPSocketServer(unsigned short port)
 {
-	if (!this->createSocket())
-		throw std::exception();
-	if (!this->configSocket(port))
-		throw std::exception();
-	this->_live = true;
+  this->createSocket();
+  this->configSocket(port);
+  this->_live = true;
 }
 
 WinTCPSocketServer::~WinTCPSocketServer()
 {
-	while (!this->_winTCPSocketClient.empty())
-	{
-		delete this->_winTCPSocketClient.front();
-		this->_winTCPSocketClient.pop();
-	}
-	if (closesocket(this->_sock) == SOCKET_ERROR)
-	{
-		std::cerr << "closesocket() function failed with error: " << WSAGetLastError() << std::endl;
-		throw std::exception();
-	}
+  SocketPool::getInstance().releaseSocket(this);
+  while (!this->_winTCPSocketClient.empty())
+  {
+    delete this->_winTCPSocketClient.front();
+    this->_winTCPSocketClient.pop();
+  }
+  if (closesocket(this->_sock) == SOCKET_ERROR)
+    std::cerr << WSAException::GetError("~TCPSocket: closesocket") << WSAGetLastError() << std::endl;
 }
 
-bool		WinTCPSocketServer::createSocket()
+void  WinTCPSocketServer::createSocket()
 {
-	if ((this->_sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, NULL)) == INVALID_SOCKET)
-	{
-		std::cerr << "WSASocket() function failed with error: " << WSAGetLastError() << std::endl;
-		return (false);
-	}
-	return (true);
+  if ((this->_sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, NULL)) == INVALID_SOCKET)
+    throw WSAException("TCPSocketServer: WSASocket");
 }
 
-bool		WinTCPSocketServer::configSocket(unsigned short port)
+void  WinTCPSocketServer::configSocket(unsigned short port)
 {
-	sockaddr_in	service;
-	hostent*	thisHost;
-	char		hostName[255];
-	char*			ip;
+  sockaddr_in	service;
+  hostent*	thisHost;
+  char		hostName[255];
+  char*		ip;
 
-	service.sin_family = AF_INET;
-	WSAHtons(this->_sock, port, &service.sin_port);
-	gethostname(hostName, 255);
-	thisHost = gethostbyname(hostName);
-	ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
-	if ((service.sin_addr.s_addr = INADDR_ANY) == INADDR_NONE)
-	{
-		std::cerr << "The target ip address entered must be a legal IPv4 address" << std::endl;
-		return (false);
-	}
+  service.sin_family = AF_INET;
+  WSAHtons(this->_sock, port, &service.sin_port);
+  gethostname(hostName, 255);
+  if (!(thisHost = gethostbyname(hostName)))
+    throw WSAException("TCPSocketServer: gethostbyname");
+  ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
+  service.sin_addr.s_addr = INADDR_ANY;
+  if (bind(this->_sock, (SOCKADDR*) &service, sizeof(SOCKADDR)) == SOCKET_ERROR)
+  {
+    int	code = WSAGetLastError();
 
-	if (bind(this->_sock, (SOCKADDR*) &service, sizeof(SOCKADDR)) == SOCKET_ERROR)
-	{
-		std::cerr << "bind() failed with error: " << WSAGetLastError() << std::endl;
-		closesocket(this->_sock);
-		return (false);
-	}
+    if (closesocket(this->_sock) == SOCKET_ERROR)
+      throw WSAException("TCPSocketServer: closesocket");
+    throw WSAException("TCPSocketServer: bind", code);
+  }
+  if (listen(this->_sock, 20) == SOCKET_ERROR)
+  {
+    int	code = WSAGetLastError();
 
-	if (listen(this->_sock, 1) == SOCKET_ERROR)
-	{
-		std::cerr << "listen() failed with error: " << WSAGetLastError() << std::endl;
-		closesocket(this->_sock);
-		return (false);
-	}
-
-	return (true);
+    if (closesocket(this->_sock) == SOCKET_ERROR)
+      throw WSAException("TCPSocketServer: closesocket");
+    throw WSAException("TCPSocketServer: listen", code);
+  }
 }
 
 WinTCPSocketClient*		WinTCPSocketServer::accept()

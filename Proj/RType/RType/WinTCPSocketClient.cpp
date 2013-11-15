@@ -5,6 +5,7 @@
 # include <iostream>
 # include "WinTCPSocketClient.h"
 # include "SocketPool.h"
+# include "WSAException.h"
 
 WinTCPSocketClient::WinTCPSocketClient(SocketId sock)
 	: _sock(sock), _live(true)
@@ -17,42 +18,27 @@ WinTCPSocketClient::WinTCPSocketClient(const char *hostName, unsigned short port
 	struct hostent	*ent;
 
 	if ((this->_sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, NULL)) == INVALID_SOCKET)
-	{
-		std::cerr << "WSASocket() function failed with error: " << WSAGetLastError() << std::endl;
-		throw std::exception();
-	}
+	  throw WSAException("TCPSocket: WSASocket");
 	if (!(ent = gethostbyname(hostName)))
-	{
-		std::cerr << "WSASocket() function failed with error: " << WSAGetLastError() << std::endl;
-		throw std::exception();
-	}
+	  throw WSAException("TCPSocket: gethostbyname");
 	clientService.sin_family = AF_INET;
 	clientService.sin_addr = *reinterpret_cast<struct in_addr*>(ent->h_addr);
-//	if ((clientService.sin_addr.s_addr = inet_addr(hostName)) == INADDR_NONE)
-//	{
-//		std::cerr << "The target ip address entered must be a legal IPv4 address" << std::endl;
-//		throw std::exception();
-//	}
 	WSAHtons(this->_sock, port, &clientService.sin_port);
-
 	if (WSAConnect(this->_sock, (SOCKADDR *) & clientService, sizeof (clientService), NULL, NULL, NULL, NULL) == SOCKET_ERROR)
 	{
-		std::cerr << "connect() function failed with error: " << WSAGetLastError() << std::endl;
-		if (closesocket(this->_sock) == SOCKET_ERROR)
-			std::cerr << "closesocket() function failed with error: " << WSAGetLastError() << std::endl;
-		throw std::exception();
+	  int errcode = WSAGetLastError();
+	  if (closesocket(this->_sock) == SOCKET_ERROR)
+	    throw WSAException("TCPSocket: closesocket");
+	  throw WSAException("TCPSocket: WSAConnect");
 	}
 	this->_live = true;
 }
 
 WinTCPSocketClient::~WinTCPSocketClient()
 {
-	if (closesocket(this->_sock) == SOCKET_ERROR)
-	{
-		std::cerr << "closesocket() function failed with error: " << WSAGetLastError() << std::endl;
-		throw std::exception();
-	}
-	SocketPool::getInstance().releaseSocket(this);
+  SocketPool::getInstance().releaseSocket(this);
+  if (closesocket(this->_sock) == SOCKET_ERROR)
+    std::cerr << WSAException::GetError("~TCPSocket: closesocket: ") << std::endl;
 }
 
 void	      WinTCPSocketClient::putback(const char* buff, unsigned int size)

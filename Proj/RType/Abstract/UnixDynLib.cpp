@@ -17,13 +17,13 @@
 UnixDynLib::UnixDynLib(const char* libName)
 {
   if (!(this->_handle = dlopen(libName, RTLD_NOW | RTLD_GLOBAL)))
-    throw std::runtime_error("DynLib: dlopen failed");
+    throw std::runtime_error("DynLib: dlopen failed");// UNIXEXCEPT
 }
 
 UnixDynLib::~UnixDynLib()
 {
   if (dlclose(this->_handle))
-    std::cerr << "DynLib: dlclose failed" << std::endl;
+    std::cerr << "DynLib: dlclose failed" << std::endl; // UNIXEXCEPT
 }
 
 #endif		// !_WIN32

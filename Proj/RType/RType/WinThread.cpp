@@ -20,7 +20,7 @@ WinThread::WinThread(const WinThread& w)
   if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, this->_call, CREATE_SUSPENDED, &this->_id)))
   {
     delete this->_call;
-    throw std::runtime_error("Thread creation failed");
+    throw WinSysException("WinThread: CreateThread");
   }
 }
 
@@ -63,6 +63,12 @@ DWORD WINAPI	WinThread::_startRoutine(LPVOID param)
   if (call)
     call->call();
   return (0);
+}
+
+void  WinThread::createThread()
+{
+  if (!(this->_th = CreateThread(NULL, 0, &this->_startRoutine, this->_call, CREATE_SUSPENDED, &this->_id)))
+    throw WinSysException("WinThread: CreateThread");
 }
 
 #endif	// _WIN32

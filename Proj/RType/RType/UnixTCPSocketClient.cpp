@@ -23,9 +23,9 @@ UnixTCPSocketClient::UnixTCPSocketClient(const char* hostname,
   struct hostent*	hostinfo;
 
   if (this->_sock == -1)
-    throw std::runtime_error("TCPSocketClient: failed to create socket");
+    throw std::runtime_error("TCPSocketClient: failed to create socket"); // UNIX EXCEPT
   if (!(hostinfo = gethostbyname(hostname)))
-    throw std::runtime_error("TCPSocketClient: failed to find host");
+    throw std::runtime_error("TCPSocketClient: failed to find host"); // UNIX EXCEPT
   sin.sin_family = AF_INET;
   sin.sin_port = htons(port);
   sin.sin_addr = *reinterpret_cast<struct in_addr*>(hostinfo->h_addr);
@@ -33,7 +33,7 @@ UnixTCPSocketClient::UnixTCPSocketClient(const char* hostname,
 	      sizeof(sin)) == -1)
     {
       perror("connect");
-      throw std::runtime_error("TCPSocketClient: cannot connect to host");
+      throw std::runtime_error("TCPSocketClient: cannot connect to host"); // UNIX EXCEPT
     }
 }
 
@@ -44,7 +44,7 @@ UnixTCPSocketClient::UnixTCPSocketClient(SocketId id)
 UnixTCPSocketClient::~UnixTCPSocketClient()
 {
   if (close(this->_sock) == -1)
-    std::cerr << "TCPSocketClient: cannot close socket" << std::endl;
+    std::cerr << "TCPSocketClient: cannot close socket" << std::endl; // UNIXEXCEPT
   SocketPool::getInstance().releaseSocket(this);
 }
 
