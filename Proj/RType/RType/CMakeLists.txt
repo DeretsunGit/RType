@@ -33,6 +33,7 @@ add_library(Abstract
 	${CMAKE_BINARY_DIR}/Abstract/Hash.h
 	${CMAKE_BINARY_DIR}/Abstract/MD5.h
 	${CMAKE_BINARY_DIR}/Abstract/MD5.cpp
+	${CMAKE_BINARY_DIR}/Abstract/UDPBindedClient.cpp
 	Caller.hpp
 	IReadableSocket.h
 	IMutex.h

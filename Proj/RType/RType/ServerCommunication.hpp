@@ -17,6 +17,7 @@
 #include <list>
 #include <map>
 #include "IReadableSocket.h"
+#include "IUDPSocketServer.h"
 #include "Packet.hpp"
 #include "Player.h"
 #include "Opcodes.h"
@@ -120,6 +121,12 @@ public:
 				(this->_handler->*_defaultCallback)(opcode, socket);
 		}
 	}
+
+	void interpretCommand(IUDPSocketServer& socket, const in_addr& addr)
+	{
+		this->interpretCommand(socket.getClient(addr));
+	}
+
 
 	/* SERVER TO CLIENT */
 	void TCProomList(Packet& packet, std::list<Room *>& rooms); // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
