@@ -10,7 +10,5 @@ public:
 
   virtual void	        putback(const char* buff, unsigned int size) = 0;
   virtual unsigned int	recv(char* buff, unsigned int size) = 0;
-  virtual void		send(const char* buff, unsigned int size) = 0;
-  virtual void		send(const Packet& p) = 0;
   virtual unsigned int	readable() const = 0;
 };

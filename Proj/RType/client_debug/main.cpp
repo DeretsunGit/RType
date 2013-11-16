@@ -3,6 +3,7 @@
 #include "Hash.h"
 #include "Opcodes.h"
 #include "SFML/Window.hpp"
+#include "SFML/Graphics.hpp"
 #include "Debugger.h"
 #include "DynLib.h"
 

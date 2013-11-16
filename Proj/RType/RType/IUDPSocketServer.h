@@ -14,13 +14,34 @@
 
 #include <map>
 #include "Socket.h"
+#include "IReadableSocket.h"
 #include "IOBuff.h"
 #include "Packet.hpp"
 
 class IUDPSocketServer : public ISocket
 {
 public:
-  typedef std::map<u_long, UDPBuff<> > BuffMap;
+  class UDPBindedClient: public IReadableSocket, public UDPBuff<>
+  {
+  public:
+    UDPBindedClient();
+    ~UDPBindedClient();
+    UDPBindedClient(const UDPBindedClient&);
+    UDPBindedClient&  operator=(const UDPBindedClient&);
+
+    void	  putback(const char* buff, unsigned int size);
+    unsigned int  recv(char* buff, unsigned int size);
+    unsigned int  readable() const;
+    SocketId	  getId() const;
+    bool	  wantToWrite() const;
+    void	  readFromSock();
+    void	  writeToSock();
+    bool	  isLive() const;
+
+  private:
+  };
+
+  typedef std::map<u_long, UDPBindedClient> BuffMap;
 
   virtual ~IUDPSocketServer() {}
 
@@ -35,4 +56,5 @@ public:
   virtual void		  sendTo(const Packet& p, const in_addr& to) = 0;
   virtual void		  broadcast(const char* buff, unsigned int size) = 0;
   virtual void		  broadcast(const Packet& p) = 0;
+  virtual UDPBindedClient&  getClient(const in_addr&) = 0;
 };

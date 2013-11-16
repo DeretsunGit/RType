@@ -30,6 +30,7 @@ public:
   void		broadcast(const Packet& p);
   void	      sendTo(const char* buff, unsigned int size, const in_addr& to);
   void	      sendTo(const Packet& p, const in_addr& to);
+  UDPBindedClient&  getClient(const in_addr&);
   SocketId      getId() const;
   bool	      wantToWrite() const;
   void	      readFromSock();

@@ -31,6 +31,7 @@ public:
       this->_buff[off] = o._buff[off];
       off = (off + 1) % size;
     }
+    return (*this);
   }
 
   ~CircularBuffer()

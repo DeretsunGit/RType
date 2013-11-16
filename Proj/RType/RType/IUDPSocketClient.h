@@ -20,8 +20,6 @@
 class IUDPSocketClient : public IReadableSocket
 {
 public:
-  typedef std::map<u_long, UDPBuff<> > BuffMap;
-
   virtual ~IUDPSocketClient() {}
 
   virtual void		  putback(const char* buff, unsigned int size) = 0;
