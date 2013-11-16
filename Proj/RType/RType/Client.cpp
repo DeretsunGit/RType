@@ -4,6 +4,7 @@
 Client::Client(ITCPSocketClient* newSocket, const int id) : _id(id)
 {
 	this->_toDelete = false;
+	this->_isRoomLeaver = false;
 	this->_tcpSocket = newSocket;
 	this->_isWaiting = true;
 	this->_resolution._posX = 1600;
@@ -34,6 +35,16 @@ void		Client::setResolution(short int x, short int y)
 void		Client::setName(char *name)
 {
 	this->_name->replace(0, std::string::npos, name);
+}
+
+void		Client::setRoomLeaver(bool isleaver)
+{
+	this->_isRoomLeaver = isleaver;
+}
+
+bool		Client::getRoomLeaver() const
+{
+return (this->_isRoomLeaver);
 }
 
 std::string		*Client::getName() const

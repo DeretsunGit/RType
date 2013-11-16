@@ -107,18 +107,9 @@ public:
 	void interpretCommand(IReadableSocket& socket)
 	{
 		typename std::map<char, bool (ServerCommunication::*)(IReadableSocket&) >::const_iterator ite;
-		char opcode ;/*= 0;
-		char temp[39];
-		int i = 0;*/
+		char opcode ;
 		if (socket.readable())
-		{/*
-			socket.recv(temp, 39);
-			while (i < 39)
-			{
-				std::cout << i << " -> " << static_cast<int>(temp[i]) << std::endl;
-				i++;
-			}
-			*/
+		{
 		socket.recv(&opcode, 1);
 			if ((ite = _commandMap.find(opcode)) != _commandMap.end())
 			{
@@ -134,7 +125,7 @@ public:
 	void TCProomList(Packet& packet, std::list<Room *>& rooms); // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 	void TCProomState(Packet& packet, Room& room);
 	void TCPwrongMap(Packet& packet);
-	void TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport); // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
+	void TCPstartLoading(Packet& packet, unsigned short); //std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport); // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
 	void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size);
 	void TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<unsigned short[4]>& coords);
 	void UDPok(Packet& packet);
@@ -142,18 +133,18 @@ public:
 	void UDPscreenState(Packet& packet, unsigned int score, std::list<Element>& elements); // elements pour idSprite et CoordSprite
 	void UDPendOfGame(Packet& packet, unsigned int score);
 	/* CLIENT TO SERVER */
-	bool TCPsayHello(IReadableSocket& socket);
-	bool TCPsetRoom(IReadableSocket& socket);
-	bool TCPselectRoom(IReadableSocket& socket);
-	bool TCPleaveRoom(IReadableSocket& socket);
-	bool TCPchangeDifficulty(IReadableSocket& socket);
-	bool TCPsetMap(IReadableSocket& socket);
-	bool TCPgetFileTrunk(IReadableSocket& socket);
-	bool TCPsetReady(IReadableSocket& socket);
-	bool TCPdownloadRessource(IReadableSocket& socket);
-	bool UDPReady(IReadableSocket& socket);
-	bool TCPletsPlay(IReadableSocket& socket);
-	bool TCPsaveMap(IReadableSocket& socket);
+	bool TCPsayHello(IReadableSocket& socket); // ok
+	bool TCPsetRoom(IReadableSocket& socket); // ok
+	bool TCPselectRoom(IReadableSocket& socket); // ok
+	bool TCPleaveRoom(IReadableSocket& socket); //	ok	------- Gestion Macro des room finie
+	bool TCPchangeDifficulty(IReadableSocket& socket); // ok
+	bool TCPsetMap(IReadableSocket& socket); // wtf
+	bool TCPgetFileTrunk(IReadableSocket& socket); // -
+	bool TCPsetReady(IReadableSocket& socket); // ok
+	bool TCPdownloadRessource(IReadableSocket& socket); // -
+	bool UDPReady(IReadableSocket& socket); //
+	bool TCPletsPlay(IReadableSocket& socket); //
+	bool TCPsaveMap(IReadableSocket& socket); //-		--------Gestion Micro des room finie
 	bool UDPinputs(IReadableSocket& socket);
 	bool UDPpauseOk(IReadableSocket& socket);
 };

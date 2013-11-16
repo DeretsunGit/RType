@@ -102,7 +102,6 @@ void		RTypeServer::sayHello(void *data)
 
 	if (magic.compare("KOUKOU\0") != 0)
 	{
-		std::cout << "-" << dataStruct->magic[1] << "-" << std::endl;
 		std::cout << "You will be terminated. destroy ! destroy ! destroy !" << std::endl;
 		this->_currentClient->setDelete(true);
 	}
@@ -111,7 +110,7 @@ void		RTypeServer::sayHello(void *data)
 		this->_currentClient->setName(dataStruct->nickname);
 		this->_currentClient->setResolution(dataStruct->resolution[1], dataStruct->resolution[2]);
 		this->sendRoomList();
-		this->sendError(40, "lol ya un soucis");
+		//this->sendError(40, "lol ya un soucis");
 	}
 	std::cout << "5 on " << DEBUGSTATE << " Finished..." << std::endl;
 }
@@ -119,14 +118,13 @@ void		RTypeServer::sayHello(void *data)
 void		RTypeServer::setRoom(void *data)
 {
 	std::cout << "6 on " << DEBUGSTATE << " RTypeServer Room set." << std::endl;
-	//s_set_room *dataStruct = (reinterpret_cast<s_set_room *>(data));
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
 			if ((*it_room)->getNbPlayer() == 0)
 			{
-		//		(*it_room)->setName(dataStruct->roomName);
+				(*it_room)->setName(reinterpret_cast<char*>(data));
 				(*it_room)->addClient(this->_currentClient);
 				(*it_room)->getThread()->start();
 				this->_currentClient->setWaiting(false);
@@ -144,19 +142,17 @@ void		RTypeServer::setRoom(void *data)
 void		RTypeServer::selectRoom(void *data)
 {
 	std::cout << "7 on " << DEBUGSTATE << " RTypeServer new client in Room." << std::endl;
-	//s_select_room *dataStruct = (reinterpret_cast<s_select_room *>(data));
 	std::list<Room*>::iterator	it_room;
 
 	for (it_room = (this->_roomPool).begin(); (it_room != (this->_roomPool).end()); it_room++)
 		{
-/*			if ((*it_room)->getId() == (dataStruct->roomId)
+			if ((*it_room)->getId() == reinterpret_cast<char *>(data)[0])
 			{
 				(*it_room)->addClient(this->_currentClient);
 				this->_currentClient->setWaiting(false);
-				std::cout << "7 on " << DEBUGSTATE << " Finished..." << std::endl;
-
+				std::cout << "7 on " << DEBUGSTATE << " Finished : " << this->_currentClient->getName() << "just joined game " << (*it_room)->getId() << ", " << (*it_room)->getName() << std::endl;
 				return;
-			}*/
+			}
 		}
 	std::cout << "7 on " << DEBUGSTATE << " Badly finished..." << std::endl;
 	return;

@@ -7,6 +7,7 @@
 class Client
 {
 	bool				_toDelete;
+	bool				_isRoomLeaver;
 	const int			_id;
 	bool				_isWaiting;
 	t_coord				_resolution;
@@ -21,7 +22,9 @@ public:
 	void		setWaiting(bool);
 	void		setResolution(short int, short int);
 	void		setName(char *);
+	void		setRoomLeaver(bool);
 
+	bool		getRoomLeaver() const;
 	std::string	*getName() const;
 	bool		getDelete() const;
 	t_coord		getResolution() const;

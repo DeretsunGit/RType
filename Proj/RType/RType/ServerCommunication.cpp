@@ -77,21 +77,21 @@ void ServerCommunication<T>::TCPwrongMap(Packet& packet)
 }
 
 template<class T>
-void ServerCommunication<T>::TCPstartLoading(Packet& packet, std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport) // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
+void ServerCommunication<T>::TCPstartLoading(Packet& packet, unsigned short UDPport)//std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport) // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
 {
 	char opcode = Opcodes::startLoading;
-	unsigned short datasize = htons((sizeof(unsigned short)) + (static_cast<unsigned short>(filenames.size()) * (160 * sizeof(char))));
+	unsigned short datasize = htons((sizeof(unsigned short)));// + (static_cast<unsigned short>(filenames.size()) * (160 * sizeof(char))));
 	unsigned short udp_to_send = htons(UDPport);
-	char name[128], md5_to_cpy[32];
-	std::list<std::string>::const_iterator f_ite = filenames.begin();
-	std::list<std::string>::const_iterator m_ite = md5.begin();
+//	char name[128], md5_to_cpy[32];
+//	std::list<std::string>::const_iterator f_ite = filenames.begin();
+//	std::list<std::string>::const_iterator m_ite = md5.begin();
 
 	packet.reset();
 	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 	packet.write(reinterpret_cast<char*>(&udp_to_send), sizeof(unsigned short));
 
-	while (f_ite != filenames.end() && m_ite != md5.end())
+/*	while (f_ite != filenames.end() && m_ite != md5.end())
 	{
 		memset(name, 0, 128);
 		memset(md5_to_cpy, 0, 128);
@@ -102,6 +102,7 @@ void ServerCommunication<T>::TCPstartLoading(Packet& packet, std::list<std::stri
 		++f_ite;
 		++m_ite;
 	}
+	*/
 }
 
 template<class T>

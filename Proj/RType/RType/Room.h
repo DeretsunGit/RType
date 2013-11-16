@@ -37,6 +37,7 @@ public:
 	Room(char);
 	~Room();
 
+	void	prepareRoom();
 	void	roomLoop();
 	bool	startGame();
 
@@ -47,7 +48,7 @@ public:
 	void	getFileTrunk(void *);
 	void	setReady(void *);
 	void	downloadRessource(void *);
-	void	ready(void *);
+	void	UDPReady(void *);
 	void	letsPlay(void *);
 	void	saveMap(void *);
 	void	callBackError(char, IReadableSocket&);

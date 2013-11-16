@@ -15,19 +15,17 @@ Room::Room(char id)
 	this->_difficulty = 1;
 	this->_nbReady = 0;
 
-	this->_RoomCom.setCallback(0x04, &Room::leaveRoom);
-	this->_RoomCom.setCallback(0x05, &Room::changeDifficulty);
-	this->_RoomCom.setCallback(0x06, &Room::setMap);
-	this->_RoomCom.setCallback(0x07, &Room::getFileTrunk);
-	this->_RoomCom.setCallback(0x08, &Room::setReady);
-	this->_RoomCom.setCallback(0x09, &Room::downloadRessource);
-	this->_RoomCom.setCallback(0x0A, &Room::ready);
-	this->_RoomCom.setCallback(0x0B, &Room::letsPlay);
-	this->_RoomCom.setCallback(0x0C, &Room::saveMap);
+	this->_RoomCom.setCallback(Opcodes::leaveRoom, &Room::leaveRoom);
+	this->_RoomCom.setCallback(Opcodes::changeDifficulty, &Room::changeDifficulty);
+	this->_RoomCom.setCallback(Opcodes::setMap, &Room::setMap);
+	this->_RoomCom.setCallback(Opcodes::fileTrunk, &Room::getFileTrunk);
+	this->_RoomCom.setCallback(Opcodes::setReady, &Room::setReady);
+	this->_RoomCom.setCallback(Opcodes::downloadRsrc, &Room::downloadRessource);
+	this->_RoomCom.setCallback(Opcodes::UDPReady, &Room::UDPReady);
+	this->_RoomCom.setCallback(Opcodes::letsPlay, &Room::letsPlay);
+	this->_RoomCom.setCallback(Opcodes::saveMap, &Room::saveMap);
 	this->_RoomCom.setDefaultCallback(&Room::callBackError);
 	this->_RoomCom.setHandler(this);
-	
-	this->_th->start();
 }
 
 Room::~Room(void)
@@ -45,62 +43,113 @@ void	Room::callBackError(char opcode, IReadableSocket& client)
 bool	Room::startGame()
 {
 	bool	ready(false);
+	ready = true;
+	/*std::vector<Player *>::iterator	ite = this->_party.begin();
 
 	std::cout << "Room (id = " << this->_id << ", nb player = "<< this->_nbReady
 				<<") attempt to create a game." << std::endl;
+	//startloading
+	while (ite != this->_party.end())
+	{
+		this->_RoomCom.TCPstartLoading(this->_pack, this->_udpSock->getPort());
+		this->_currentClient->getTCPSock()->send(this->_pack);
+		++ite;
+	}
+	std::cout << "Start Loading send... Waiting UDP port confirmation ..." << std::endl;
+	// on attend udpready des clients
+	this->_nbReady = 0;
+	while (ready != true)
+	{
+		for (ite = this->_party.begin(); ite != this->_party.end(); ite++)
+		{
+			//this->_RoomCom.interpretCommand(this->_udpSock);
 
-	this->_script->LoadMap(this->_map);
-	this->_game->startGame();
-  // cree la game avec joueurs (UDP set) et un pointeur sur script
-  // 
-	return (true);
+			//this->_udpSock->readFromSock();
+			// on read sur la socket en udp et on attend udpready
+		}
+		if (this->_nbReady == this->_party.size())
+			ready = true;
+	}
+	std::cout << "UDP is ok !" << std::endl;
+	//on leur renvoie udpokay
+	this->_RoomCom.UDPok(this->_pack);
+	this->_udpSock->broadcast(this->_pack);
+	std::cout << "sending UDPokay" << std::endl;
+	//on attend lets play
+	this->_nbReady = 0;
+	while (ready != true)
+	{
+		for (ite = this->_party.begin(); ite != this->_party.end(); ite++)
+		{
+			this->_RoomCom.interpretCommand(*(this->_currentClient->getTCPSock()));
+		}
+		if (this->_nbReady == this->_party.size())
+			ready = true;
+	}*/
+	std::cout << "Everybody's ok ! Game Starting !" << std::endl;
+	if (ready == true)
+	{
+		this->_script->LoadMap(this->_map);
+		std::cout << "Script generation ok" << std::endl;
+		this->_game->startGame();
+		return (true);
+	}
+	return (false);
+}
+
+void	Room::prepareRoom()
+{
+std::cout << "Preparing room of id" << this->_id << std::endl;
 }
 
 void	Room::roomLoop()
 {
 	this->_m.lock();
 	std::vector<Player*>::iterator	ite = this->_party.begin();
-
-	while (this->_party.size() != 0)
+	std::cout << "Room " << this->_name << "Started to Loop" << std::endl;
+	while (this->_party.size() > 0)
 	{
-		for (ite = (this->_party).begin(); (ite != (this->_party).end()); ite++)
-			{
-				this->_currentClient = (*ite)->getClient();
-				this->_RoomCom.interpretCommand(*(this->_currentClient->getTCPSock()));
-				if (this->_nbReady == this->_party.size())
-					this->startGame();
-			}
+		ite = (this->_party).begin();
+		while ( (ite != (this->_party).end()))
+		{
+			this->_currentClient = (*ite)->getClient();
+			this->_RoomCom.interpretCommand(*(this->_currentClient->getTCPSock()));
+			if ((this->_currentClient->getRoomLeaver()) == true)
+				ite = this->_party.erase(ite);
+			else
+				ite++;
+		}
+		if (this->_nbReady == this->_party.size() && this->_party.size() > 0)
+		{
+			std::cout << this->_nbReady <<" - "<< this->_party.size() << std::endl;
+			this->startGame();
+		}
 	}
+	std::cout << "Room " << this->_name << ": no more player. exit..." << std::endl;
 	this->_m.unlock();
 }
 
 void	Room::leaveRoom(void *data)
 {
-	this->_m.lock();
-	if (removeClient(this->_currentClient->getId()))
-	{
-		this->_currentClient->setWaiting(true);
-	}
-	this->_m.unlock();
+	std::cout << "LEAVER"<< std::endl;
+	this->_currentClient->setRoomLeaver(true);
+	this->_currentClient->setWaiting(true);
+	std::cout << "Leaver Ok" << std::endl;
 }
 
 void	Room::setMap(void *data)
 {
 	s_set_map *dataStruct = (reinterpret_cast<s_set_map *>(data));
 	
-	this->_m.lock();
 	this->_script->setRandom(dataStruct->status);
 	this->_map->replace(0, std::string::npos, (dataStruct->filename));
-	this->_m.unlock();
 }
 
 void	Room::changeDifficulty(void *data)
 {
 //	s_change_difficulty *dataStruct = (reinterpret_cast<s_change_difficulty *>(data));
-
-	this->_m.lock();
-//	this->_difficulty = dataStruct->difficulty;
-	this->_m.unlock();
+	std::cout << "Changing difficluty" << std::endl;
+	this->_difficulty = *(reinterpret_cast<char *>(data));
 }
 
 void	Room::getFileTrunk(void *data)
@@ -110,8 +159,7 @@ void	Room::getFileTrunk(void *data)
 
 void	Room::setReady(void *data)
 {
-	this->_m.lock();
-
+	std::cout << "Player Ready" << std::endl;
 	int i = 0;
 	std::vector<Player*>::iterator ite = _party.begin();
 
@@ -120,12 +168,17 @@ void	Room::setReady(void *data)
 		if (_party[i]->getClient()->getId() == 	this->_currentClient->getId())
 		{
 			(* ite)->setReady(!(* ite)->getReady());
+			if ((* ite)->getReady() == true)
+			{
+				this->_nbReady++;
+			}
+			else
+				this->_nbReady--;
 			return;
 		}
 		++i;
 		++ite;
 	}
-		this->_m.unlock();
 }
 
 void	Room::downloadRessource(void *data)
@@ -133,10 +186,9 @@ void	Room::downloadRessource(void *data)
 
 }
 
-void	Room::ready(void *data)
+void	Room::UDPReady(void *data)
 {
-
-	// init UDP ?
+	this->_nbReady++;
 }
 
 void	Room::letsPlay(void *data)
