@@ -1,11 +1,10 @@
 #pragma once
 #include "Button.h"
-class CreditsButton :
+class BackMainButton :
 	public Button
 {
-	sf::Sprite		_sprite;
 public:
-	CreditsButton(SpriteManager *);
+	BackMainButton(SpriteManager *);
 	virtual void	action(sf::Keyboard::Key, sf::RenderWindow *, bool *);
-	~CreditsButton(void);
+	~BackMainButton(void);
 };

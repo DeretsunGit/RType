@@ -9,7 +9,8 @@ enum eMenus
 {
 	MAIN,
 	PLAY,
-	SETTINGS
+	SETTINGS,
+	INGAME
 };
 
 class Menu

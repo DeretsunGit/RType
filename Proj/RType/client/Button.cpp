@@ -37,7 +37,7 @@ void	Button::extraDisplay(unsigned int pos, unsigned int max, sf::RenderWindow *
 
 }
 
-void	Button::action(sf::Keyboard::Key key, sf::RenderWindow *window)
+void	Button::action(sf::Keyboard::Key key, sf::RenderWindow *window, bool *running)
 {
 
 }

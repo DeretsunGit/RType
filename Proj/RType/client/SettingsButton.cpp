@@ -7,7 +7,7 @@ SettingsButton::SettingsButton(SpriteManager *sprmgr)
 	this->setSpriteOn(sprmgr->getSpritebyId(MENU_SETT_ON));
 }
 
-void	SettingsButton::action(sf::Keyboard::Key, sf::RenderWindow *window)
+void	SettingsButton::action(sf::Keyboard::Key, sf::RenderWindow *, bool *running)
 {
 
 }

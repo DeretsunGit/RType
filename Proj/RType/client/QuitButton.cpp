@@ -7,7 +7,7 @@ QuitButton::QuitButton(SpriteManager *sprmgr)
 	this->setSpriteOn(sprmgr->getSpritebyId(MENU_QUIT_ON));
 }
 
-void	QuitButton::action(sf::Keyboard::Key, sf::RenderWindow *window)
+void	QuitButton::action(sf::Keyboard::Key, sf::RenderWindow *window, bool *running)
 {
 	window->close();
 }

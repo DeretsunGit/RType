@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include "SpriteManager.h"
 #include "MainMenu.h"
+#include <iostream>
+#include <Windows.h>
 
 int main()
 {
@@ -10,4 +12,5 @@ int main()
 
 	menu.menuLoop();
 	return 0;
+
 }

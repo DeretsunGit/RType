@@ -6,7 +6,7 @@ class PlayButton :
 	SpriteManager	*_sprmgr;
 public:
 	PlayButton(SpriteManager *);
-	virtual void	action(sf::Keyboard::Key, sf::RenderWindow *);
+	virtual void	action(sf::Keyboard::Key, sf::RenderWindow *, bool *);
 	~PlayButton(void);
 };
 

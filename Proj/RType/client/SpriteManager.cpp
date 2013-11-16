@@ -8,7 +8,6 @@ SpriteManager::SpriteManager(void)
 	if (!this->_shiptexture.loadFromFile("assets/ship.gif"))
 	{
 		std::cerr << "Error opening texture file" << std::endl;
-		return;
 	}
 	if (!this->_menutexture.loadFromFile("assets/menu.png"))
 	{
@@ -66,7 +65,6 @@ SpriteManager::SpriteManager(void)
 	this->_sprites[SETT_SRVL_ON].setTextureRect(sf::IntRect(480, 560, 450, 54));
 	this->_sprites[BACK_MAIN_ON].setTextureRect(sf::IntRect(480, 620, 450, 54));
 }
-
 
 SpriteManager::~SpriteManager(void)
 {

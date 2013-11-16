@@ -1,7 +1,7 @@
 #include "GameLoop.h"
 #include "PlayerShip.h"
 #include "Background.h"
-
+#include "Menu.h"
 
 GameLoop::GameLoop(sf::RenderWindow *window)
 {
@@ -11,6 +11,15 @@ GameLoop::GameLoop(sf::RenderWindow *window)
 
 GameLoop::~GameLoop(void)
 {
+}
+
+void	GameLoop::openBackMenu(bool *running)
+{
+	Menu	backmenu(this->_window, &this->_spritemgr, INGAME);
+
+	backmenu.menuLoop();
+	if (backmenu.getActive() == backmenu.getSize() - 1)
+		*running = false;
 }
 
 void	GameLoop::manageEvent(bool *running, PlayerShip *player)
@@ -27,7 +36,7 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
-		*running = false;
+		this->openBackMenu(running);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
@@ -55,10 +64,13 @@ void	GameLoop::mainLoop(void)
 	while (running)
     {
         this->manageEvent(&running, &ship);
-        this->_window->clear();
-		bg.moveBackground();
-		this->_window->draw(bg.getSprite());
-		this->_window->draw(ship.getSprite());
-        this->_window->display();
+		if (running)
+		{
+			this->_window->clear();
+			bg.moveBackground();
+			this->_window->draw(bg.getSprite());
+			this->_window->draw(ship.getSprite());
+			this->_window->display();
+		}
     }
 }

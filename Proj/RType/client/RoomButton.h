@@ -7,7 +7,7 @@ class RoomButton :
 	std::string		_name;
 public:
 	RoomButton(SpriteManager *, std::string);
-	virtual void	action(sf::Keyboard::Key, sf::RenderWindow *);
+	virtual void	action(sf::Keyboard::Key, sf::RenderWindow *, bool *);
 	virtual void	displayButton(unsigned int, unsigned int, sf::RenderWindow *);
 	~RoomButton(void);
 };

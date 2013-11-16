@@ -1,4 +1,5 @@
 #include "RoomButton.h"
+#include "GameLoop.h"
 
 
 RoomButton::RoomButton(SpriteManager *sprmgr, std::string name)
@@ -6,9 +7,12 @@ RoomButton::RoomButton(SpriteManager *sprmgr, std::string name)
 	this->_name = name;
 }
 
-void	RoomButton::action(sf::Keyboard::Key, sf::RenderWindow *window)
+void	RoomButton::action(sf::Keyboard::Key, sf::RenderWindow *window, bool *running)
 {
-	window->close();
+	GameLoop	loop(window);
+
+	*running = false;
+	loop.mainLoop();
 }
 
 void	RoomButton::displayButton(unsigned int pos, unsigned int max, sf::RenderWindow *window)
@@ -17,7 +21,6 @@ void	RoomButton::displayButton(unsigned int pos, unsigned int max, sf::RenderWin
 	sf::Text text;
 	if (!font.loadFromFile("assets/arial.ttf"))
 	{
-		// error...
 	}
 	text.setFont(font);
 	text.setString(this->_name);

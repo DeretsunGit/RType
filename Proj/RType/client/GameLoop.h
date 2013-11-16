@@ -12,6 +12,7 @@ private:
 public:
 	GameLoop(sf::RenderWindow*);
 	void	manageEvent(bool *, PlayerShip *);
+	void	openBackMenu(bool *);
 	void	drawBackground(void);
 	void	mainLoop(void);
 	~GameLoop(void);

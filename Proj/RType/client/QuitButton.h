@@ -6,6 +6,6 @@ class QuitButton :
 	sf::Sprite		_sprite;
 public:
 	QuitButton(SpriteManager *);
-	virtual void	action(sf::Keyboard::Key, sf::RenderWindow *);
+	virtual void	action(sf::Keyboard::Key, sf::RenderWindow *, bool *);
 	~QuitButton(void);
 };

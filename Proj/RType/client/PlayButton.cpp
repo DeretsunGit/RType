@@ -9,7 +9,7 @@ PlayButton::PlayButton(SpriteManager *sprmgr)
 	this->_sprmgr = sprmgr;
 }
 
-void	PlayButton::action(sf::Keyboard::Key, sf::RenderWindow *window)
+void	PlayButton::action(sf::Keyboard::Key, sf::RenderWindow *window, bool *running)
 {
 	Menu	playmenu(window, this->_sprmgr, PLAY);
 

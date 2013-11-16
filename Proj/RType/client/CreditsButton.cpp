@@ -10,16 +10,16 @@ CreditsButton::CreditsButton(SpriteManager *sprmgr)
 			static_cast<float>(SIZEY / 2) - this->_sprite.getTextureRect().height / 2);
 }
 
-void	CreditsButton::action(sf::Keyboard::Key, sf::RenderWindow *window)
+void	CreditsButton::action(sf::Keyboard::Key, sf::RenderWindow *window, bool *running)
 {
-	bool			running = true;
+	bool	running2 = true;
 
-	while (running)
+	while (running2)
 	{
 		sf::Event event;
         while (window->pollEvent(event))
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
-				running = false;
+				running2 = false;
 		window->clear();
 		window->draw(this->_sprite);
 		window->display();
