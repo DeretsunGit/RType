@@ -1,6 +1,7 @@
 #include <iostream>
 #include "ServerCommunication.hpp"
 #include "Room.h"
+#include "SocketStack.h"
 
 
 	/* SERVER TO CLIENT */
@@ -224,6 +225,7 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 	char magic[7];
 	unsigned int readsize;
 	unsigned short dataSize;
+	SocketStack stack;
 
 
 	if (socket.readable())
@@ -233,28 +235,27 @@ bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
 			socket.putback(reinterpret_cast<char *>(&dataSize), readsize);
 			return false;
 		}
+		stack.push(dataSize);
 		if ((readsize = socket.recv(magic, 7)) != 7)
 		{
 			socket.putback(magic, readsize);
-			socket.putback(reinterpret_cast<char *>(&dataSize), 2);
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(magic);
 		if ((readsize = socket.recv(nickname, 32)) != 32)
 		{
 			socket.putback(nickname, readsize);
-			socket.putback(magic, 7);
-			socket.putback(reinterpret_cast<char *>(&dataSize), 2);
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(nickname);
 		if ((readsize = socket.recv(reinterpret_cast<char*>(block.resolution), (2 * sizeof(unsigned short)))) != (2 * sizeof(unsigned short)))
 		{
 			socket.putback(reinterpret_cast<char*>(block.resolution), readsize);
-			socket.putback(nickname, 32);
-			socket.putback(magic, 7);
-			socket.putback(reinterpret_cast<char *>(&dataSize), 2);
+			stack.put_back(socket);
 			return false;
 		}
-		
 		block.nickname = nickname;
 		block.magic = magic;
 		block.resolution[0] = ntohs(block.resolution[0]);
@@ -371,6 +372,7 @@ bool ServerCommunication<T>::TCPsetMap(IReadableSocket& socket)
 	unsigned int readsize;
 	bool status;
 	char file[128];
+	SocketStack stack;
 
 	if (socket.readable())
 	{
@@ -379,17 +381,18 @@ bool ServerCommunication<T>::TCPsetMap(IReadableSocket& socket)
 			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
 			return false;
 		}
+		stack.push(datasize);
 		if ((readsize = socket.recv(reinterpret_cast<char*>(&status), 1)) != 1)
 		{
 			socket.putback(reinterpret_cast<char*>(&status), readsize);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(status);
 		if ((readsize = socket.recv(file, 128)) != 128)
 		{
 			socket.putback(file, readsize);
-			socket.putback(reinterpret_cast<char*>(&status), 1);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
 
@@ -410,6 +413,7 @@ bool ServerCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket)
 	unsigned int size;
 	char file[32];
 	char data[1024];
+	SocketStack stack;
 
 	if (socket.readable())
 	{
@@ -418,25 +422,25 @@ bool ServerCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket)
 			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
 			return false;
 		}
+		stack.push(datasize);
 		if ((readsize = socket.recv(file, 32)) != 32)
 		{
 			socket.putback(file, readsize);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(file);
 		if ((readsize = socket.recv(reinterpret_cast<char*>(&size), sizeof(size))) != sizeof(size))
 		{
 			socket.putback(reinterpret_cast<char*>(&size), readsize);
-			socket.putback(file, 32);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
+		stack.push(size);
 		if ((readsize = socket.recv(reinterpret_cast<char*>(data), htonl(size))) != htonl(size))
 		{
 			socket.putback(data, readsize);
-			socket.putback(reinterpret_cast<char*>(&size), sizeof(size));
-			socket.putback(file, 32);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
+			stack.put_back(socket);
 			return false;
 		}
 		
