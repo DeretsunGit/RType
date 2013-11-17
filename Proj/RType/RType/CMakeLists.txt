@@ -17,11 +17,11 @@ link_directories(${CMAKE_BINARY_DIR})
 
 set_option(CMAKE_BUILD_TYPE "Debug" STRING "Type of build (Debug or Release)")
 
-if(WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	set(SFML_LIBS sfml-graphics-s-d sfml-system-s-d sfml-window-s-d)
-else(WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	set(SFML_LIBS sfml-graphics-s sfml-system-s sfml-window-s)
-endif(WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+	set(SFML_LIBS sfml-graphics-s-d sfml-window-s-d sfml-system-s-d)
+else("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+	set(SFML_LIBS sfml-graphics-s sfml-window-s sfml-system-s)
+endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
 if(WIN32)
 	set(CompilerFlags
@@ -34,7 +34,7 @@ if(WIN32)
 			)
 	foreach(CompilerFlag ${CompilerFlags})
 	  string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-	endforeach()	
+	endforeach()
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 	link_directories(${SFML_PATH}/extlibs/libs-msvc/x64)
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -229,9 +229,6 @@ target_link_libraries (Abstract
 target_link_libraries (Client
 	Abstract
 	${SFML_LIBS}
-	opengl32
-	glew
-	Winmm.lib
 	jpeg
 	freetype
 	)
@@ -243,19 +240,23 @@ target_link_libraries (Server
 target_link_libraries (DebugClient
 	${CMAKE_THREAD_LIBS_INIT}
 	Abstract
+	${SFML_LIBS}
+	jpeg
 	)
-
-target_link_libraries(DebugClient ${SFML_LIBS} opengl32 glew Winmm.lib jpeg)
 
 if(WIN32)
 	target_link_libraries(Abstract Ws2_32.lib)
 	target_link_libraries(Server Ws2_32.lib)
+	target_link_libraries(DebugClient opengl32 glew Winmm.lib)
+	target_link_libraries(Client opengl32 glew Winmm.lib)
 #	target_link_libraries(Client sfml-graphics sfml-system sfml-window)
 #	target_link_libraries(DebugClient sfml-graphics sfml-system sfml-window)
 else(WIN32)
 	target_link_libraries(Abstract
 		dl
 		crypto)
+	target_link_libraries(Client GL X11 GLEW rt Xrandr)
+	target_link_libraries(DebugClient GL X11 GLEW rt Xrandr)
 #	target_link_libraries(Client
 #		sfml-graphics
 #		sfml-system
