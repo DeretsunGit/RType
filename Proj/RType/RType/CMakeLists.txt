@@ -14,6 +14,14 @@ include_directories(${SFML_PATH}/include)
 link_directories(${SFML_PATH}/lib)
 add_definitions(-DSFML_STATIC)
 
+set_option(CMAKE_BUILD_TYPE "Debug" STRING "Type of build (Debug or Release)")
+
+if(WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+	set(SFML_LIBS sfml-graphics-s-d sfml-system-s-d sfml-window-s-d)
+else(WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+	set(SFML_LIBS sfml-graphics-s sfml-system-s sfml-window-s)
+endif(WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+
 if(WIN32)
 	set(CompilerFlags
 			CMAKE_CXX_FLAGS
@@ -219,10 +227,7 @@ target_link_libraries (Abstract
 
 target_link_libraries (Client
 	Abstract
-	sfml-graphics-s
-	sfml-system-s
-	sfml-window-s
-	sfml-audio-s
+	${SFML_LIBS}
 	opengl32
 	glew
 	Winmm.lib
@@ -239,7 +244,7 @@ target_link_libraries (DebugClient
 	Abstract
 	)
 
-target_link_libraries(DebugClient sfml-graphics-s sfml-system-s sfml-window-s opengl32 glew Winmm.lib jpeg)
+target_link_libraries(DebugClient ${SFML_LIBS} opengl32 glew Winmm.lib jpeg)
 
 if(WIN32)
 	target_link_libraries(Abstract Ws2_32.lib)
