@@ -27,5 +27,24 @@ int main(int ac, char** av)
   {
     std::cout << Hash::MD5(av[1]) << std::endl;
   }
+  else
+  {
+    sf::RenderWindow  w(sf::VideoMode(800, 600), "Test");
+    sf::Texture t;
+    sf::Sprite	s;
+    sf::Event	e;
+
+    t.loadFromFile("assets/ship.gif");
+    s.setTexture(t);
+    while (w.isOpen())
+    {
+      w.clear();
+      w.draw(s);
+      w.display();
+      w.waitEvent(e);
+      if (e.type == sf::Event::Closed)
+	w.close();
+    }
+  }
   return (0);
 }

@@ -1,19 +1,43 @@
 cmake_minimum_required(VERSION 2.8)
 project(RType)
 
+macro(set_option var default type docstring)
+    if(NOT DEFINED ${var})
+        set(${var} ${default})
+    endif()
+    set(${var} ${${var}} CACHE ${type} ${docstring} FORCE)
+endmacro()
+
+set_option(SFML_PATH "${CMAKE_BINARY_DIR}/SFML" STRING "The path to the SFML lib")
+
+include_directories(${SFML_PATH}/include)
+link_directories(${SFML_PATH}/lib)
 add_definitions(-DSFML_STATIC)
+
 if(WIN32)
+	set(CompilerFlags
+			CMAKE_CXX_FLAGS
+			CMAKE_CXX_FLAGS_DEBUG
+			CMAKE_CXX_FLAGS_RELEASE
+			CMAKE_C_FLAGS
+			CMAKE_C_FLAGS_DEBUG
+			CMAKE_C_FLAGS_RELEASE
+			)
+	foreach(CompilerFlag ${CompilerFlags})
+	  string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+	endforeach()	
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+	link_directories(${SFML_PATH}/extlibs/libs-msvc/x64)
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-		include_directories(../client/SFML-2.1-x64/include)
-		link_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-x64/lib)
+#		include_directories(../client/SFML-2.1-vc10-x64/include)
+#		link_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-vc10-x64/lib)
 	else(CMAKE_SIZEOF_VOID_P EQUAL 8)
-		include_directories(../client/SFML-2.1/include)
-		link_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1/lib)
+#		include_directories(../client/SFML-2.1/include)
+#		link_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1/lib)
 	endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 else(WIN32)
-	include_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-Unix/include)
-	link_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-Unix/lib)
+#	include_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-Unix/include)
+#	link_directories(${CMAKE_BINARY_DIR}/client/SFML-2.1-Unix/lib)
 endif(WIN32)
 
 include_directories(${CMAKE_SOURCE_DIR})
@@ -134,25 +158,43 @@ add_executable (Server
 	)
 
 add_executable (Client
-	${CMAKE_BINARY_DIR}/Abstract/SocketStack.h
-	../client/ClientCommunication.hpp
-	../client/ClientCommunication.cpp
+	${CMAKE_BINARY_DIR}/client/Background.h
+	${CMAKE_BINARY_DIR}/client/ClientCommunication.hpp
+	${CMAKE_BINARY_DIR}/client/Drawable.h
+	${CMAKE_BINARY_DIR}/client/GameLoop.h
+	${CMAKE_BINARY_DIR}/client/Menu.h
+	${CMAKE_BINARY_DIR}/client/MenuManager.h
+	${CMAKE_BINARY_DIR}/client/Background.h
+	${CMAKE_BINARY_DIR}/client/SpriteManager.h
 	Packet.hpp
-	../client/main.cpp
-	../client/Background.h
-	../client/Background.cpp
-	../client/Drawable.h
-	../client/Drawable.cpp
-	../client/GameLoop.h
-	../client/GameLoop.cpp
-	../client/Menu.h
-	../client/Menu.cpp
-	../client/MenuManager.h
-	../client/MenuManager.cpp
-	../client/PlayerShip.h
-	../client/PlayerShip.cpp
-	../client/SpriteManager.h
-	../client/SpriteManager.cpp
+	${CMAKE_BINARY_DIR}/client/PlayerShip.h
+	${CMAKE_BINARY_DIR}/client/SpriteManager.h
+	${CMAKE_BINARY_DIR}/client/Background.cpp
+	${CMAKE_BINARY_DIR}/client/ClientCommunication.cpp
+	${CMAKE_BINARY_DIR}/client/Drawable.cpp
+	${CMAKE_BINARY_DIR}/client/GameLoop.cpp
+	${CMAKE_BINARY_DIR}/client/Menu.cpp
+	${CMAKE_BINARY_DIR}/client/MenuManager.cpp
+	${CMAKE_BINARY_DIR}/client/Background.cpp
+	${CMAKE_BINARY_DIR}/client/PlayerShip.cpp
+	${CMAKE_BINARY_DIR}/client/SpriteManager.cpp
+	${CMAKE_BINARY_DIR}/client/main.cpp
+	${CMAKE_BINARY_DIR}/client/BackGameButton.h
+	${CMAKE_BINARY_DIR}/client/BackGameButton.cpp
+	${CMAKE_BINARY_DIR}/client/Button.h
+	${CMAKE_BINARY_DIR}/client/Button.cpp
+	${CMAKE_BINARY_DIR}/client/BackMainButton.h
+	${CMAKE_BINARY_DIR}/client/BackMainButton.cpp
+	${CMAKE_BINARY_DIR}/client/CreditsButton.h
+	${CMAKE_BINARY_DIR}/client/CreditsButton.cpp
+	${CMAKE_BINARY_DIR}/client/PlayButton.h
+	${CMAKE_BINARY_DIR}/client/PlayButton.cpp
+	${CMAKE_BINARY_DIR}/client/QuitButton.h
+	${CMAKE_BINARY_DIR}/client/QuitButton.cpp
+	${CMAKE_BINARY_DIR}/client/RoomButton.h
+	${CMAKE_BINARY_DIR}/client/RoomButton.cpp
+	${CMAKE_BINARY_DIR}/client/SettingsButton.h
+	${CMAKE_BINARY_DIR}/client/SettingsButton.cpp
 	)
 
 add_executable (DebugClient
@@ -177,6 +219,15 @@ target_link_libraries (Abstract
 
 target_link_libraries (Client
 	Abstract
+	sfml-graphics-s
+	sfml-system-s
+	sfml-window-s
+	sfml-audio-s
+	opengl32
+	glew
+	Winmm.lib
+	jpeg
+	freetype
 	)
 
 target_link_libraries (Server
@@ -188,21 +239,21 @@ target_link_libraries (DebugClient
 	Abstract
 	)
 
+target_link_libraries(DebugClient sfml-graphics-s sfml-system-s sfml-window-s opengl32 glew Winmm.lib jpeg)
+
 if(WIN32)
 	target_link_libraries(Abstract Ws2_32.lib)
 	target_link_libraries(Server Ws2_32.lib)
-	target_link_libraries(Client sfml-graphics sfml-system sfml-window)
-	target_link_libraries(DebugClient sfml-graphics sfml-system sfml-window)
+#	target_link_libraries(Client sfml-graphics sfml-system sfml-window)
+#	target_link_libraries(DebugClient sfml-graphics sfml-system sfml-window)
 else(WIN32)
 	target_link_libraries(Abstract
-		dl)
-	target_link_libraries(Client
-		sfml-graphics
-		sfml-system
-		sfml-window
-		GLEW
-		dl)
-	target_link_libraries(DebugClient
-		crypto
-		)
+		dl
+		crypto)
+#	target_link_libraries(Client
+#		sfml-graphics
+#		sfml-system
+#		sfml-window
+#		GLEW
+#		dl)
 endif(WIN32)
