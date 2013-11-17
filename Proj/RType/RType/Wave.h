@@ -2,17 +2,22 @@
 
 #include <list>
 #include "Ennemy.h"
+#include "Clock.h"
+#include "Bullet.h"
 
 class Wave
 {
-	std::list<Ennemy>	_livingMobs;
-	std::list<Ennemy>	_deadMobs;
-
+	std::list<Ennemy>	_ennemy;
+	t_coord				_pos;
+	Clock				_timeFire;
+	Clock				_timePop;
 public:
-	Wave();
+	Wave(std::list<Bullet*> &);
 	~Wave();
 
-	void	start();
-	void	moveMobs();
-	void	mobsAction();
+	void	init();
+	void	action();
+	void	popEnnemy();
+	void	moveEnnemy();
+	void	moveBullet();
 };

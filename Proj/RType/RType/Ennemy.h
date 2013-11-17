@@ -1,13 +1,16 @@
 #pragma once
 
-#include "Element.h"
+# include "Element.h"
+# include <map>
 
 class Ennemy : public Element
 {
+private:
+	std::map<int, std::string>	_skins;
 public:
-	Ennemy();
+	Ennemy(int);
 	~Ennemy();
 
-	void	reset();
-	void	onDeath();
+	void setShipAttributes();
+	void setBullet();
 };

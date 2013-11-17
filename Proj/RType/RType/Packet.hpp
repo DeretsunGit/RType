@@ -11,6 +11,7 @@
 #include <list>
 #include <cstring>
 #include <iostream>
+#include <algorithm>
 
 class Packet
 {
