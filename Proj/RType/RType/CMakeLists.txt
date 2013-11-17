@@ -13,18 +13,13 @@ set_option(SFML_PATH "${CMAKE_BINARY_DIR}/SFML" STRING "The path to the SFML lib
 include_directories(${SFML_PATH}/include)
 link_directories(${SFML_PATH}/lib)
 add_definitions(-DSFML_STATIC)
+link_directories(${CMAKE_BINARY_DIR})
 
 set_option(CMAKE_BUILD_TYPE "Debug" STRING "Type of build (Debug or Release)")
 
 if(WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	link_directories(${CMAKE_BINARY_DIR}/Debug)
 	set(SFML_LIBS sfml-graphics-s-d sfml-system-s-d sfml-window-s-d)
 else(WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	if (WIN32)
-		link_directories(${CMAKE_BINARY_DIR}/Release)
-	else(WIN32)
-		link_directories(${CMAKE_BINARY_DIR})
-	endif(WIN32)
 	set(SFML_LIBS sfml-graphics-s sfml-system-s sfml-window-s)
 endif(WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 
