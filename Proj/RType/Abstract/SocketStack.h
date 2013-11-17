@@ -18,17 +18,25 @@ class	SocketStack: std::stack<std::pair<const char*, unsigned int> >
 {
 public:
   SocketStack()
+    : _size(0)
   {}
 
   void	push(const char* addr, unsigned int size)
   {
     this->Parent::push(std::pair<const char*, unsigned int>(addr, size));
+    this->_size += size;
   }
 
   template<typename T>
   void	push(const T& var)
   {
     this->push(reinterpret_cast<const char*>(&var), sizeof(T));
+  }
+
+  void	pop()
+  {
+    this->_size -= this->top().second;
+    this->Parent::pop();
   }
 
   void	put_back(IReadableSocket& s)
@@ -40,11 +48,17 @@ public:
       }
   }
 
+  unsigned int	byteSize() const
+  {
+    return (this->_size);
+  }
+
   ~SocketStack()
   {}
 
 private:
   typedef std::stack<std::pair<const char*, unsigned int> > Parent;
+  unsigned int	_size;
 
   SocketStack(const SocketStack&);
   SocketStack&	operator=(const SocketStack&);
