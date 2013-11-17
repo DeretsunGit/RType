@@ -4,10 +4,10 @@ class PlayMenu :
 	public Menu
 {
 private:
-	ClientCommunication<PlayMenu>	_comm;
-	TCPSocketClient					*_tcpsock;
+	ClientCommunication<Menu>	_comm;
+	TCPSocketClient				*_tcpsock;
 public:
-	PlayMenu(sf::RenderWindow *, SpriteManager *);
+	PlayMenu(sf::RenderWindow *, SpriteManager *, eMenus);
 	virtual void			childAction();
 	void					parseRoomList(void *data);
 	void					defaultCallback(char opcode, IReadableSocket &);

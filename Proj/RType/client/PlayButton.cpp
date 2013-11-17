@@ -1,4 +1,4 @@
-#include "Menu.h"
+#include "PlayMenu.h"
 #include "PlayButton.h"
 
 
@@ -11,7 +11,7 @@ PlayButton::PlayButton(SpriteManager *sprmgr)
 
 void	PlayButton::action(sf::Keyboard::Key, sf::RenderWindow *window, bool *running)
 {
-	Menu	playmenu(window, this->_sprmgr, PLAY);
+	PlayMenu	playmenu(window, this->_sprmgr);
 
 	playmenu.menuLoop();
 

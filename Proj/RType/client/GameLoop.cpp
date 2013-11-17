@@ -15,7 +15,7 @@ GameLoop::~GameLoop(void)
 
 void	GameLoop::openBackMenu(bool *running)
 {
-	Menu	backmenu(this->_window, &this->_spritemgr, INGAME);
+	Menu	backmenu(this->_window, &this->_spritemgr);
 
 	backmenu.menuLoop();
 	if (backmenu.getActive() == backmenu.getSize() - 1)

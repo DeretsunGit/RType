@@ -7,13 +7,13 @@
 #include "BackMainButton.h"
 #include "BackGameButton.h"
 
-Menu::Menu(sf::RenderWindow *window, SpriteManager *spritemgr, eMenus menu)
+Menu::Menu(sf::RenderWindow *window, SpriteManager *spritemgr)
 {
 	this->_active = 0;
 	this->_spritemgr = spritemgr;
 	this->_window = window;
-	this->_type = menu;
-	this->setMenuContent(menu);
+	//this->setMenuContent(menu);
+
 }
 
 void			Menu::setMenuContent(eMenus menu)
@@ -67,6 +67,7 @@ void			Menu::menuLoop()
 	logo.setPosition(1400 / 2 - static_cast<float>(logo.getTextureRect().width) / 2, 100); 
 	while (running)
 	{
+		this->childAction();
 		sf::Event event;
         while (this->_window->pollEvent(event))
         {
@@ -119,6 +120,11 @@ unsigned int	Menu::getSize(void) const
 	return (this->_size);
 }
 
+
+void			Menu::childAction()
+{
+
+}
 
 Menu::~Menu(void)
 {
