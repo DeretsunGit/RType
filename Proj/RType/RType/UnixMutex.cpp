@@ -5,17 +5,18 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Sat Oct 26 14:26:23 2013 julien edmond
-// Last update Tue Nov  5 01:23:15 2013 julien edmond
+// Last update Sun Nov 17 14:51:34 2013 julien edmond
 //
 
 #ifndef _WIN32
 
-#include "UnixMutex.h"
+# include	"UnixMutex.h"
+# include	"UnixSysException.h"
 
 UnixMutex::UnixMutex()
 {
   if (pthread_mutex_init(&this->_mutex, NULL))
-    throw std::runtime_error("Mutex creation failed"); // UNIXEXCEPT
+    throw UnixSysException("Mutex: pthread_mutex_init");
 }
 
 UnixMutex::~UnixMutex()

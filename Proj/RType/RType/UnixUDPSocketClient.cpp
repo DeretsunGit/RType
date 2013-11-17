@@ -9,6 +9,8 @@
 # include	<cstring>
 # include	"UnixUDPSocketClient.h"
 # include	"SocketPool.h"
+# include	"UnixSysException.h"
+# include	"UnixHostException.h"
 
 #define	READ_SIZE 500
 
@@ -18,16 +20,17 @@ UnixUDPSocketClient::UnixUDPSocketClient(const char* hostname, unsigned short po
   struct hostent* ent;
 
   if (this->_sock == -1)
-    throw std::runtime_error("UDPSocketClient: failed to create socket"); // UNIXEXCEPT
+    throw UnixSysException("UDPSocketClient: socket");
   if (!(ent = gethostbyname(hostname)))
-    throw std::runtime_error("UDPScoektClient: could not find host"); // UNIXEXCEPT
+    throw UnixHostException("UDPSocketClient: gethostbyname");
   this->_host = *reinterpret_cast<IN_ADDR*>(ent->h_addr);
 }
 
 UnixUDPSocketClient::~UnixUDPSocketClient()
 {
   if (close(this->_sock))
-    std::cerr << "UDPSocketClient: failed to close socket" << std::endl; // UNIXEXCEPT
+    std::cerr << UnixSysException::GetError("UDPSocketClient: close")
+	      << std::endl;
 }
 
 unsigned int  UnixUDPSocketClient::readable() const

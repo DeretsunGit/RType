@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Fri Nov  8 16:27:25 2013 julien edmond
-// Last update Fri Nov  8 16:43:21 2013 julien edmond
+// Last update Sun Nov 17 14:37:43 2013 julien edmond
 //
 
 #ifndef		_WIN32
@@ -13,17 +13,18 @@
 # include	<iostream>
 # include	<stdexcept>
 # include	"UnixDynLib.h"
+# include	"UnixSysException.h"
 
 UnixDynLib::UnixDynLib(const char* libName)
 {
   if (!(this->_handle = dlopen(libName, RTLD_NOW | RTLD_GLOBAL)))
-    throw std::runtime_error("DynLib: dlopen failed");// UNIXEXCEPT
+    throw UnixSysException("DynLib: dlopen");
 }
 
 UnixDynLib::~UnixDynLib()
 {
   if (dlclose(this->_handle))
-    std::cerr << "DynLib: dlclose failed" << std::endl; // UNIXEXCEPT
+    std::cerr << UnixSysException::GetError("~DynLib: dlcose") << std::endl;
 }
 
 #endif		// !_WIN32

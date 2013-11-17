@@ -67,6 +67,9 @@ add_library(Abstract
 	${CMAKE_BINARY_DIR}/Abstract/MD5.h
 	${CMAKE_BINARY_DIR}/Abstract/MD5.cpp
 	${CMAKE_BINARY_DIR}/Abstract/UDPBindedClient.cpp
+	${CMAKE_BINARY_DIR}/Abstract/WinSysException.h
+	${CMAKE_BINARY_DIR}/Abstract/UnixSysException.h
+	${CMAKE_BINARY_DIR}/Abstract/UnixHostException.h
 	Caller.hpp
 	IReadableSocket.h
 	IMutex.h

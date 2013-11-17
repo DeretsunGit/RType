@@ -5,16 +5,17 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Mon Oct 28 16:31:55 2013 julien edmond
-// Last update Mon Oct 28 16:57:54 2013 julien edmond
+// Last update Sun Nov 17 14:38:56 2013 julien edmond
 //
 
 #ifndef		_WIN32
 # include	"UnixCondVar.h"
+# include	"UnixSysException.h"
 
 UnixCondVar::UnixCondVar()
 {
   if (pthread_cond_init(&this->_cond, NULL))
-    throw std::runtime_error("Conditional variable creation failed"); // UNIXEXCEPT
+    throw UnixSysException("CondVar: pthread_cond_init");
 }
 
 UnixCondVar::~UnixCondVar()

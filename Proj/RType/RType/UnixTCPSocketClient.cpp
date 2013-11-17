@@ -9,6 +9,8 @@
 # include	"UnixTCPSocketClient.h"
 # include	"SocketPool.h"
 # include	"Packet.hpp"
+# include	"UnixSysException.h"
+# include	"UnixHostException.h"
 
 // TO REMOVE
 # include	<stdio.h>
@@ -23,18 +25,15 @@ UnixTCPSocketClient::UnixTCPSocketClient(const char* hostname,
   struct hostent*	hostinfo;
 
   if (this->_sock == -1)
-    throw std::runtime_error("TCPSocketClient: failed to create socket"); // UNIX EXCEPT
+    throw UnixSysException("TCPSocketClient: socket");
   if (!(hostinfo = gethostbyname(hostname)))
-    throw std::runtime_error("TCPSocketClient: failed to find host"); // UNIX EXCEPT
+    throw UnixHostException("TCPSocketClient: gethostbyname");
   sin.sin_family = AF_INET;
   sin.sin_port = htons(port);
   sin.sin_addr = *reinterpret_cast<struct in_addr*>(hostinfo->h_addr);
   if (connect(this->_sock, reinterpret_cast<const struct sockaddr *>(&sin),
 	      sizeof(sin)) == -1)
-    {
-      perror("connect");
-      throw std::runtime_error("TCPSocketClient: cannot connect to host"); // UNIX EXCEPT
-    }
+    throw UnixSysException("TCPSocketClient: connect");
 }
 
 UnixTCPSocketClient::UnixTCPSocketClient(SocketId id)
@@ -44,7 +43,8 @@ UnixTCPSocketClient::UnixTCPSocketClient(SocketId id)
 UnixTCPSocketClient::~UnixTCPSocketClient()
 {
   if (close(this->_sock) == -1)
-    std::cerr << "TCPSocketClient: cannot close socket" << std::endl; // UNIXEXCEPT
+    std::cerr << UnixSysException::GetError("~TCPSocketClient: close")
+	      << std::endl;
   SocketPool::getInstance().releaseSocket(this);
 }
 
