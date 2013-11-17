@@ -15,7 +15,7 @@ Hash::MD5::MD5(const MD5& m)
 
 Hash::MD5::MD5(const std::string& str)
 {
-  this->hash(str.c_str(), str.size());
+  this->hash(str.c_str(), static_cast<unsigned int>(str.size()));
 }
 
 Hash::MD5::MD5(const char* src, unsigned int size)
