@@ -177,7 +177,8 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/Drawable.h
 	${CMAKE_BINARY_DIR}/client/GameLoop.h
 	${CMAKE_BINARY_DIR}/client/Menu.h
-	${CMAKE_BINARY_DIR}/client/MenuManager.h
+	${CMAKE_BINARY_DIR}/client/PlayMenu.h
+	${CMAKE_BINARY_DIR}/client/MainMenu.h
 	${CMAKE_BINARY_DIR}/client/Background.h
 	${CMAKE_BINARY_DIR}/client/SpriteManager.h
 	Packet.hpp
@@ -188,7 +189,8 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/Drawable.cpp
 	${CMAKE_BINARY_DIR}/client/GameLoop.cpp
 	${CMAKE_BINARY_DIR}/client/Menu.cpp
-	${CMAKE_BINARY_DIR}/client/MenuManager.cpp
+	${CMAKE_BINARY_DIR}/client/MainMenu.cpp
+	${CMAKE_BINARY_DIR}/client/PlayMenu.cpp
 	${CMAKE_BINARY_DIR}/client/Background.cpp
 	${CMAKE_BINARY_DIR}/client/PlayerShip.cpp
 	${CMAKE_BINARY_DIR}/client/SpriteManager.cpp
