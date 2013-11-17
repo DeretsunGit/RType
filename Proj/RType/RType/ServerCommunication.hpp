@@ -74,6 +74,7 @@ public:
 		_handler = NULL;
 		_defaultCallback = NULL;
 		_commandMap[Opcodes::sayHello] = &ServerCommunication::TCPsayHello;
+		_commandMap[Opcodes::askRoomList] = &ServerCommunication::TCProomListRequest;
 		_commandMap[Opcodes::setRoom] = &ServerCommunication::TCPsetRoom;
 		_commandMap[Opcodes::selectRoom] = &ServerCommunication::TCPselectRoom;
 		_commandMap[Opcodes::leaveRoom] = &ServerCommunication::TCPleaveRoom;
@@ -154,4 +155,5 @@ public:
 	bool TCPsaveMap(IReadableSocket& socket); //-		--------Gestion Micro des room finie
 	bool UDPinputs(IReadableSocket& socket);
 	bool UDPpauseOk(IReadableSocket& socket);
+	bool TCProomListRequest(IReadableSocket& socket);
 };

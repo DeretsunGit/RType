@@ -25,6 +25,7 @@ namespace Opcodes
       sendError =	19,
       inputs =		20,
       screenState =	21,
-      endOfGame =	22
+      endOfGame =	22,
+	  askRoomList = 23
     };
 }

@@ -178,6 +178,7 @@ public:
 
 	/* CLIENT TO SERVER */
   void TCPsayHello(Packet& packet, const char* nickname, unsigned short resolution[2]);
+  void TCPaskRoomList(Packet& packet);
   void TCPsetRoom(Packet& packet, const char* roomName);
   void TCPselectRoom(Packet& packet, const char roomId);
   void TCPleaveRoom(Packet& packet);

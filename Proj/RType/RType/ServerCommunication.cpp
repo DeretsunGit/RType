@@ -590,6 +590,25 @@ bool ServerCommunication<T>::UDPinputs(IReadableSocket& socket)
 }
 
 template<class T>
+bool ServerCommunication<T>::TCProomListRequest(IReadableSocket& socket)
+{
+	unsigned int readsize;
+	unsigned short datasize;
+
+	if (socket.readable())
+	{
+		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
+		{
+			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::askRoomList])(NULL);
+		return true;
+	}
+	return false;
+}
+
+template<class T>
 bool ServerCommunication<T>::UDPpauseOk(IReadableSocket& socket)
 { 
 	return true;

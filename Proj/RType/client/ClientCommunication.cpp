@@ -39,6 +39,17 @@ void ClientCommunication<T>::TCPsayHello(Packet& packet, const char* nickname, u
 }
 
 template<typename T>
+void ClientCommunication<T>::TCPaskRoomList(Packet& packet)
+{
+	char opcode = Opcodes::askRoomList;
+	unsigned short datasize = htons(0);
+
+	packet.reset();
+	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(datasize));
+}
+
+template<typename T>
 void ClientCommunication<T>::TCPsetRoom(Packet& packet, const char* roomName)
 {
   char opcode = Opcodes::setRoom;
