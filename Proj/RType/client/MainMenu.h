@@ -3,10 +3,8 @@
 class MainMenu :
 	public Menu
 {
-private:
-
 public:
-	MainMenu(sf::RenderWindow*, SpriteManager *);
-	virtual ~MainMenu(void);
+	MainMenu(sf::RenderWindow *, SpriteManager *);
+	~MainMenu(void);
 };
 
