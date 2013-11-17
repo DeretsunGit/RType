@@ -233,7 +233,7 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 	      stack.put_back(socket);
 	      return false;
 	    }
-	  stack.push(ret.back().name);
+	  stack.push(ret.back().name, 32);
 	  total += readsize;
 	  if ((readsize = socket.recv(&ret.back().id, 1)) != 1)
 	    {
@@ -249,6 +249,7 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 	      stack.put_back(socket);
 	      return false;
 	    }
+	  stack.push(ret.back().nbPlayer);
 	  total += readsize;
 	}
       (_handler->*_callableMap.at(Opcodes::roomList))(reinterpret_cast<void *>(&ret));
