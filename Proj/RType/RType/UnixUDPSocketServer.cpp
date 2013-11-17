@@ -191,7 +191,7 @@ bool  UnixUDPSocketServer::isLive() const
 
 IUDPSocketServer::UDPBindedClient&  UnixUDPSocketServer::getClient(const in_addr& c)
 {
-  return (this->_map[c.S_un.S_addr]);
+  return (this->_map[c.s_addr]);
 }
 
 #endif	// !_WIN32

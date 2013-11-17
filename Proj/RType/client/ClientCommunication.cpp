@@ -224,7 +224,7 @@ bool ClientCommunication<T>::TCProomList(IReadableSocket& socket) const
 	  return false;
 	}
       stack.push(dataSize);
-      while (total < htons(dataSize))
+      while (total < ntohs(dataSize))
 	{
 	  ret.push_back(s_room_info());
 	  if ((readsize = socket.recv(ret.back().name, 32)) != 32)
@@ -343,12 +343,11 @@ bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 	  stack.put_back(socket);
 	  return false;
 	}
-      stack.push(&(block.udp));
+      stack.push(block.udp);
       total = readsize;
-      while (total != ntohs(datasize))
+      while (total != ntohs(datasize) - sizeof(block.udp))
 	{
 	  block.files.push_back(std::pair<Buffer<128>, Buffer<32> >());
-
 	  if ((readsize = socket.recv(block.files.back().first._buff, 128)) != 128)
 	    {
 	      socket.putback(block.files.back().first._buff, readsize);
@@ -405,7 +404,8 @@ bool ClientCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket) const
 	  stack.put_back(socket);
 	  return false;
 	}
-      if ((readsize = socket.recv(reinterpret_cast<char*>(data), htonl(size))) != htonl(size))
+      stack.push(size);
+      if ((readsize = socket.recv(reinterpret_cast<char*>(data), ntohl(size))) != ntohl(size))
 	{
 	  socket.putback(data, readsize);
 	  stack.put_back(socket);
@@ -446,7 +446,7 @@ bool ClientCommunication<T>::TCPassocSprites(IReadableSocket& socket) const
 	}
       stack.push(filename);
       total = readsize;
-      while (total != datasize)
+      while (total != ntohs(datasize))
 	{
 	  block.sprites.push_back(std::pair<char, s_shorts>());
 	  if ((readsize = socket.recv(&block.sprites.back().first, 1)) != 1)
