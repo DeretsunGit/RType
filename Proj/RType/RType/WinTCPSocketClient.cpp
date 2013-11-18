@@ -27,9 +27,10 @@ WinTCPSocketClient::WinTCPSocketClient(const char *hostName, unsigned short port
 	if (WSAConnect(this->_sock, (SOCKADDR *) & clientService, sizeof (clientService), NULL, NULL, NULL, NULL) == SOCKET_ERROR)
 	{
 	  int errcode = WSAGetLastError();
+
 	  if (closesocket(this->_sock) == SOCKET_ERROR)
 	    throw WSAException("TCPSocket: closesocket");
-	  throw WSAException("TCPSocket: WSAConnect");
+	  throw WSAException("TCPSocket: WSAConnect", errcode);
 	}
 	this->_live = true;
 }

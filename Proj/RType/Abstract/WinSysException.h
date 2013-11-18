@@ -2,7 +2,7 @@
 # pragma once
 # include <Windows.h>
 # include "SystemException.h"
-
+#include<iostream>
 class WinSysException: public SystemException
 {
 public:
@@ -39,11 +39,10 @@ public:
     LPVOID lpMsgBuf;
     DWORD bufLen = FormatMessage(
         FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_IGNORE_INSERTS,
+        FORMAT_MESSAGE_FROM_SYSTEM,
         NULL,
         code,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        0,
         (LPTSTR) &lpMsgBuf,
         0, NULL );
 
