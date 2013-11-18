@@ -13,6 +13,7 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 	std::cout << "Size: " << this->_players.size() << std::endl;
 	this->_endGame = false;
 	this->_firstColumn = 0;
+	this->_globalPos = 17;
 	// on récupère Script en argument
 	//this->_com.TCPsendStartGame(packet, this->_port);
 	//this->TCPsend(packet);
@@ -104,6 +105,9 @@ void	Game::mapGeneration()
 						(*it)->setHP(1);
 						coord._posX = x * 100;
 						coord._posY = y * 50;
+						(*it)->setPos(&coord);
+						coord._posX = x;
+						coord._posY = y;
 						(*it)->addToCurrentCell(coord);
 					}
 					it ++;
@@ -124,6 +128,9 @@ void	Game::mapGeneration()
 						(*it)->setHP(1);
 						coord._posX = x * 100;
 						coord._posY = y * 50;
+						(*it)->setPos(&coord);
+						coord._posX = x;
+						coord._posY = y;
 						(*it)->addToCurrentCell(coord);
 					}
 					it ++;
@@ -191,12 +198,13 @@ void	Game::gameLoop()
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
+	//	std::cout << "loop" << std::endl;
 		loopTimer.initialise();
 		//std::cout << __LINE__ << std::endl;
 		this->getInputs();
 		// déplacement de Waves en fonction du script
 		//std::cout << __LINE__ << std::endl;
-		this->moveBullets();
+	//	this->moveBullets();
 	//	std::cout << __LINE__ << std::endl;
 		this->moveWall();
 	//	std::cout << __LINE__ << std::endl;
@@ -205,7 +213,8 @@ void	Game::gameLoop()
 		// (pop de Wave)
 		this->sendPriority();
 	//	std::cout << __LINE__ << std::endl;
-		this->_endGame = !this->isPlayerAlive();
+		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
+			this->_endGame = true;
 	//	std::cout << __LINE__ << std::endl;
 		execTime = loopTimer.getTimeBySec();
 	//	std::cout << __LINE__ << std::endl;
@@ -343,6 +352,7 @@ bool	Game::isPlayerAlive()
 
 void	Game::moveWall()
 {
+	bool							assign = false;
 	bool							decal = false;
 	t_coord							temp;
 	std::list<Wall*>::iterator		it_wall;
@@ -352,51 +362,115 @@ void	Game::moveWall()
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				temp._posX = (*it_wall)->getPos()._posX - 3 * (*it_wall)->getSpeed();
+				temp._posX = (*it_wall)->getPos()._posX - 4 * (*it_wall)->getSpeed();
 				temp._posY = (*it_wall)->getPos()._posY;
 				(*it_wall)->setPos(&temp);
-			}
+			//	if ((*it_wall)->getPos()._posX > 1550)
+		//			std::cout << (*it_wall)->getPos()._posX << "/" << (*it_wall)->getPos()._posY << std::endl;
 			// on supprime les murs inactifs et on set les nouveaux murs
-			if ((*it_wall)->getPos()._posX <= -100)
-			{
-				decal = true;
-				(*it_wall)->setHP(0);
-				(*it_wall)->setSendPriority(2);
+				if ((*it_wall)->getPos()._posX <= -100 )
+				{
+					temp._posX = 0;
+					temp._posY = 0;
+					std::cout << "deleting wall" << std::endl;
+					decal = true;
+					(*it_wall)->setHP(0);
+					(*it_wall)->setPos(&temp);
+					(*it_wall)->setSendPriority(2);
+					this->_map[((*it_wall)->getCurrentCell().front()._posY)][((*it_wall)->getCurrentCell().front()._posX)].clear();
+				}
 			}
 		}
 	if (decal == true)
 	{
-		while (y < 18)
+	//	std::cout << "new wall--------------------------------------------------" << std::endl;
+		y = 0;
+		it_wall = (this->_wallPool).begin();
+		while (y < atoi(this->_script->getMap()->_topMap.substr(this->_globalPos, 1).c_str()))
 		{
-			if (this->_script->getMap()->_topMap[this->_globalPos] >= y || this->_script->getMap()->_botMap[this->_globalPos] >= 18 - y)
+			assign = false;
+			while ( it_wall != (this->_wallPool).end() && assign == false)
+			{
+				if ((*it_wall)->getHP() == 0)
 				{
-					for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
-					{
-						if ((*it_wall)->getHP() == 0)
-						{
-							this->_map[y][_firstColumn].push_back(*it_wall);
-							(*it_wall)->setHP(1);
-							temp._posX = 1600;
-							temp._posY = y * 50;
-							(*it_wall)->addToCurrentCell(temp);
-						}
-					}
+					std::cout << "CREATED !top" <<std::endl;
+					assign = true;
+					this->_map[y][this->_firstColumn].push_back(*it_wall);
+					(*it_wall)->setHP(1);
+					temp._posX = 1600;
+					temp._posY = y * 50;
+					(*it_wall)->setPos(&temp);
+					temp._posX = this->_firstColumn;
+					temp._posY = y;
+					(*it_wall)->addToCurrentCell(temp);
+				}
+				it_wall ++;
 			}
 			y++;
 		}
+		y = 17;
+		it_wall = this->_wallPool.begin();
+		while (y > 17 - atoi(this->_script->getMap()->_botMap.substr(this->_globalPos, 1).c_str()))
+		{
+			assign = false;
+			while (assign == false && it_wall != this->_wallPool.end())
+			{
+				std::cout << "kouk" << std::endl;
+				if ((*it_wall)->getHP() == 0)
+				{
+					std::cout << "CREATED !bot "<< std::endl;
+					assign = true;
+					this->_map[y][this->_firstColumn].push_back(*it_wall);
+					(*it_wall)->setHP(1);
+					temp._posX = 1600;
+					temp._posY = y * 50;
+					(*it_wall)->setPos(&temp);
+					temp._posX = this->_firstColumn;
+					temp._posY = y;
+					(*it_wall)->addToCurrentCell(temp);
+				//	std::cout << "ok" << std::endl;
+				}
+				it_wall ++;
+			//	std::cout << "Test" << std::endl;
+			}
+			//std::cout << "non-kouk" << std::endl;
+			--y;
+		}
+		std::cout << "--------------NEW Screen " << this->_firstColumn <<"/" << this->_globalPos << " ------------" << std::endl;
 		this->_globalPos ++;
-		if (this->_firstColumn <= 16)
+		if (this->_firstColumn < 17)
 			this->_firstColumn++;
 		else
 			this->_firstColumn = 0;
+		short x;
+		y = 0;
+	while (y < 18)
+	{
+		x = this->_firstColumn;
+		while (x < 17)
+		{
+			if (this->_map[y][x].size() > 0)
+				std::cout << "[=]";
+			else
+				std::cout << "   ";
+			x ++;
+		}
+		x = 0;
+		while (x < this->_firstColumn)
+		{
+			if (this->_map[y][x].size() > 0)
+				std::cout << "[=]";
+			else
+				std::cout << "   ";
+			x ++;
+		}
+		std::cout << "-" << std::endl;
+		y ++;
+	}
+
 	}
 }
-/*
-ServerCommunication	*Game::getServCom()
-{
-	return (&this->_com);
-}
-*/
+
 Game::~Game()
 {
 	// ramener tous les joueurs au menu

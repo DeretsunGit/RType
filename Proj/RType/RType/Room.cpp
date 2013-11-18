@@ -105,9 +105,11 @@ std::cout << "Preparing room of id" << this->_id << std::endl;
 void	Room::roomLoop()
 {
 	this->_m.lock();
+	bool finish = false;
 	std::vector<Player*>::iterator	ite = this->_party.begin();
+	
 	std::cout << "Room " << this->_name << "Started to Loop" << std::endl;
-	while (this->_party.size() > 0)
+	while (this->_party.size() > 0 && finish == false)
 	{
 		ite = (this->_party).begin();
 		while ( (ite != (this->_party).end()))
@@ -123,6 +125,7 @@ void	Room::roomLoop()
 		{
 			std::cout << this->_nbReady <<" - "<< this->_party.size() << std::endl;
 			this->startGame();
+			finish = true;
 		}
 	}
 	std::cout << "Room " << this->_name << ": no more player. exit..." << std::endl;

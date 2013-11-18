@@ -45,8 +45,8 @@
 
 typedef struct s_coord
 {
-	unsigned short _posX;
-	unsigned short _posY;
+	short _posX;
+	short _posY;
 } t_coord;
 
 template<typename T>
