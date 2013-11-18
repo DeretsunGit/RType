@@ -223,6 +223,7 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/RoomButton.cpp
 	${CMAKE_BINARY_DIR}/client/SettingsButton.h
 	${CMAKE_BINARY_DIR}/client/SettingsButton.cpp
+	ESprites.h
 	)
 
 add_executable (DebugClient
