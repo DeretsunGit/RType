@@ -99,6 +99,16 @@ void	Element::setPos(t_coord *newCoord)
 	this->_pos = *newCoord;
 }
 
+void		Element::setColor(char color)
+{
+	this->_color = color;
+}
+
+void		Element::setSide(bool side)
+{
+	this->_side = side;
+}
+
 t_coord	Element::getPos() const
 {
 	return (this->_pos);
@@ -152,4 +162,14 @@ char	Element::getSendPriority() const
 short int	Element::getSpeed() const
 {
 	return(this->_speed);
+}
+
+char		Element::getColor() const
+{
+	return (this->_color);
+}
+
+bool		Element::getSide() const
+{
+	return (this->_side);
 }

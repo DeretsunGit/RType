@@ -11,6 +11,7 @@ class Wave
 	t_coord				_pos;
 	Clock				_timeFire;
 	Clock				_timePop;
+	char				_color;
 public:
 	Wave(std::list<Bullet*> &);
 	~Wave();

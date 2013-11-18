@@ -19,6 +19,8 @@ class Element
 	char					_spriteId;
 	std::vector<t_coord>	_currentCells;
 	char					_sendPriority;
+	bool					_side; // DARK / LIGHT
+	char					_color;
 
 public:
 	Element();
@@ -33,6 +35,8 @@ public:
 	void					setSpeed(short int);
 	void					setHitboxSize(t_coord *);
 	void					setId(int);
+	void					setColor(char);
+	void					setSide(bool);
 
 	t_coord					getPos() const;
 	t_coord					getHitboxSize() const;
@@ -45,7 +49,8 @@ public:
 	char					getFaction() const;
 	char					getSendPriority() const;
 	short int				getSpeed() const;
-
+	char					getColor() const;
+	bool					getSide() const;
 
 	void					move();
 	int						isCollision(std::list<Element*>);

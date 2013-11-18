@@ -25,8 +25,14 @@
 #define MAXROOM		100
 #define MAXCLIENT	400
 
-#define SHIELD_LIGHT	0
-#define	SHILED_DARK		1
+#define LIGHT	0
+#define	DARK	1
+
+#define BLUE	0
+#define RED		1
+#define YELLOW	2
+#define GREEN	3
+#define WHITE	4
 
 #define	WALL	0
 #define PLAYER	1

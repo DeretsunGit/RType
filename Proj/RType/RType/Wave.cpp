@@ -1,9 +1,13 @@
 #include "Wave.h"
+#include "Randomisation.h"
 
 Wave::Wave(std::list<Bullet*> &bulletPool)
 {
+	Randomisation<char>	rand;
+
 	this->_pos._posX = 1650;
 	this->_pos._posY = 450;
+	this->_color = rand.tRand(4);
 }
 
 Wave::~Wave()
