@@ -180,6 +180,7 @@ add_executable (Server
 	Script.cpp
 	Randomisation.h
 	Randomisation.cpp
+	ESprites.h
 	)
 
 add_executable (Client
