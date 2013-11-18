@@ -1,3 +1,7 @@
+#pragma once
+
+#define NB_SPRITES	(55)
+
 enum eSprites
 {
 	SHIP_BLUE_IDLE = 0,
