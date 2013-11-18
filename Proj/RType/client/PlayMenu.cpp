@@ -13,16 +13,9 @@ PlayMenu::PlayMenu(sf::RenderWindow *window, SpriteManager *spritemgr) : Menu(wi
 	this->_comm.setHandler(this);
 	this->_comm.setCallback(Opcodes::roomList, &PlayMenu::parseRoomList);
 	this->_comm.setDefaultCallback(&PlayMenu::defaultCallback);
-	try
-	{
-		this->_tcpsock = new TCPSocketClient("127.0.0.1", 1234);
-		//this->_comm.TCPsayHello(p, "ledp", res);
-		//this->_tcpsock->send(p);
-	}
-	catch (SystemException &e)
-	{
-		std::cout << e.what() << std::endl;
-	}
+	this->_tcpsock = new TCPSocketClient("127.0.0.1", 1234);
+	this->_comm.TCPsayHello(p, "ledp", res);
+	this->_tcpsock->send(p);
 }
 
 void			PlayMenu::defaultCallback(char opcode, IReadableSocket& sock)
@@ -32,7 +25,7 @@ void			PlayMenu::defaultCallback(char opcode, IReadableSocket& sock)
 
 void			PlayMenu::parseRoomList(void *data)
 {
-	/*int	i = 0;
+	int	i = 0;
 	std::cout << "parseroomlist" <<std::endl;
 	std::list<s_room_info>	*list = static_cast<std::list<s_room_info>*>(data);
 	this->_size = list->size();
@@ -42,12 +35,12 @@ void			PlayMenu::parseRoomList(void *data)
 	{
 		this->_buttons[i] = new RoomButton(this->_spritemgr, "TkhTo");
 		i = i + 1;
-	}*/	
+	}	
 }
 
 void	PlayMenu::childAction()
 {
-		this->_comm.interpretCommand(*this->_tcpsock);
+	this->_comm.interpretCommand(*this->_tcpsock);
 }
 
 PlayMenu::~PlayMenu(void)

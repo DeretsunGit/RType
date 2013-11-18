@@ -9,7 +9,7 @@ QuitButton::QuitButton(SpriteManager *sprmgr)
 
 void	QuitButton::action(sf::Keyboard::Key, sf::RenderWindow *window, bool *running)
 {
-	window->close();
+	*running = false;
 }
 
 QuitButton::~QuitButton(void)

@@ -9,15 +9,16 @@ template<class T>
 void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 {
 	char opcode = Opcodes::roomList;
-	unsigned short datasize = htons(static_cast<short>(rooms.size()) * (sizeof(char) * 34));
+	unsigned short datasize = htons(static_cast<short>(rooms.size()) *  (sizeof(char) * 34));
 	char name[32], id = 0, nbplayer = 0;
+	int i = 0;
 	std::list<Room *>::const_iterator ite = rooms.begin();
 
 	packet.reset();
 	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 
-	while (ite != rooms.end())
+	while (ite != rooms.end() && i < 5)
 	{
 //		if ((*ite)->getNbPlayer() != 0)
 //		{

@@ -55,7 +55,6 @@ void			Menu::displayMenu() const
 			this->_buttons[i]->setHighlight(false);
 		this->_buttons[i]->displayButton(i, _size, this->_window);
 	}
-
 }
 
 void			Menu::menuLoop()
@@ -86,6 +85,7 @@ void			Menu::menuLoop()
 		this->_window->draw(logo);
 		this->displayMenu();
 		this->_window->display();
+		Sleep(300);
 	}
 	return;
 }
