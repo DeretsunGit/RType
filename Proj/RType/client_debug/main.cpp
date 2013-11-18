@@ -7,6 +7,7 @@
 #include "Debugger.h"
 #include "DynLib.h"
 #include "SystemException.h"
+#include  "Debug.h"
 
 int main(int ac, char** av)
 {
@@ -30,22 +31,8 @@ int main(int ac, char** av)
   }
   else
   {
-    sf::RenderWindow  w(sf::VideoMode(800, 600), "Test");
-    sf::Texture t;
-    sf::Sprite	s;
-    sf::Event	e;
-
-    t.loadFromFile("assets/ship.gif");
-    s.setTexture(t);
-    while (w.isOpen())
-    {
-      w.clear();
-      w.draw(s);
-      w.display();
-      w.waitEvent(e);
-      if (e.type == sf::Event::Closed)
-	w.close();
-    }
+    Debug::log("A que coucou", Debug::emerg);
+    std::cin.get();
   }
   return (0);
 }

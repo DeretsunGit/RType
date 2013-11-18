@@ -138,6 +138,7 @@ add_library(Abstract
 add_executable (Server
 	${CMAKE_BINARY_DIR}/Abstract/SocketStack.h
 	Debug.h
+	Debug.cpp
 	IReadableSocket.h
 	CondVar.h
 	Packet.hpp
