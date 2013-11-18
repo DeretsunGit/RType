@@ -7,7 +7,7 @@ class SystemException: std::runtime_error
 {
 public:
   SystemException(const std::string& msg = "", int code = 0, const std::string& what = "An error occured") throw()
-    : std::runtime_error(_str.empty() ? _strerror : _str + ": " + _strerror), _str(msg), _code(0),
+    : std::runtime_error(msg.empty() ? what : msg + ": " + what), _str(msg), _code(0),
       _strerror(what), _res(this->std::runtime_error::what())
   {}
 

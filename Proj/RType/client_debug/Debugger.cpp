@@ -92,6 +92,8 @@ void	      Debugger::networkThread()
 {
   while (this->_live && this->_tcp.isLive())
   {
+    if (this->_tcp.readable())
+      std::cout << "Readable: " << this->_tcp.readable() << std::endl;
     this->_TCPcomm.interpretCommand(this->_tcp);
     if (this->_udp)
       {

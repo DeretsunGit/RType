@@ -6,6 +6,7 @@
 #include "SFML/Graphics.hpp"
 #include "Debugger.h"
 #include "DynLib.h"
+#include "SystemException.h"
 
 int main(int ac, char** av)
 {
@@ -17,7 +18,7 @@ int main(int ac, char** av)
 
       d.start();
     }
-    catch (const std::exception& e)
+    catch (const SystemException& e)
     {
       std::cerr << "EXCEPTION: " << e.what() << std::endl;
       std::cin.get();
