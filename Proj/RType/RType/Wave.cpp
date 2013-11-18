@@ -1,5 +1,6 @@
 #include "Wave.h"
-#include "Randomisation.h"
+#include "Randomisation.cpp"
+template class Randomisation<char>;
 
 Wave::Wave(std::list<Bullet*> &bulletPool)
 {
