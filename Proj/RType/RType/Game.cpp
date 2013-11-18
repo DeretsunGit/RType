@@ -16,11 +16,15 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 	// on récupère Script en argument
 	//this->_com.TCPsendStartGame(packet, this->_port);
 	//this->TCPsend(packet);
+		this->genPool();
+	std::cout << "Pools fully created" << std::endl;
 	this->mapGeneration();
-	this->genPool();
+	std::cout << "Map generation finished !" << std::endl;
 	this->startGame();
+	std::cout << "----------------- GAME INITIALIZED ----------------------" << std::endl;
 	// startGame() va attendre que les clients soient ready via TCP
 	// puis envoi aux client le start game via TCP
+	std::cout << "___________________Loop starting________________________" << std::endl;
 	this->gameLoop();
 }
 
@@ -68,6 +72,7 @@ void	Game::TCPsend(Packet& tosend)
 void	Game::mapGeneration()
 {
 	// grâce au script et à un fichier qui décrit les patterns, on recompose la map globale
+	bool						assign = false;
 	short int					i = 0;
 	short int					x = 0;
 	short int					y = 0;
@@ -75,28 +80,77 @@ void	Game::mapGeneration()
 	std::list<Wall*>::iterator	it;
 
 	// on génère maintenant visibleMap
-	while (y < 18)
-	{
-		x = 0;
+	std::cout << "Visible map generation started" << std::endl;
+	std::cout << "unsing script, map of size" << this->_script->getMap()->_botMap.size() << std::endl;
+	std::cout << "-------------------TOPMAP------------------" << std::endl;
+	std::cout << this->_script->getMap()->_topMap << std::endl;
+	std::cout << "-------------------BOTMAP------------------" << std::endl;
+	std::cout << this->_script->getMap()->_botMap << std::endl;
+	std::cout << "__________________________________________" << std::endl;
 		while (x < 17)
 		{
-			if (this->_script->getMap()->_topMap[x] >= y || this->_script->getMap()->_botMap[x] >= 18 - y)
+			// on parcours topmap
+			y = 0;
+			while (y < atoi(this->_script->getMap()->_topMap.substr(x, 1).c_str()))
 			{
-				for (it = (this->_wallPool).begin(); it != (this->_wallPool).end(); it++)
+				assign = false;
+				it = (this->_wallPool).begin();
+				while ( it != (this->_wallPool).end() && assign == false)
 				{
 					if ((*it)->getHP() == 0)
 					{
+						std::cout << x <<" ; "<< y <<" ---------------------------------" << std::endl;
+						assign = true;
 						this->_map[y][x].push_back(*it);
 						(*it)->setHP(1);
 						coord._posX = x * 100;
 						coord._posY = y * 50;
 						(*it)->addToCurrentCell(coord);
 					}
+					it ++;
 				}
+				y++;
 			}
+		/*	y = 18;
+			while (y > (18 - atoi(this->_script->getMap()->_topMap.substr(x, 1).c_str())))
+			{
+				assign = false;
+			//	std::cout << "pushing new botwall" << std::endl;
+				it = (this->_wallPool).begin();
+				while ( it != (this->_wallPool).end() && assign == false)
+				{
+					if ((*it)->getHP() == 0)
+					{
+						assign = true;
+						this->_map[y][x].push_back(*it);
+						(*it)->setHP(1);
+						coord._posX = x * 100;
+						coord._posY = y * 50;
+						(*it)->addToCurrentCell(coord);
+					}
+					it ++;
+				}
+				y--;
+			}*/
 			x++;
 		}
-		y++;
+	std::cout << "finished !" << std::endl;
+	x = 0;
+	y = 0;
+	std::cout << "--------------First Screen------------" << std::endl;
+while (y < 18)
+	{
+		x = 0;
+		while (x < 17)
+		{
+			if (this->_map[y][x].size() > 0)
+				std::cout << "[]";
+			else
+				std::cout << "  ";
+			x ++;
+		}
+		std::cout << "-" << std::endl;
+		y ++;
 	}
 }
 
@@ -136,26 +190,27 @@ void	Game::gameLoop()
 	Clock	loopTimer;
 	float	execTime;
 
+	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
 		loopTimer.initialise();
-		std::cout << __LINE__ << std::endl;
+		//std::cout << __LINE__ << std::endl;
 		this->getInputs();
 		// déplacement de Waves en fonction du script
-		std::cout << __LINE__ << std::endl;
+		//std::cout << __LINE__ << std::endl;
 		this->moveBullets();
-		std::cout << __LINE__ << std::endl;
+	//	std::cout << __LINE__ << std::endl;
 		this->moveWall();
-		std::cout << __LINE__ << std::endl;
+	//	std::cout << __LINE__ << std::endl;
 		//this->collision();
-		std::cout << __LINE__ << std::endl;
+	//	std::cout << __LINE__ << std::endl;
 		// (pop de Wave)
 		this->sendPriority();
-		std::cout << __LINE__ << std::endl;
+	//	std::cout << __LINE__ << std::endl;
 		this->_endGame = !this->isPlayerAlive();
-		std::cout << __LINE__ << std::endl;
+	//	std::cout << __LINE__ << std::endl;
 		execTime = loopTimer.getTimeBySec();
-		std::cout << __LINE__ << std::endl;
+	//	std::cout << __LINE__ << std::endl;
 		Sleep((unsigned long)(16 - execTime));
 	}
 }

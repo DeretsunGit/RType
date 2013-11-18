@@ -4,7 +4,7 @@ Element::Element()
 {
 	this->_shipProof	 =		false;
 	this->_bulletProof =		false;
-	this->_hp =				1;
+	this->_hp =				0;
 	this->_sendPriority =	1;
 	this->_speed =			1;
 	this->_id =			0;

@@ -20,7 +20,7 @@
 
 #define DEBUGSTATE	8
 
-#define PATTERNFILE	""
+#define PATTERNFILE	"..\\ServerRessources\\PatternList.txt"
 
 #define MAXROOM		100
 #define MAXCLIENT	400

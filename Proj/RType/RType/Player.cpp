@@ -10,7 +10,7 @@ Player::Player(Client* c, int id)
 	this->_score =		0;
 	this->_alive =		true;
 	this->_isShooting = false;
-	this->_shield =		SHIELD_LIGHT;
+	this->_shield =		LIGHT;
 
 	temp._posX = 50;
 	temp._posY = 30;
