@@ -51,7 +51,7 @@ void	Script::setRandomMap()
 	//std::uniform_int_distribution<char> distribution(1, this->_patternList.size());
 	while (topLen < this->_mapSize || botLen < this->_mapSize) // top
 	{
-		std::cout << topLen << "<->" << botLen << std::endl;
+//		std::cout << topLen << "<->" << botLen << std::endl;
 		rand = this->_rand->tRand(1, this->_patternList.size());
 		//rand = distribution(generator);
 		if (this->_patternList[rand]._isTop == true)
@@ -84,7 +84,6 @@ void	Script::getPattern()
 	}
 	while (std::getline(*(this->_patternFile), line))
 	{
-		std::cout << "get Next line" << std::endl;
 		if ((*this->_patternFile).eof() || line.find("/") == 1)
 		{
 			std::cout << "END :" <<line << std::endl;
@@ -97,7 +96,6 @@ void	Script::getPattern()
 			pos = 0;
 			pos2 = 0;
 			len = 0;
-			std::cout << line << std::endl;
 			if ((pos2 = line.find(":", pos)) != std::string::npos)
 			{
 				len = pos2 - pos;
@@ -105,12 +103,10 @@ void	Script::getPattern()
 				pos = pos2 + 1;
 				if ((newPattern._id = strTo<int>(temp)) < 100)
 				{
-					std::cout << "pattern is Top" << std::endl;
 					newPattern._isTop = true;
 				}
 				else
 				{
-					std::cout << "pattern is bot" << std::endl;
 					newPattern._isTop = false;
 				}
 				//((newPattern._id = strTo<int>(temp)) >= 100) ? newPattern._isTop = true : newPattern._isTop = false;

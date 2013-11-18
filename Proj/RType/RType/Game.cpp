@@ -99,7 +99,6 @@ void	Game::mapGeneration()
 				{
 					if ((*it)->getHP() == 0)
 					{
-						std::cout << x <<" ; "<< y <<" ---------------------------------" << std::endl;
 						assign = true;
 						this->_map[y][x].push_back(*it);
 						(*it)->setHP(1);
@@ -111,11 +110,10 @@ void	Game::mapGeneration()
 				}
 				y++;
 			}
-		/*	y = 18;
-			while (y > (18 - atoi(this->_script->getMap()->_topMap.substr(x, 1).c_str())))
+			y = 17;
+			while (y > 17 - atoi(this->_script->getMap()->_botMap.substr(x, 1).c_str()))
 			{
 				assign = false;
-			//	std::cout << "pushing new botwall" << std::endl;
 				it = (this->_wallPool).begin();
 				while ( it != (this->_wallPool).end() && assign == false)
 				{
@@ -131,7 +129,7 @@ void	Game::mapGeneration()
 					it ++;
 				}
 				y--;
-			}*/
+			}
 			x++;
 		}
 	std::cout << "finished !" << std::endl;
@@ -158,7 +156,7 @@ void	Game::genPool()
 {
 	int i = 0;
 
-	while (i <= 100)
+	while (i <= 200)
 	{
 		this->_wallPool.push_back(new Wall);
 		this->_bulletPool.push_back(new Bullet);
