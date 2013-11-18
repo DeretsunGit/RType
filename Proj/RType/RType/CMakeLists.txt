@@ -22,6 +22,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/lib/")
 
 include_directories(${SFML_PATH}/include)
 link_directories(${SFML_PATH}/lib)
+link_directories("${CMAKE_BINRAY_DIR}/lib")
 add_definitions(-DSFML_STATIC)
 link_directories(${CMAKE_BINARY_DIR})
 
