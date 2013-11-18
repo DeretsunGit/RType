@@ -44,7 +44,7 @@ bool	Room::startGame()
 {
 	bool	ready(false);
 	ready = true;
-	/*std::vector<Player *>::iterator	ite = this->_party.begin();
+	std::vector<Player *>::iterator	ite = this->_party.begin();
 
 	std::cout << "Room (id = " << this->_id << ", nb player = "<< this->_nbReady
 				<<") attempt to create a game." << std::endl;
@@ -62,7 +62,7 @@ bool	Room::startGame()
 	{
 		for (ite = this->_party.begin(); ite != this->_party.end(); ite++)
 		{
-			//this->_RoomCom.interpretCommand(this->_udpSock);
+			//this->_RoomCom.interpretCommand(this->_currentClient->get);
 
 			//this->_udpSock->readFromSock();
 			// on read sur la socket en udp et on attend udpready
@@ -85,7 +85,7 @@ bool	Room::startGame()
 		}
 		if (this->_nbReady == this->_party.size())
 			ready = true;
-	}*/
+	}
 	std::cout << "Everybody's ok ! Game Starting !" << std::endl;
 	if (ready == true)
 	{

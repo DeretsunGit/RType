@@ -13,6 +13,7 @@ class Client
 	t_coord				_resolution;
 	std::string*		_name; // limite a 32
 	ITCPSocketClient*	_tcpSocket;
+	in_addr				_iaClient;
 public:
 	Client(ITCPSocketClient*, int id);
 	~Client();
@@ -31,6 +32,6 @@ public:
 	int			getId() const;
 	bool		getWaiting() const;
 	ITCPSocketClient*	getTCPSock();
-
+	in_addr				getInaddr();
 };
 

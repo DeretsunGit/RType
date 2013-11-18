@@ -505,6 +505,7 @@ bool ServerCommunication<T>::UDPReady(IReadableSocket& socket)
 {
 	unsigned int readsize;
 	unsigned short datasize;
+	char *			nickname;
 
 	if (socket.readable())
 	{
@@ -513,7 +514,12 @@ bool ServerCommunication<T>::UDPReady(IReadableSocket& socket)
 			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
 			return false;
 		}
-		(_handler->*_callableMap[Opcodes::UDPReady])(NULL);
+		if ((readsize = socket.recv(nickname, 32)) != 32)
+		{
+			socket.putback(nickname, readsize);
+			return false;
+		}
+		(_handler->*_callableMap[Opcodes::UDPReady])(&nickname);
 		return true;
 	}
 	return false;

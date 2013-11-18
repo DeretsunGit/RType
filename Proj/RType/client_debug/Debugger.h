@@ -12,6 +12,7 @@ template<typename T>
 T		      stringTo(const std::string& str)
 {
   std::istringstream  stream(str);
+
   T		      sent;
 
   stream >> sent;
@@ -30,7 +31,7 @@ private:
   typedef std::vector<std::string>	Args;
   typedef void				(Debugger::*Sender)(const Args&);
   typedef std::map<std::string, Sender>	SenderMap;
-
+  const char *	_name;
   Thread			_th;
   TCPSocketClient		_tcp;
   UDPSocketClient*		_udp;

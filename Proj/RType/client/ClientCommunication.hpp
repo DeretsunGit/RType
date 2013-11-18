@@ -187,7 +187,7 @@ public:
   void TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size);
   void TCPsetReady(Packet& packet);
   void TCPdownloadRessource(Packet& packet, const char* filename);
-  void UDPReady(Packet& packet);
+  void UDPReady(Packet& packet, const char *);
   void TCPletsPlay(Packet& packet);
   void TCPsaveMap(Packet& packet, const char* mapName);
   void UDPinputs(Packet& packet, s_inputs& inputs);
