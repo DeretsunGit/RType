@@ -268,8 +268,8 @@ void	Game::sendPriority()
 			}
 		}
 	// ajouter les ennemis et les bullets
-	/*this->_GameCom.UDPscreenState(this->_pack, 0, elemToSend);
-	this->_udpSock->broadcast(this->_pack);*/
+	this->_GameCom.UDPscreenState(this->_pack, 0, elemToSend);
+	this->_udpSock->broadcast(this->_pack);
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
 	// on déclare un Packet qui va etre alloué dans la méthode
 	//Packet pack;
@@ -351,7 +351,7 @@ void	Game::moveWall()
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				temp._posX = (*it_wall)->getPos()._posX - (4 * (*it_wall)->getSpeed());
+				temp._posX = (*it_wall)->getPos()._posX - (3 * (*it_wall)->getSpeed());
 				temp._posY = (*it_wall)->getPos()._posY;
 				(*it_wall)->setPos(&temp);
 				if ((*it_wall)->getPos()._posX <= -100 )
@@ -363,6 +363,7 @@ void	Game::moveWall()
 					(*it_wall)->setPos(&temp);
 					(*it_wall)->setSendPriority(2);
 					this->_map[((*it_wall)->getCurrentCell().front()._posY)][((*it_wall)->getCurrentCell().front()._posX)].clear();
+					(*it_wall)->cleanCurrentCell();
 				}
 			}
 		}

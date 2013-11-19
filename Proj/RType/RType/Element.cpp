@@ -7,7 +7,8 @@ Element::Element()
 	this->_hp =				0;
 	this->_sendPriority =	1;
 	this->_speed =			1;
-	this->_id =			0;
+	this->_id =				0;
+	this->_spriteId =		0;
 }
 
 Element::~Element()
