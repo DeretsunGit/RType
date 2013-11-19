@@ -416,7 +416,7 @@ void		Debugger::sendLetsPlay(const Args& a)
     std::cout << "Usage: letsPlay" << std::endl;
   else
     {
-      this->_TCPcomm.UDPReady(p, this->_name.c_str());
+      this->_TCPcomm.TCPletsPlay(p);
       this->_tcp.send(p);
     }
 }
