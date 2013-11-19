@@ -12,20 +12,21 @@ SpriteManager::SpriteManager(void)
 	if (!this->_menutexture.loadFromFile("assets/menu.png"))
 	{
 		std::cerr << "Error opening texture file" << std::endl;
-		return;
 	}
 	if (!this->_bgtexture.loadFromFile("assets/bg.png"))
 	{
 		std::cerr << "Error opening texture file" << std::endl;
-		return;
 	}
 	if (!this->_creditstexture.loadFromFile("assets/credits.png"))
 	{
 		std::cerr << "Error opening texture file" << std::endl;
-		return;
+	}
+	if (!this->_walltexture.loadFromFile("assets/mur.png"))
+	{
+		std::cerr << "Error opening texture file" << std::endl;
 	}
 	this->_sprites.resize(NB_SPRITES);
-	for (int i = SHIP_IDLE ; i <= SHIP_UPMAX ; i++)
+	for (int i = SHIP_BLUE_IDLE ; i <= SHIP_BLUE_UPMAX ; i++)
 	{
 		this->_sprites[i].setTexture(this->_shiptexture);
 	}
@@ -33,14 +34,16 @@ SpriteManager::SpriteManager(void)
 	{
 		this->_sprites[i].setTexture(this->_menutexture);
 	}
+	this->_sprites[WALL_DOWN].setTexture(this->_walltexture);
+	this->_sprites[WALL_UP].setTexture(this->_walltexture);
 	this->_sprites[CREDITS].setTexture(this->_creditstexture);
 	this->_sprites[BG_IMG].setTexture(this->_bgtexture);
-	this->_sprites[SHIP_IDLE].setTextureRect(sf::IntRect(167, 3, 32, 14));
-	this->_sprites[SHIP_IDLE].setScale(3, 3);
-	this->_sprites[SHIP_UPMAX].setTextureRect(sf::IntRect(233, 3, 32, 14));
-	this->_sprites[SHIP_UP].setTextureRect(sf::IntRect(200, 3, 32, 14));
-	this->_sprites[SHIP_DOWNMAX].setTextureRect(sf::IntRect(134, 3, 32, 14));
-	this->_sprites[SHIP_DOWN].setTextureRect(sf::IntRect(134, 3, 32, 14));
+	this->_sprites[SHIP_BLUE_IDLE].setTextureRect(sf::IntRect(167, 3, 32, 14));
+	this->_sprites[SHIP_BLUE_IDLE].setScale(3, 3);
+	this->_sprites[SHIP_BLUE_UPMAX].setTextureRect(sf::IntRect(233, 3, 32, 14));
+	this->_sprites[SHIP_BLUE_UP].setTextureRect(sf::IntRect(200, 3, 32, 14));
+	this->_sprites[SHIP_BLUE_DOWNMAX].setTextureRect(sf::IntRect(134, 3, 32, 14));
+	this->_sprites[SHIP_BLUE_DOWN].setTextureRect(sf::IntRect(134, 3, 32, 14));
 	this->_sprites[ENGINE_SLOW].setTextureRect(sf::IntRect(234, 18, 32, 32));
 	this->_sprites[ENGINE_NORM].setTextureRect(sf::IntRect(200, 18, 32, 32));
 	this->_sprites[ENGINE_FAST].setTextureRect(sf::IntRect(167, 18, 32, 32));
