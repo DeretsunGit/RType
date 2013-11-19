@@ -234,6 +234,8 @@ add_executable (DebugClient
 	${CMAKE_BINARY_DIR}/client_debug/Debugger.cpp
 	${CMAKE_BINARY_DIR}/client/ClientCommunication.hpp
 	${CMAKE_BINARY_DIR}/client/ClientCommunication.cpp
+	Debug.h
+	Debug.cpp
 	rtype_common.h
 	Opcodes.h
 	Thread.h

@@ -196,4 +196,25 @@ IUDPSocketServer::UDPBindedClient&  UnixUDPSocketServer::getClient(const in_addr
   return (this->_map[c.s_addr]);
 }
 
+IUDPSocketServer::BuffMap::iterator		UnixUDPSocketServer::begin()
+{
+  return (this->_map.begin());
+}
+
+IUDPSocketServer::BuffMap::const_iterator	UnixUDPSocketServer::begin() const
+{
+  return (this->_map.begin());
+}
+
+IUDPSocketServer::BuffMap::iterator		UnixUDPSocketServer::end()
+{
+  return (this->_map.end());
+}
+
+IUDPSocketServer::BuffMap::const_iterator	UnixUDPSocketServer::end() const
+{
+  return (this->_map.end());
+}
+
+
 #endif	// !_WIN32

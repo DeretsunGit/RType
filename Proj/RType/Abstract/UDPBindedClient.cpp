@@ -31,11 +31,12 @@ unsigned int  IUDPSocketServer::UDPBindedClient::readable() const
 {
   return (this->_input.readableSize());
 }
+
 ISocket::SocketId	  IUDPSocketServer::UDPBindedClient::getId() const
 {
   return (0);
 }
- 
+
 bool	  IUDPSocketServer::UDPBindedClient::wantToWrite() const
 {
   return (false);

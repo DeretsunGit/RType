@@ -23,7 +23,7 @@ Debug::~Debug()
 
 void		Debug::_log(const std::string& msg, Level lvl) const
 {
-  std::ofstream	file(this->_filename);
+  std::ofstream	file(this->_filename.c_str());
   char		buff[255];
 
   if (!file.is_open())

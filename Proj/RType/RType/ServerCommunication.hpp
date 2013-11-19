@@ -21,6 +21,7 @@
 #include "Packet.hpp"
 #include "Player.h"
 #include "Opcodes.h"
+#include "IUDPSocketServer.h"
 
 #define HEADSIZE (sizeof(char) + sizeof(short)) // taille du "header" opcode + datasize
 
@@ -45,9 +46,15 @@ struct s_file_trunk
 	char* data;
 };
 
+struct s_udp_ready
+{
+  u_long	from;
+  std::string	nickname;
+};
+
 struct s_inputs
 {
-  // TODO
+  u_long	  from;
   unsigned short  x;
   unsigned short  y;
   char		  fire;
@@ -62,11 +69,12 @@ template<typename T>
 class ServerCommunication
 {
 private:
-	std::map<char, bool (ServerCommunication::*)(IReadableSocket&)> _commandMap;
-	std::map<char, void (T::*)(void*)> _callableMap;
+  std::map<char, bool (ServerCommunication::*)(IReadableSocket&)> _commandMap;
+  std::map<char, void (T::*)(void*)> _callableMap;
+  u_long			     from;
 
-	T* _handler;
-	void (T::*_defaultCallback)(char, IReadableSocket&);
+  T* _handler;
+  void (T::*_defaultCallback)(char, IReadableSocket&);
 
 public:
 	ServerCommunication()
@@ -125,8 +133,22 @@ public:
 
 	void interpretCommand(IUDPSocketServer& socket, const in_addr& addr)
 	{
-		this->interpretCommand(socket.getClient(addr));
+	  this->from = reinterpret_cast<const u_long&>(addr);
+	  this->interpretCommand(socket.getClient(addr));
 	}
+
+  void	interpretCommand(IUDPSocketServer& socket)
+  {
+    IUDPSocketServer::BuffMap::iterator	it(socket.begin());
+    IUDPSocketServer::BuffMap::iterator	end(socket.end());
+
+    while (it != end)
+      {
+	this->from = it->first;
+	this->interpretCommand(it->second);
+	++it;
+      }
+  }
 
 
 	/* SERVER TO CLIENT */
