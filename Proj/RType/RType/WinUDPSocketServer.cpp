@@ -80,7 +80,7 @@ void  WinUDPSocketServer::sendTo(const Packet& p, const in_addr& to)
   std::list<char*>::const_iterator  it(p.getBuffer().begin());
   unsigned int			    sent;
 
-  while (size >= 0)
+  while (size > 0)
   {
     sent = std::min<unsigned int>(size, 1024);
     this->sendTo(*it, sent, to);
