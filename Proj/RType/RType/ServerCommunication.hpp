@@ -160,7 +160,7 @@ public:
 	void TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<unsigned short[4]>& coords);
 	void UDPok(Packet& packet);
 	void TCPsendError(Packet& packet, char errorCode, const char* errorMsg);
-	void UDPscreenState(Packet& packet, unsigned int score, std::list<Element>& elements); // elements pour idSprite et CoordSprite
+	void UDPscreenState(Packet& packet, unsigned int score, std::list<Element*>& elements); // elements pour idSprite et CoordSprite
 	void UDPendOfGame(Packet& packet, unsigned int score);
 	/* CLIENT TO SERVER */
 	bool TCPsayHello(IReadableSocket& socket); // ok

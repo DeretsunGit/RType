@@ -14,7 +14,6 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	this->_globalPos = 17;
-	// on récupère Script en argument
 	//this->_com.TCPsendStartGame(packet, this->_port);
 	//this->TCPsend(packet);
 		this->genPool();
@@ -22,9 +21,6 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 	this->mapGeneration();
 	std::cout << "Map generation finished !" << std::endl;
 	this->startGame();
-	std::cout << "----------------- GAME INITIALIZED ----------------------" << std::endl;
-	// startGame() va attendre que les clients soient ready via TCP
-	// puis envoi aux client le start game via TCP
 	std::cout << "___________________Loop starting________________________" << std::endl;
 	this->gameLoop();
 }
@@ -143,15 +139,15 @@ void	Game::mapGeneration()
 	x = 0;
 	y = 0;
 	std::cout << "--------------First Screen------------" << std::endl;
-while (y < 18)
+	while (y < 18)
 	{
 		x = 0;
 		while (x < 17)
 		{
 			if (this->_map[y][x].size() > 0)
-				std::cout << "[]";
+				std::cout << "[=]";
 			else
-				std::cout << "  ";
+				std::cout << "   ";
 			x ++;
 		}
 		std::cout << "-" << std::endl;
@@ -200,25 +196,17 @@ void	Game::gameLoop()
 	{
 	//	std::cout << "loop" << std::endl;
 		loopTimer.initialise();
-		//std::cout << __LINE__ << std::endl;
 		this->getInputs();
 		// déplacement de Waves en fonction du script
-		//std::cout << __LINE__ << std::endl;
 	//	this->moveBullets();
-	//	std::cout << __LINE__ << std::endl;
 		this->moveWall();
-	//	std::cout << __LINE__ << std::endl;
 		//this->collision();
-	//	std::cout << __LINE__ << std::endl;
 		// (pop de Wave)
 		this->sendPriority();
-	//	std::cout << __LINE__ << std::endl;
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
 			this->_endGame = true;
-	//	std::cout << __LINE__ << std::endl;
 		execTime = loopTimer.getTimeBySec();
-	//	std::cout << __LINE__ << std::endl;
-		Sleep((unsigned long)(16 - execTime));
+		Sleep((unsigned long)(LOOPTIME - execTime));
 	}
 }
 
@@ -280,7 +268,8 @@ void	Game::sendPriority()
 			}
 		}
 	// ajouter les ennemis et les bullets
-
+	/*this->_GameCom.UDPscreenState(this->_pack, 0, elemToSend);
+	this->_udpSock->broadcast(this->_pack);*/
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
 	// on déclare un Packet qui va etre alloué dans la méthode
 	//Packet pack;
@@ -362,17 +351,13 @@ void	Game::moveWall()
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				temp._posX = (*it_wall)->getPos()._posX - 4 * (*it_wall)->getSpeed();
+				temp._posX = (*it_wall)->getPos()._posX - (4 * (*it_wall)->getSpeed());
 				temp._posY = (*it_wall)->getPos()._posY;
 				(*it_wall)->setPos(&temp);
-			//	if ((*it_wall)->getPos()._posX > 1550)
-		//			std::cout << (*it_wall)->getPos()._posX << "/" << (*it_wall)->getPos()._posY << std::endl;
-			// on supprime les murs inactifs et on set les nouveaux murs
 				if ((*it_wall)->getPos()._posX <= -100 )
 				{
 					temp._posX = 0;
 					temp._posY = 0;
-					std::cout << "deleting wall" << std::endl;
 					decal = true;
 					(*it_wall)->setHP(0);
 					(*it_wall)->setPos(&temp);
@@ -383,7 +368,6 @@ void	Game::moveWall()
 		}
 	if (decal == true)
 	{
-	//	std::cout << "new wall--------------------------------------------------" << std::endl;
 		y = 0;
 		it_wall = (this->_wallPool).begin();
 		while (y < atoi(this->_script->getMap()->_topMap.substr(this->_globalPos, 1).c_str()))
@@ -410,12 +394,11 @@ void	Game::moveWall()
 		}
 		y = 17;
 		it_wall = this->_wallPool.begin();
-		while (y > 17 - atoi(this->_script->getMap()->_botMap.substr(this->_globalPos, 1).c_str()))
+		while (y >= 17 - atoi(this->_script->getMap()->_botMap.substr(this->_globalPos, 1).c_str()))
 		{
 			assign = false;
 			while (assign == false && it_wall != this->_wallPool.end())
 			{
-				std::cout << "kouk" << std::endl;
 				if ((*it_wall)->getHP() == 0)
 				{
 					std::cout << "CREATED !bot "<< std::endl;
@@ -428,17 +411,14 @@ void	Game::moveWall()
 					temp._posX = this->_firstColumn;
 					temp._posY = y;
 					(*it_wall)->addToCurrentCell(temp);
-				//	std::cout << "ok" << std::endl;
 				}
 				it_wall ++;
-			//	std::cout << "Test" << std::endl;
 			}
-			//std::cout << "non-kouk" << std::endl;
 			--y;
 		}
 		std::cout << "--------------NEW Screen " << this->_firstColumn <<"/" << this->_globalPos << " ------------" << std::endl;
 		this->_globalPos ++;
-		if (this->_firstColumn < 17)
+		if (this->_firstColumn < 16)
 			this->_firstColumn++;
 		else
 			this->_firstColumn = 0;

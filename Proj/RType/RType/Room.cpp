@@ -94,7 +94,7 @@ bool	Room::startGame()
 	{
 		this->_script->LoadMap(this->_map);
 		std::cout << "Script generation ok" << std::endl;
-		//this->_game = new Game(this->_party, this->_script, this->_udpSock);
+		this->_game = new Game(this->_party, this->_script, this->_udpSock);
 		return (true);
 	}
 	return (false);

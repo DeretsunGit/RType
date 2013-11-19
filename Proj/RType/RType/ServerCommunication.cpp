@@ -180,14 +180,14 @@ void ServerCommunication<T>::TCPsendError(Packet& packet, char errorCode, const 
 }
 
 template<class T>
-void ServerCommunication<T>::UDPscreenState(Packet& packet, unsigned int score, std::list<Element>& elements) // elements pour idSprite et CoordSprite
+void ServerCommunication<T>::UDPscreenState(Packet& packet, unsigned int score, std::list<Element*>& elements) // elements pour idSprite et CoordSprite
 {
 	char opcode = Opcodes::screenState;
 	unsigned short datasize = htons(sizeof(unsigned int) + (static_cast<unsigned short>(elements.size()) * (sizeof(unsigned char) + sizeof(t_coord))));
 	unsigned int score_to_send = htonl(score);
 	char id;
 	t_coord coord;
-	std::list<Element>::const_iterator ite = elements.begin();
+	std::list<Element*>::const_iterator ite = elements.begin();
 
 	packet.reset();
 	packet.write(&opcode, sizeof(char));
@@ -196,9 +196,9 @@ void ServerCommunication<T>::UDPscreenState(Packet& packet, unsigned int score, 
 
 	while (ite != elements.end())
 	{
-		id = ite->getId();
-		coord._posX = htons(ite->getPos()._posX);
-		coord._posY = htons(ite->getPos()._posY);
+		id = (*ite)->getId();
+		coord._posX = htons((*ite)->getPos()._posX);
+		coord._posY = htons((*ite)->getPos()._posY);
 		packet.write(&id, sizeof(char));
 		packet.write(reinterpret_cast<char*>(&coord), sizeof(t_coord));
 		++ite;

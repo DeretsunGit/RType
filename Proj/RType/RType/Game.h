@@ -25,7 +25,7 @@ private:
 	Script					*_script;
 	bool					_endGame;
 	short int				_firstColumn;
-	std::list<Element*>		_map[18][18]; // [hauteur y][largeur x]
+	std::list<Element*>		_map[18][17]; // [hauteur y][largeur x]
 	short int				_globalPos;
 
 	// pools
