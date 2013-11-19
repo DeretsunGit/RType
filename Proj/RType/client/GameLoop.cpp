@@ -1,13 +1,18 @@
 #include "GameLoop.h"
 #include "PlayerShip.h"
 #include "Background.h"
-#include "Menu.h"
+#include "IngameMenu.h"
+#include "ClientCommunication.cpp"
 
-GameLoop::GameLoop(sf::RenderWindow *window)
+template class ClientCommunication<GameLoop>;
+
+GameLoop::GameLoop(sf::RenderWindow *window, short udpport)
 {
 	this->_window = window;
+	this->_udpsock = new UDPSocketClient("127.0.0.1", udpport);
+//	this->_comm.UDPsayHello(p, "ledp", res);
+//	this->_udpsock->send(p);
 }
-
 
 GameLoop::~GameLoop(void)
 {
@@ -15,10 +20,10 @@ GameLoop::~GameLoop(void)
 
 void	GameLoop::openBackMenu(bool *running)
 {
-	Menu	backmenu(this->_window, &this->_spritemgr);
+	IngameMenu	igmenu(this->_window, &this->_spritemgr);
 
-	backmenu.menuLoop();
-	if (backmenu.getActive() == backmenu.getSize() - 1)
+	igmenu.menuLoop();
+	if (igmenu.getActive() == igmenu.getSize() - 1)
 		*running = false;
 }
 
@@ -56,9 +61,17 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 	}
 }
 
+void	GameLoop::displaySprite(short x, short y, eSprites id)
+{
+	sf::Sprite	tmp = this->_spritemgr.getSpritebyId(id);
+
+	tmp.setPosition(x, y);
+	this->_window->draw(tmp);
+}
+
 void	GameLoop::mainLoop(void)
-	{
-	PlayerShip			ship(this->_spritemgr.getSpritebyId(SHIP_IDLE));
+{
+	PlayerShip			ship(this->_spritemgr.getSpritebyId(SHIP_BLUE_IDLE));
 	Background			bg(this->_spritemgr.getSpritebyId(BG_IMG));
 	bool running = true;
 	while (running)

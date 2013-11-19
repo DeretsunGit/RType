@@ -68,6 +68,7 @@ void			Menu::menuLoop()
 	{
 		this->childAction();
 		sf::Event event;
+		Sleep(300);
         while (this->_window->pollEvent(event))
         {
 			if(event.type == sf::Event::Closed)
@@ -85,7 +86,6 @@ void			Menu::menuLoop()
 		this->_window->draw(logo);
 		this->displayMenu();
 		this->_window->display();
-		Sleep(300);
 	}
 	return;
 }
