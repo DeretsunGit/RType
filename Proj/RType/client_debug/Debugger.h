@@ -31,6 +31,7 @@ private:
   typedef std::vector<std::string>	Args;
   typedef void				(Debugger::*Sender)(const Args&);
   typedef std::map<std::string, Sender>	SenderMap;
+
   const char *	_name;
   Thread			_th;
   TCPSocketClient		_tcp;
@@ -39,6 +40,7 @@ private:
   ClientCommunication<Debugger>	_TCPcomm;
   ClientCommunication<Debugger>	_UDPcomm;
   SenderMap			_senders;
+  std::string			_hostname;
 
   void	networkThread();
 

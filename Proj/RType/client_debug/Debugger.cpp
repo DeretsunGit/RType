@@ -8,7 +8,7 @@
 template class ClientCommunication<Debugger>;
 
 Debugger::Debugger(const char* hostname, unsigned short port)
-  : _th(*this, &Debugger::networkThread), _tcp(hostname, port), _udp(NULL), _live(true)
+  : _th(*this, &Debugger::networkThread), _tcp(hostname, port), _udp(NULL), _live(true), _hostname(hostname)
 {
   this->_TCPcomm.setHandler(this);
   this->_TCPcomm.setDefaultCallback(&Debugger::defaultHandler);
@@ -175,6 +175,7 @@ void			Debugger::handleStartLoading(void *data)
 
   std::cout << "--- START LOADING ---" << std::endl;
   std::cout << "UDP port: " << loader->udp << std::endl;
+  this->_udp = new UDPSocketClient(this->_hostname.c_str(), loader->udp);
   /*while (it != end)
     {
       //std::cout << "Ressource: \"" << it->first << "\" (";
@@ -396,12 +397,14 @@ void		Debugger::sendUDPReady(const Args& a)
 {
   Packet	p;
 
-  if (a.size() != 1)
+  if (!this->_udp)
+    std::cout << "No UDP connection" << std::endl;
+  else if (a.size() != 1)
     std::cout << "Usage: UDPReady" << std::endl;
   else
     {
       this->_TCPcomm.UDPReady(p, this->_name);
-      this->_tcp.send(p);
+      this->_udp->send(p);
     }
 }
 
