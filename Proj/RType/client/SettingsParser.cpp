@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "SettingsParser.h"
 
 SettingsParser::SettingsParser(const std::string &fname)
