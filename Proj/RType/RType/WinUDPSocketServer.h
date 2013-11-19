@@ -36,6 +36,10 @@ public:
   void	      readFromSock();
   void	      writeToSock();
   bool	      isLive() const;
+  BuffMap::iterator		begin();
+  BuffMap::const_iterator	begin() const;
+  BuffMap::iterator		end();
+  BuffMap::const_iterator	end() const;
 };
 
 #endif // _WIN32

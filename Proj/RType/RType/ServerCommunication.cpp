@@ -45,7 +45,7 @@ void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 	int i = 0;
 
 	strncpy(name, room.getName().c_str(), 32);
-	
+
 	packet.reset();
 	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(short));
@@ -221,7 +221,7 @@ void ServerCommunication<T>::UDPendOfGame(Packet& packet, unsigned int score)
 /* CLIENT TO SERVER */
 template<class T>
 bool ServerCommunication<T>::TCPsayHello(IReadableSocket& socket)
-{ 
+{
 	s_say_hello block;
 	char nickname[32];
 	char magic[7];
@@ -445,7 +445,7 @@ bool ServerCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket)
 			stack.put_back(socket);
 			return false;
 		}
-		
+
 		block.data = data;
 		block.filename = file;
 		block.size = ntohl(size);
@@ -457,7 +457,7 @@ bool ServerCommunication<T>::TCPgetFileTrunk(IReadableSocket& socket)
 
 template<class T>
 bool ServerCommunication<T>::TCPsetReady(IReadableSocket& socket)
-{ 
+{
 	unsigned int readsize;
 	unsigned short datasize;
 
@@ -503,20 +503,29 @@ bool ServerCommunication<T>::TCPdownloadRessource(IReadableSocket& socket)
 template<class T>
 bool ServerCommunication<T>::UDPReady(IReadableSocket& socket)
 {
-	unsigned int readsize;
-	unsigned short datasize;
+  unsigned int readsize;
+  unsigned short datasize;
+  char		nickname[32];
+  s_udp_ready	sent;
 
-	if (socket.readable())
+  if (socket.readable())
+    {
+      if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
 	{
-		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
-		{
-			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
-			return false;
-		}
-		(_handler->*_callableMap[Opcodes::UDPReady])(NULL);
-		return true;
+	  socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+	  return false;
 	}
-	return false;
+      if ((readsize = socket.recv(nickname, 32)) != 32)
+	{
+	  socket.putback(nickname, readsize);
+	  return false;
+	}
+      sent.from = this->from;
+      sent.nickname = nickname;
+      (_handler->*_callableMap[Opcodes::UDPReady])(&sent);
+      return true;
+    }
+  return false;
 }
 
 template<class T>
@@ -540,7 +549,7 @@ bool ServerCommunication<T>::TCPletsPlay(IReadableSocket& socket)
 
 template<class T>
 bool ServerCommunication<T>::TCPsaveMap(IReadableSocket& socket)
-{ 
+{
 	unsigned short datasize;
 	unsigned int readsize;
 	char map[128];
@@ -566,28 +575,29 @@ bool ServerCommunication<T>::TCPsaveMap(IReadableSocket& socket)
 
 template<class T>
 bool ServerCommunication<T>::UDPinputs(IReadableSocket& socket)
-{	
-	unsigned short datasize;
-	unsigned int readsize;
-	s_inputs in;
+{
+  unsigned short datasize;
+  unsigned int readsize;
+  s_inputs in;
 
-	if (socket.readable())
+  if (socket.readable())
+    {
+      if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
 	{
-		if ((readsize = socket.recv(reinterpret_cast<char*>(&datasize), sizeof(datasize))) != 2)
-		{
-			socket.putback(reinterpret_cast<char*>(&datasize), readsize);
-			return false;
-		}
-		if ((readsize = socket.recv(reinterpret_cast<char*>(&in), sizeof(in))) != sizeof(in))
-		{
-			socket.putback(reinterpret_cast<char*>(&in), readsize);
-			socket.putback(reinterpret_cast<char*>(&datasize), 2);
-			return false;
-		}
-		(_handler->*_callableMap[Opcodes::inputs])(&in);
-		return true;
+	  socket.putback(reinterpret_cast<char*>(&datasize), readsize);
+	  return false;
 	}
-	return false;
+      if ((readsize = socket.recv(reinterpret_cast<char*>(&in), sizeof(in))) != sizeof(in))
+	{
+	  socket.putback(reinterpret_cast<char*>(&in), readsize);
+	  socket.putback(reinterpret_cast<char*>(&datasize), 2);
+	  return false;
+	}
+      in.from = this->from;
+      (_handler->*_callableMap[Opcodes::inputs])(&in);
+      return true;
+    }
+  return false;
 }
 
 template<class T>
@@ -611,6 +621,6 @@ bool ServerCommunication<T>::TCProomListRequest(IReadableSocket& socket)
 
 template<class T>
 bool ServerCommunication<T>::UDPpauseOk(IReadableSocket& socket)
-{ 
+{
 	return true;
 }

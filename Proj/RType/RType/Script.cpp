@@ -47,8 +47,6 @@ void	Script::setRandomMap()
 	short int	botLen = 0;
 
 	Randomisation<char> my_rand;
-	//std::default_random_engine generator;
-	//std::uniform_int_distribution<char> distribution(1, this->_patternList.size());
 	while (topLen < this->_mapSize || botLen < this->_mapSize) // top
 	{
 //		std::cout << topLen << "<->" << botLen << std::endl;

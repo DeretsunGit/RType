@@ -158,14 +158,19 @@ void ClientCommunication<T>::TCPdownloadRessource(Packet& packet, const char* fi
 }
 
 template<typename T>
-void ClientCommunication<T>::UDPReady(Packet& packet)
+void ClientCommunication<T>::UDPReady(Packet& packet, const char *nickname)
 {
   char opcode = Opcodes::UDPReady;
-  unsigned short datasize = htons(0);
+  unsigned short datasize = htons(32 * sizeof(char));
+  char nickname_to_write[32];
+
+  strncpy(nickname_to_write, nickname, 32);
 
   packet.reset();
   packet.write(&opcode, sizeof(char));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
+  packet.write(nickname_to_write, 32 * sizeof(char));
+
 }
 
 template<typename T>
