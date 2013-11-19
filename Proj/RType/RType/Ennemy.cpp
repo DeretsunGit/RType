@@ -39,7 +39,7 @@ void Ennemy::setBullet(std::list<Bullet*> &bullets)
 	if ((*it)->getHP() == 0)
 	{
 		(*it)->setHP(1);
-		(*it)->setPos(&this->getPos());
+		(*it)->setPos(&(this->getPos()));
 		(*it)->setFaction(ENNEMY);
 		(*it)->setSpeed(2);
 		(*it)->setSide(this->getSide());

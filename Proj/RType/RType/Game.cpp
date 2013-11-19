@@ -200,13 +200,13 @@ void	Game::gameLoop()
 		// déplacement de Waves en fonction du script
 	//	this->moveBullets();
 		this->moveWall();
-		//this->collision();
+		this->collision();
 		// (pop de Wave)
 		this->sendPriority();
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
 			this->_endGame = true;
 		execTime = loopTimer.getTimeBySec();
-		Sleep((unsigned long)(LOOPTIME - execTime));
+		//Sleep((unsigned long)(LOOPTIME - execTime));
 	}
 }
 
@@ -216,12 +216,15 @@ void	Game::collision()
 	std::list<Wall*>::iterator				it_wall;
 	std::vector<t_coord>::const_iterator	it_coord;
 	std::vector<Player*>::const_iterator	it_player;
+	std::vector<t_coord>					shittyvar_currentcelll;
+
 
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				for (it_coord = ((*it_wall)->getCurrentCell()).begin(); it_coord != ((*it_wall)->getCurrentCell()).end(); it_coord++)
+				shittyvar_currentcelll = ((*it_wall)->getCurrentCell());
+				for (it_coord = shittyvar_currentcelll.begin(); it_coord != shittyvar_currentcelll.end(); it_coord++)
 					{
 						if ((collision_ret = (*it_wall)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX])) != -1)
 						{
@@ -234,7 +237,8 @@ void	Game::collision()
 		{
 			if ((*it_player)->getHP() != 0)
 			{
-				for (it_coord = ((*it_player)->getCurrentCell()).begin(); it_coord != ((*it_player)->getCurrentCell()).end(); it_coord++)
+				shittyvar_currentcelll = ((*it_player)->getCurrentCell());
+				for (it_coord = shittyvar_currentcelll.begin(); it_coord != shittyvar_currentcelll.end(); it_coord++)
 					{
 						if ((collision_ret = (*it_player)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX])) != -1)
 						{
@@ -395,7 +399,7 @@ void	Game::moveWall()
 		}
 		y = 17;
 		it_wall = this->_wallPool.begin();
-		while (y >= 17 - atoi(this->_script->getMap()->_botMap.substr(this->_globalPos, 1).c_str()))
+		while (y > 17 - atoi(this->_script->getMap()->_botMap.substr(this->_globalPos, 1).c_str()))
 		{
 			assign = false;
 			while (assign == false && it_wall != this->_wallPool.end())
