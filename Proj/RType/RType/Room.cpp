@@ -79,6 +79,7 @@ bool	Room::startGame()
 	std::cout << "sending UDPokay" << std::endl;
 	//on attend lets play
 	this->_nbReady = 0;
+	ready = false;
 	while (ready != true)
 	{
 		for (ite = this->_party.begin(); ite != this->_party.end(); ite++)
@@ -193,15 +194,18 @@ void	Room::downloadRessource(void *data)
 
 void	Room::UDPReady(void *data)
 {
+	std::cout << "I HAZ BIN CALID, ME ZI     UDPREADY !" << std::endl;
 	int i = 0;
 	s_udp_ready *mydata = static_cast<s_udp_ready *>(data);
 
+	std::cout << "name : " << mydata->nickname << std::endl;
 	while (i < _party.size())
 	{
 		if (*(_party[i]->getClient()->getName()) == mydata->nickname)
 		{
 			if (_party[i]->getClient()->getInaddr() == 0)
 			{
+				std::cout << "LOL" << std::endl;
 				this->_nbReady ++;
 				_party[i]->getClient()->setInaddr(mydata->from);
 			}

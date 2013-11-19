@@ -267,7 +267,7 @@ void		  Debugger::sendSayHello(const Args& a)
     std::cout << "Usage: sayHello nickname resWidth resHeight" << std::endl;
   else
     {
-		this->_name = a[1].c_str();
+		this->_name = new std::string(a[1]);
       res[0] = stringTo<unsigned short>(a[2]);
       res[1] = stringTo<unsigned short>(a[3]);
       this->_TCPcomm.TCPsayHello(p, a[1].c_str(), res);
@@ -403,7 +403,8 @@ void		Debugger::sendUDPReady(const Args& a)
     std::cout << "Usage: UDPReady" << std::endl;
   else
     {
-      this->_TCPcomm.UDPReady(p, this->_name);
+		std::cout << "name :" << *(this->_name) << std::endl;
+		this->_TCPcomm.UDPReady(p, this->_name->c_str());
       this->_udp->send(p);
     }
 }
@@ -416,7 +417,7 @@ void		Debugger::sendLetsPlay(const Args& a)
     std::cout << "Usage: letsPlay" << std::endl;
   else
     {
-      this->_TCPcomm.UDPReady(p, this->_name);
+      this->_TCPcomm.UDPReady(p, this->_name->c_str());
       this->_tcp.send(p);
     }
 }

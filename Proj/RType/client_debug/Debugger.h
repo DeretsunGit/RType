@@ -32,7 +32,7 @@ private:
   typedef void				(Debugger::*Sender)(const Args&);
   typedef std::map<std::string, Sender>	SenderMap;
 
-  const char *	_name;
+  std::string*	_name;
   Thread			_th;
   TCPSocketClient		_tcp;
   UDPSocketClient*		_udp;
