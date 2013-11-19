@@ -191,7 +191,8 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/GameLoop.h
 	${CMAKE_BINARY_DIR}/client/Menu.h
 	${CMAKE_BINARY_DIR}/client/PlayMenu.h
-	${CMAKE_BINARY_DIR}/client/MainMenu.h
+	${CMAKE_BINARY_DIR}/client/IngameMenu.h
+	${CMAKE_BINARY_DIR}/client/IngameMenu.h
 	${CMAKE_BINARY_DIR}/client/Background.h
 	${CMAKE_BINARY_DIR}/client/SpriteManager.h
 	Packet.hpp
@@ -204,6 +205,7 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/Menu.cpp
 	${CMAKE_BINARY_DIR}/client/MainMenu.cpp
 	${CMAKE_BINARY_DIR}/client/PlayMenu.cpp
+	${CMAKE_BINARY_DIR}/client/IngameMenu.cpp
 	${CMAKE_BINARY_DIR}/client/Background.cpp
 	${CMAKE_BINARY_DIR}/client/PlayerShip.cpp
 	${CMAKE_BINARY_DIR}/client/SpriteManager.cpp
@@ -224,6 +226,8 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/RoomButton.cpp
 	${CMAKE_BINARY_DIR}/client/SettingsButton.h
 	${CMAKE_BINARY_DIR}/client/SettingsButton.cpp
+	${CMAKE_BINARY_DIR}/client/SettingsParser.cpp
+	${CMAKE_BINARY_DIR}/client/SettingsParser.h
 	ESprites.h
 	)
 
