@@ -165,14 +165,15 @@ public:
 
 	  if (socket.readable())
 	  {
-		  socket.recv(&opcode, 1);
-		  if ((ite = _commandMap.find(opcode)) != _commandMap.end())
-		  {
-			  if ((this->*(ite->second))(socket) == false)
-				  socket.putback(&opcode, 1);
-		  }
-		  else if (_handler != NULL && _defaultCallback != NULL)
-		    (this->_handler->*_defaultCallback)(opcode, socket);
+	      socket.recv(&opcode, 1);
+	      if ((ite = _commandMap.find(opcode)) != _commandMap.end()
+		  && _callableMap.find(opcode) != _callableMap.end())
+	      {
+		      if ((this->*(ite->second))(socket) == false)
+			      socket.putback(&opcode, 1);
+	      }
+	      else if (_handler != NULL && _defaultCallback != NULL)
+		(this->_handler->*_defaultCallback)(opcode, socket);
 	  }
 	}
 

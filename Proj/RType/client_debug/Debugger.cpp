@@ -22,13 +22,12 @@ Debugger::Debugger(const char* hostname, unsigned short port)
   _TCPcomm.setCallback(Opcodes::startLoading, &Debugger::handleStartLoading);
   _TCPcomm.setCallback(Opcodes::fileTrunk, &Debugger::handleFileTrunk);
   _TCPcomm.setCallback(Opcodes::assocSprite, &Debugger::handleAssocSprites);
-  _TCPcomm.setCallback(Opcodes::UDPOkay, &Debugger::handleUDPOkay);
   _TCPcomm.setCallback(Opcodes::sendError, &Debugger::handleSendError);
 
   // set UDP callback
   _UDPcomm.setCallback(Opcodes::screenState, &Debugger::handleScreenState);
   _UDPcomm.setCallback(Opcodes::endOfGame, &Debugger::handleEndOfGame);
-
+  _UDPcomm.setCallback(Opcodes::UDPOkay, &Debugger::handleUDPOkay);
 
   // set TCP senders
   _senders["sayHello"] = &Debugger::sendSayHello;
@@ -267,7 +266,7 @@ void		  Debugger::sendSayHello(const Args& a)
     std::cout << "Usage: sayHello nickname resWidth resHeight" << std::endl;
   else
     {
-		this->_name = new std::string(a[1]);
+      this->_name = a[1];
       res[0] = stringTo<unsigned short>(a[2]);
       res[1] = stringTo<unsigned short>(a[3]);
       this->_TCPcomm.TCPsayHello(p, a[1].c_str(), res);
@@ -403,8 +402,8 @@ void		Debugger::sendUDPReady(const Args& a)
     std::cout << "Usage: UDPReady" << std::endl;
   else
     {
-		std::cout << "name :" << *(this->_name) << std::endl;
-		this->_TCPcomm.UDPReady(p, this->_name->c_str());
+		std::cout << "name :" << this->_name << std::endl;
+		this->_TCPcomm.UDPReady(p, this->_name.c_str());
       this->_udp->send(p);
     }
 }
@@ -417,7 +416,7 @@ void		Debugger::sendLetsPlay(const Args& a)
     std::cout << "Usage: letsPlay" << std::endl;
   else
     {
-      this->_TCPcomm.UDPReady(p, this->_name->c_str());
+      this->_TCPcomm.UDPReady(p, this->_name.c_str());
       this->_tcp.send(p);
     }
 }
