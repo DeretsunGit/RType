@@ -12,6 +12,7 @@ Room::Room(char id)
 {
 	this->_script = new Script;
 	this->_script->setRandom(true);
+	this->_udpSock = new UDPSocketServer(0);
 	this->_difficulty = 1;
 	this->_nbReady = 0;
 
@@ -43,7 +44,7 @@ void	Room::callBackError(char opcode, IReadableSocket& client)
 bool	Room::startGame()
 {
 	bool	ready(false);
-	ready = true;
+	ready = false;
 	std::vector<Player *>::iterator	ite = this->_party.begin();
 
 	std::cout << "Room (id = " << this->_id << ", nb player = "<< this->_nbReady
@@ -51,8 +52,12 @@ bool	Room::startGame()
 	//startloading
 	while (ite != this->_party.end())
 	{
+		std::cout << "fail : "<< this->_udpSock->getPort() << std::endl;
 		this->_RoomCom.TCPstartLoading(this->_pack, this->_udpSock->getPort());
+		std::cout << "-----------" << std::endl;
 		this->_currentClient->getTCPSock()->send(this->_pack);
+		std::cout << "fail bis" << std::endl;
+
 		++ite;
 	}
 	std::cout << "Start Loading send... Waiting UDP port confirmation ..." << std::endl;
@@ -62,10 +67,7 @@ bool	Room::startGame()
 	{
 		for (ite = this->_party.begin(); ite != this->_party.end(); ite++)
 		{
-			//this->_RoomCom.interpretCommand(this->_currentClient->get);
-
-			//this->_udpSock->readFromSock();
-			// on read sur la socket en udp et on attend udpready
+			this->_RoomCom.interpretCommand(*this->_udpSock);
 		}
 		if (this->_nbReady == this->_party.size())
 			ready = true;
@@ -91,7 +93,7 @@ bool	Room::startGame()
 	{
 		this->_script->LoadMap(this->_map);
 		std::cout << "Script generation ok" << std::endl;
-		this->_game = new Game(this->_party, this->_script, this->_udpSock);
+		//this->_game = new Game(this->_party, this->_script, this->_udpSock);
 		return (true);
 	}
 	return (false);
@@ -191,12 +193,27 @@ void	Room::downloadRessource(void *data)
 
 void	Room::UDPReady(void *data)
 {
-	this->_nbReady++;
+	int i = 0;
+	s_udp_ready *mydata = static_cast<s_udp_ready *>(data);
+
+	while (i < _party.size())
+	{
+		if (*(_party[i]->getClient()->getName()) == mydata->nickname)
+		{
+			if (_party[i]->getClient()->getInaddr() == 0)
+			{
+				this->_nbReady ++;
+				_party[i]->getClient()->setInaddr(mydata->from);
+			}
+		}
+		++i;
+	}
 }
 
 void	Room::letsPlay(void *data)
 {
 	// launch game if all clients said it
+	this->_nbReady ++;
 }
 
 void	Room::saveMap(void *data)

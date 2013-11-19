@@ -10,6 +10,7 @@ Client::Client(ITCPSocketClient* newSocket, const int id) : _id(id)
 	this->_resolution._posX = 1600;
 	this->_resolution._posY = 900;
 	this->_name = new std::string("");
+	this->_inaddr = 0;
 }
 
 Client::~Client(void)
@@ -42,9 +43,14 @@ void		Client::setRoomLeaver(bool isleaver)
 	this->_isRoomLeaver = isleaver;
 }
 
+void		Client::setInaddr(u_long newaddr)
+{
+	this->_inaddr = newaddr;
+}
+
 bool		Client::getRoomLeaver() const
 {
-return (this->_isRoomLeaver);
+	return (this->_isRoomLeaver);
 }
 
 std::string		*Client::getName() const
@@ -62,7 +68,7 @@ t_coord		Client::getResolution() const
 	return (this->_resolution);
 }
 
-ITCPSocketClient*	Client::getTCPSock()
+ITCPSocketClient*	Client::getTCPSock() const
 {
 	return (this->_tcpSocket);
 }
@@ -75,4 +81,9 @@ int			Client::getId() const
 bool		Client::getWaiting() const
 {
 	return (this->_isWaiting);
+}
+
+u_long		Client::getInaddr() const
+{
+	return (this->_inaddr);
 }

@@ -13,7 +13,7 @@ class Client
 	t_coord				_resolution;
 	std::string*		_name; // limite a 32
 	ITCPSocketClient*	_tcpSocket;
-  u_long			_iaClient;
+	u_long				_inaddr;
 public:
 	Client(ITCPSocketClient*, int id);
 	~Client();
@@ -24,6 +24,7 @@ public:
 	void		setResolution(short int, short int);
 	void		setName(char *);
 	void		setRoomLeaver(bool);
+	void		setInaddr(u_long);
 
 	bool		getRoomLeaver() const;
 	std::string	*getName() const;
@@ -31,7 +32,7 @@ public:
 	t_coord		getResolution() const;
 	int			getId() const;
 	bool		getWaiting() const;
-	ITCPSocketClient*	getTCPSock();
-	in_addr				getInaddr();
+	ITCPSocketClient*	getTCPSock() const;
+	u_long				getInaddr() const;
 };
 

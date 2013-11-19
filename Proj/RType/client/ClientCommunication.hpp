@@ -64,7 +64,7 @@ struct s_room_state_info
 struct s_start_loading
 {
 	unsigned short udp;
-	std::list<std::pair<Buffer<128>, Buffer<32> > > files;
+//	std::list<std::pair<Buffer<128>, Buffer<32> > > files;
 };
 
 struct s_shorts

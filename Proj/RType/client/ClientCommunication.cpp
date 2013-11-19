@@ -361,7 +361,7 @@ bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 	}
       stack.push(block.udp);
       total = readsize;
-      while (total != ntohs(datasize) - sizeof(block.udp))
+     /* while (total != ntohs(datasize) - sizeof(block.udp))
 	{
 	  block.files.push_back(std::pair<Buffer<128>, Buffer<32> >());
 	  if ((readsize = socket.recv(block.files.back().first._buff, 128)) != 128)
@@ -380,7 +380,7 @@ bool ClientCommunication<T>::TCPstartLoading(IReadableSocket& socket) const
 	    }
 	  stack.push(block.files.back().second._buff);
 	  total += readsize;
-	}
+	}*/
       block.udp = ntohs(block.udp);
       (_handler->*_callableMap.at(Opcodes::startLoading))(reinterpret_cast<void*>(&block));
       return true;
