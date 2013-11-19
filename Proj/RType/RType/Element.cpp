@@ -109,6 +109,11 @@ void		Element::setSide(bool side)
 	this->_side = side;
 }
 
+void		Element::setSprite(std::list<eSprites> sprites)
+{
+	this->_sprites = sprites;
+}
+
 t_coord	Element::getPos() const
 {
 	return (this->_pos);
@@ -172,4 +177,9 @@ char		Element::getColor() const
 bool		Element::getSide() const
 {
 	return (this->_side);
+}
+
+std::list<eSprites>	Element::getSprite() const
+{
+	return (this->_sprites);
 }

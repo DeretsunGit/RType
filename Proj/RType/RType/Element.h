@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "rtype_common.h"
+#include "ESprites.h"
 
 class Element
 {
@@ -19,8 +20,9 @@ class Element
 	char					_spriteId;
 	std::vector<t_coord>	_currentCells;
 	char					_sendPriority;
-	bool					_side; // DARK / LIGHT
+	bool					_side; // 0 LIGHT ; 1 DARK
 	char					_color;
+	std::list<eSprites>		_sprites;
 
 public:
 	Element();
@@ -37,6 +39,7 @@ public:
 	void					setId(int);
 	void					setColor(char);
 	void					setSide(bool);
+	void					setSprite(std::list<eSprites>);
 
 	t_coord					getPos() const;
 	t_coord					getHitboxSize() const;
@@ -51,6 +54,7 @@ public:
 	short int				getSpeed() const;
 	char					getColor() const;
 	bool					getSide() const;
+	std::list<eSprites>		getSprite() const;
 
 	void					move();
 	int						isCollision(std::list<Element*>);

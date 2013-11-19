@@ -7,10 +7,9 @@
 class Ennemy : public Element
 {
 private:
-	std::map<int, std::string>	_skins;
 	unsigned short				_powerShoot;
 public:
-	Ennemy(int, char); // id, color
+	Ennemy(int, t_coord, std::list<eSprites>);
 	~Ennemy();
 
 	void setShipAttributes();

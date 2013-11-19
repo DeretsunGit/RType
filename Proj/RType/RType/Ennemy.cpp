@@ -2,13 +2,14 @@
 #include "Randomisation.cpp"
 template class Randomisation<bool>;
 
-Ennemy::Ennemy(int id, char color)
+Ennemy::Ennemy(int id, t_coord pos, std::list<eSprites> sprites)
 {
 	this->setId(id);
 	this->setFaction(ENNEMY);
 	this->setSendPriority(1);
-	this->setColor(color);
+	this->setPos(&pos);
 	this->setShipAttributes();
+	this->setSprite(sprites);
 }
 
 Ennemy::~Ennemy(void)
@@ -18,40 +19,33 @@ Ennemy::~Ennemy(void)
 void Ennemy::setShipAttributes()
 {
 	Randomisation<bool>	rand;
-	t_coord				pos;
 	t_coord				hitBoxSize;
 
-	this->_skins[1] = "default.jpg";
-	this->_skins[2] = "defaultUp.jpg";
-	this->_skins[3] = "defaultDown.jpg";
 	this->setHP(1);
-	pos._posX = 1650;
-	pos._posY = 450;
-	this->setPos(&pos);
-	hitBoxSize._posX = 10;
-	hitBoxSize._posY = 10;
-	this->setHitboxSize(&hitBoxSize);
 	this->setSpeed(1);
 	this->_powerShoot = 1;
 	this->setSide(rand.tRand(1));
+	hitBoxSize._posX = 10;
+	hitBoxSize._posY = 10;
+	this->setHitboxSize(&hitBoxSize);
 }
 
 void Ennemy::setBullet(std::list<Bullet*> &bullets)
 {
-	std::list<Bullet*>::iterator it;
+	std::list<Bullet*>::iterator	it;
+	t_coord							hitBoxSize;
 
-	for (it = bullets.begin(); ((it != bullets.end()) || (*it)->getHP() == 0); ++it)
-	{
-	}
+	for (it = bullets.begin(); ((it != bullets.end()) || (*it)->getHP() == 0); ++it) {}
 	if ((*it)->getHP() == 0)
 	{
-		/*
-		set HP
-		set Skin
-		set Hitbox
-		set Pos
-		set Faction
-		set Speed
-		*/
+		(*it)->setHP(1);
+		(*it)->setPos(&this->getPos());
+		(*it)->setFaction(ENNEMY);
+		(*it)->setSpeed(2);
+		(*it)->setSide(this->getSide());
+		(*it)->setSprite(std::list<eSprites>(BULLETS_AI));
+		hitBoxSize._posX = 5;
+		hitBoxSize._posY = 5;
+		(*it)->setHitboxSize(&hitBoxSize);
 	}
 }
