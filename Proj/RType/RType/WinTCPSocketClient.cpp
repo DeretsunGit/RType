@@ -148,6 +148,7 @@ void	    WinTCPSocketClient::writeToSock()
   rc = WSASend(this->_sock, &dataBuf, 1, &sendBytes, 0, NULL, NULL);
   if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
     this->_live = false;
+  _buff._output.pop_front();
   this->_lock.unlock();
 }
 
