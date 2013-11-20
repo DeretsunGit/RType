@@ -54,6 +54,20 @@ void						SettingsParser::setNick(const std::string &nick)
 void						SettingsParser::setServer(const std::string &server)
 {
 	this->_server = server;
+	this->writeServer(this->_server);
+}
+
+void						SettingsParser::writeServer(const std::string &server)
+{
+	std::string line;
+	std::ofstream myfile (this->_fname.c_str());
+	
+	myfile.clear();
+	if (myfile.is_open())
+	{
+		myfile << "NICK=" << this->_nick << std::endl;
+		myfile << "SERVER=" << this->_server << std::endl;
+	}
 }
 
 SettingsParser::~SettingsParser(void)

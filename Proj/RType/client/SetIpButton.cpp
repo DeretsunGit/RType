@@ -11,19 +11,19 @@ SetIpButton::SetIpButton(SpriteManager *sprmgr)
 
 void	SetIpButton::action(sf::Keyboard::Key key, sf::RenderWindow *window, bool *running)
 {
-	switch (key)
-	{
-	case sf::Keyboard::BackSpace:
-		this->_serv = this->_serv.substr(0, this->_serv.length() - 1);
-		break;
-
-	}
+	if (key == sf::Keyboard::Return)
+		this->_sett->setServer(this->_serv);
+	else
+		this->_txthandler.keyPressed(key, &this->_serv);
 }
 
 void	SetIpButton::extraDisplay(unsigned int pos, unsigned int max, sf::RenderWindow *window)
 {
 	sf::Font font;
 	sf::Text text;
+
+	if (!this->_highlight)
+		this->_serv = this->_sett->getServer();
 	if (!font.loadFromFile("assets/arial.ttf"))
 	{
 	}

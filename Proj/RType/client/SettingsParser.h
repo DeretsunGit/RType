@@ -18,6 +18,7 @@ public:
 	const std::string			&getFname(void) const;
 	void						setNick(const std::string &);
 	void						setServer(const std::string &);
+	void						writeServer(const std::string &);
 	~SettingsParser(void);
 };
 
