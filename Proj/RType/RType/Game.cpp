@@ -338,7 +338,7 @@ void	Game::moveWall()
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				temp._posX = (*it_wall)->getPos()._posX - (3 * (*it_wall)->getSpeed());
+				temp._posX = (*it_wall)->getPos()._posX - (2 * (*it_wall)->getSpeed());
 				temp._posY = (*it_wall)->getPos()._posY;
 				(*it_wall)->setPos(&temp);
 				if ((*it_wall)->getPos()._posX <= -100 )
