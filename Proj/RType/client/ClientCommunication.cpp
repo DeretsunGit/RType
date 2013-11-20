@@ -562,7 +562,7 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
   s_screen_state block;
   unsigned short datasize;
   unsigned int readsize, total;
-  std::list<std::pair<unsigned char, t_coord> >::iterator ite;
+  std::list<std::pair<u_long, t_coord> >::iterator ite;
   SocketStack stack;
 
   if (socket.readable())
