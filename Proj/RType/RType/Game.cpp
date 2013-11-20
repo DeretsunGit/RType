@@ -355,6 +355,8 @@ void	Game::moveWall()
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
+				if ((*it_wall)->getPos()._posY < 0)
+					std::cout << "POMI IZ SO BAD!" << std::endl;
 				temp._posX = (*it_wall)->getPos()._posX - (3 * (*it_wall)->getSpeed());
 				temp._posY = (*it_wall)->getPos()._posY;
 				(*it_wall)->setPos(&temp);
@@ -427,7 +429,7 @@ void	Game::moveWall()
 			this->_firstColumn++;
 		else
 			this->_firstColumn = 0;
-		short x;
+		/*short x;
 		y = 0;
 	while (y < 18)
 	{
@@ -451,7 +453,7 @@ void	Game::moveWall()
 		}
 		std::cout << "-" << std::endl;
 		y ++;
-	}
+	}*/
 
 	}
 }
