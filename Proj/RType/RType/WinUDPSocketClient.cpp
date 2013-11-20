@@ -111,7 +111,7 @@ void	WinUDPSocketClient::writeToSock()
   sin.sin_port = htons(this->_port);
   this->_m.lock();
   //  buff.len = this->_buff._output.readSome(buf, READ_SIZE);
-  buff.len = std::min<unsigned int>(it->_buff.output.getSize(), 1024);
+  buff.len = std::min<unsigned int>(this->_buff._output.getSize(), 1024);
   buff.buf = this->_buff._output.getBuffer().front();
   if (WSASendTo(this->_sock, &buff, 1, &buff.len, 0, reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin), NULL, NULL) == SOCKET_ERROR)
     this->_live = false;

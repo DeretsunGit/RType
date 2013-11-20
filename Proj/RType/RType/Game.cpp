@@ -10,13 +10,12 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 	this->_GameCom.setCallback(0x0E, &Game::pauseOk);
 	this->_GameCom.setDefaultCallback(&Game::callBackError);
 	this->_GameCom.setHandler(this);
-	std::cout << "Size: " << this->_players.size() << std::endl;
+
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	this->_globalPos = 17;
-	//this->_com.TCPsendStartGame(packet, this->_port);
-	//this->TCPsend(packet);
-		this->genPool();
+	this->genPool();
+
 	std::cout << "Pools fully created" << std::endl;
 	this->mapGeneration();
 	std::cout << "Map generation finished !" << std::endl;
@@ -68,7 +67,6 @@ void	Game::TCPsend(Packet& tosend)
 
 void	Game::mapGeneration()
 {
-	// grâce au script et à un fichier qui décrit les patterns, on recompose la map globale
 	bool						assign = false;
 	short int					i = 0;
 	short int					x = 0;
@@ -77,13 +75,6 @@ void	Game::mapGeneration()
 	std::list<Wall*>::iterator	it;
 
 	// on génère maintenant visibleMap
-	std::cout << "Visible map generation started" << std::endl;
-	std::cout << "unsing script, map of size" << this->_script->getMap()->_botMap.size() << std::endl;
-	std::cout << "-------------------TOPMAP------------------" << std::endl;
-	std::cout << this->_script->getMap()->_topMap << std::endl;
-	std::cout << "-------------------BOTMAP------------------" << std::endl;
-	std::cout << this->_script->getMap()->_botMap << std::endl;
-	std::cout << "__________________________________________" << std::endl;
 		while (x < 17)
 		{
 			// on parcours topmap
@@ -136,23 +127,6 @@ void	Game::mapGeneration()
 			x++;
 		}
 	std::cout << "finished !" << std::endl;
-	x = 0;
-	y = 0;
-	std::cout << "--------------First Screen------------" << std::endl;
-	while (y < 18)
-	{
-		x = 0;
-		while (x < 17)
-		{
-			if (this->_map[y][x].size() > 0)
-				std::cout << "[=]";
-			else
-				std::cout << "   ";
-			x ++;
-		}
-		std::cout << "-" << std::endl;
-		y ++;
-	}
 }
 
 void	Game::genPool()
@@ -260,18 +234,27 @@ void	Game::sendPriority()
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				if ((*it_wall)->getSendPriority() > maxPriority)
-					maxPriority = (*it_wall)->getSendPriority();
-				if (elemToSend.size() < 100)
-					{
+				//if ((*it_wall)->getSendPriority() > maxPriority)
+				//	maxPriority = (*it_wall)->getSendPriority();
+				/*if (elemToSend.size() < 100)
+					{*/
 						elemToSend.push_back(*it_wall);
-						(*it_wall)->setSendPriority(2);
-					}
-				else
+				//		(*it_wall)->setSendPriority(2);
+				//	}
+				/*else
 					(*it_wall)->setSendPriority((*it_wall)->getSendPriority() + 1);
-			}
+*/			}
 		}
 	// ajouter les ennemis et les bullets
+	std::list<Element *>::iterator	it = elemToSend.begin();
+	int i = 0;
+	while (it != elemToSend.end())
+	{
+		i++;
+//		std::cout << (*it)->getPos()._posX << std::endl;
+		it++;
+	}
+	std::cout << "Sended " << i << "Walls" << std::endl;
 	this->_GameCom.UDPscreenState(this->_pack, 0, elemToSend);
 	this->_udpSock->broadcast(this->_pack);
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
@@ -355,8 +338,6 @@ void	Game::moveWall()
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				if ((*it_wall)->getPos()._posY < 0)
-					std::cout << "POMI IZ SO BAD!" << std::endl;
 				temp._posX = (*it_wall)->getPos()._posX - (3 * (*it_wall)->getSpeed());
 				temp._posY = (*it_wall)->getPos()._posY;
 				(*it_wall)->setPos(&temp);
@@ -458,6 +439,20 @@ void	Game::moveWall()
 	}
 }
 
+bool	Game::assignWall(Wall * vWall, bool isfirst, short x, short y)
+{
+	t_coord						coord;
+
+	this->_map[y][x].push_back(vWall);
+	vWall->setHP(1);
+	coord._posX = x * 100;
+	coord._posY = y * 50;
+	vWall->setPos(&coord);
+	coord._posX = x;
+	coord._posY = y;
+	vWall->addToCurrentCell(coord);
+	return (true);
+}
 
 Game::~Game()
 {

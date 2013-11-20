@@ -55,7 +55,10 @@ public:
 	void	sendPriority();
 	void	getInputs();
 	bool	isPlayerAlive();
+	
 	void	moveWall();
+	bool	assignWall(Wall *, bool, short, short);
+
 	void	playerShoot(Player *);
 	void	moveBullets();
 

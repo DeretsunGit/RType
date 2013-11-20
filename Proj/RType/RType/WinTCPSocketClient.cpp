@@ -144,7 +144,7 @@ void	    WinTCPSocketClient::writeToSock()
   //  dataBuf.len = this->_buff._output.readSome(buffer, DATA_BUFSIZE);
   //  dataBuf.buf = buffer;
   dataBuf.len = std::min<unsigned int>(_buff._output.getSize(), 1024);
-  dataBuf.buf = _buff._output.front();
+  dataBuf.buf = _buff._output.getBuffer().front();
   rc = WSASend(this->_sock, &dataBuf, 1, &sendBytes, 0, NULL, NULL);
   if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
     this->_live = false;

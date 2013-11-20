@@ -221,7 +221,7 @@ void		RTypeServer::delRoomPool(int nbRoom)
 }
 
 template<class ret, class clist>
-ret			RTypeServer::createValidId(ret id, std::list<clist> checkList)
+ret			RTypeServer::createValidId(ret id, std::list<clist> &checkList)
 {
   typename std::list<clist>::iterator	it;
 

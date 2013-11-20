@@ -50,7 +50,7 @@ public:
 	int		getMaxRoom();
 
 	template<class ret, class clist>
-	ret		createValidId(ret, std::list<clist>);
+	ret		createValidId(ret, std::list<clist>&);
 	bool	loadDynEnnemy(std::string);
 	void	CheckClientAnswer();
 };
