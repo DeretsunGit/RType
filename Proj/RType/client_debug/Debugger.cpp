@@ -233,8 +233,8 @@ void		Debugger::handleSendError(void *data)
 void			Debugger::handleScreenState(void *data)
 {
   s_screen_state*	state(static_cast<s_screen_state*>(data));
-  std::list<std::pair<unsigned char, t_coord> >::iterator  it(state->elements.begin());
-  std::list<std::pair<unsigned char, t_coord> >::iterator  end(state->elements.end());
+  std::list<std::pair<unsigned int, t_coord> >::iterator  it(state->elements.begin());
+  std::list<std::pair<unsigned int, t_coord> >::iterator  end(state->elements.end());
 
   std::cout << "--- SCREEN STATE ---" << std::endl;
   std::cout << "Score: " << state->score << std::endl;
