@@ -34,7 +34,7 @@ private:
 	Packet		_pack;
 
 public:
-	Room(char);
+	Room(char, std::vector<t_pattern>);
 	~Room();
 
 	void	prepareRoom();

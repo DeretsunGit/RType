@@ -5,8 +5,7 @@ template class Randomisation<char>;
 Script::Script()
 {
 	this->_patternFile = new std::ifstream();
-	this->getPattern();
-	std::cout << "Pattern list Retrived !" << std::endl;
+	//this->getPattern();
 	this->_rand = new Randomisation<char>;
 	this->_mapSize = 256;
 }
@@ -127,8 +126,10 @@ void	Script::getPattern()
 	}
 	if (this->_patternList.size() == 0)
 	{
-	std::cout << "Patternfile is empty" << std::endl;
+		std::cout << "Patternfile is empty" << std::endl;
 	}
+	else
+		std::cout << "Pattern list Retrived !" << std::endl;
 }
 
 bool		Script::getRandom()
@@ -141,9 +142,19 @@ void		Script::setScriptFile(std::string *newfile)
   this->_scriptFile = new std::ifstream(newfile->c_str());
 }
 
+void		Script::setPatternList(std::vector<t_pattern> newpattern)
+{
+	this->_patternList = newpattern;
+}
+
 void		Script::setRandom(bool rand)
 {
 	this->_isRandom = rand;
+}
+
+std::vector<t_pattern>	Script::getPatternList()
+{
+	return this->_patternList;
 }
 
 t_scriptMap	*Script::getMap()

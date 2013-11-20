@@ -7,11 +7,12 @@
 template class ServerCommunication<Room>;
 
 
-Room::Room(char id)
+Room::Room(char id, std::vector<t_pattern>pattern)
 	: _id(id), _th(new Thread(*this, &Room::roomLoop))
 {
 	this->_script = new Script;
 	this->_script->setRandom(true);
+	this->_script->setPatternList(pattern);
 	this->_udpSock = new UDPSocketServer(0);
 	this->_difficulty = 1;
 	this->_nbReady = 0;
@@ -108,12 +109,16 @@ std::cout << "Preparing room of id" << this->_id << std::endl;
 void	Room::roomLoop()
 {
 	this->_m.lock();
+	Clock	loopTimer;
+	float	execTime;
+
 	bool finish = false;
 	std::vector<Player*>::iterator	ite = this->_party.begin();
 	
 	std::cout << "Room " << this->_name << "Started to Loop" << std::endl;
 	while (this->_party.size() > 0 && finish == false)
 	{
+		loopTimer.initialise();
 		ite = (this->_party).begin();
 		while ( (ite != (this->_party).end()))
 		{
@@ -130,7 +135,10 @@ void	Room::roomLoop()
 			this->startGame();
 			finish = true;
 		}
+		execTime = loopTimer.getTimeBySec();
+	Sleep((unsigned long)(/*ROOMLOOPTIME*/100 - execTime));
 	}
+	
 	std::cout << "Room " << this->_name << ": no more player. exit..." << std::endl;
 	this->_m.unlock();
 }
@@ -242,7 +250,7 @@ void		Room::startLoading()
 #include <iostream>
 bool	Room::removeClient(int id)
 {
-	this->_m.lock();
+	//this->_m.lock();
 	int i = 0;
 	std::vector<Player*>::iterator ite = _party.begin();
 
@@ -256,13 +264,13 @@ bool	Room::removeClient(int id)
 		++i;
 		++ite;
 	}
-	this->_m.unlock();
+	//this->_m.unlock();
 	return (false);
 }
 
 bool	Room::removePlayer(int id)
 {
-	this->_m.lock();
+	//this->_m.lock();
 	int i = 0;
 	std::vector<Player*>::iterator ite = _party.begin();
 
@@ -276,13 +284,13 @@ bool	Room::removePlayer(int id)
 		++i;
 		++ite;
 	}
-	this->_m.unlock();
+	//this->_m.unlock();
 	return (false);
 }
 
 bool	Room::addClient(Client* newClient)
 {
-  this->_m.lock();
+ // this->_m.lock();
   if (_party.size() < 2)
   {
     std::cout << "PUSH BACK" <<  std::endl;
@@ -293,7 +301,7 @@ bool	Room::addClient(Client* newClient)
 	this->_m.unlock();
     return (true);
   }
-  this->_m.unlock();
+ // this->_m.unlock();
   return (false);
 }
 

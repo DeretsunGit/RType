@@ -429,7 +429,7 @@ void	Game::moveWall()
 			this->_firstColumn++;
 		else
 			this->_firstColumn = 0;
-		/*short x;
+		short x;
 		y = 0;
 	while (y < 18)
 	{
@@ -453,10 +453,11 @@ void	Game::moveWall()
 		}
 		std::cout << "-" << std::endl;
 		y ++;
-	}*/
+	}
 
 	}
 }
+
 
 Game::~Game()
 {

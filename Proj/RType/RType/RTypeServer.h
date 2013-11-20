@@ -22,6 +22,7 @@ class RTypeServer
 	TCPSocketServer			_TCPsocket;
 	ServerCommunication<RTypeServer>	_RTypeServerCom;
 	Packet					_pack;
+	Script					_temp;
 	// std::ofstream _blFile;
 
 public:
