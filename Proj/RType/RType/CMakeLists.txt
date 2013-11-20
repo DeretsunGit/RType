@@ -228,6 +228,10 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/RoomButton.cpp
 	${CMAKE_BINARY_DIR}/client/SetIpButton.h
 	${CMAKE_BINARY_DIR}/client/SetIpButton.cpp
+	${CMAKE_BINARY_DIR}/client/SetPortButton.h
+	${CMAKE_BINARY_DIR}/client/SetPortButton.cpp
+	${CMAKE_BINARY_DIR}/client/SetNickButton.h
+	${CMAKE_BINARY_DIR}/client/SetNickButton.cpp
 	${CMAKE_BINARY_DIR}/client/SettingsButton.h
 	${CMAKE_BINARY_DIR}/client/SettingsButton.cpp
 	${CMAKE_BINARY_DIR}/client/SettingsParser.cpp

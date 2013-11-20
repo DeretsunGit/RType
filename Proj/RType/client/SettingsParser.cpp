@@ -24,6 +24,8 @@ void						SettingsParser::parseFile(const std::string &fname)
 				this->setNick(line.substr(line.find('=') + 1, line.size() - line.find('=') + 1));
 			else if (line.substr(0, line.find('=')) == "SERVER")
 				this->setServer(line.substr(line.find('=') + 1, line.size() - line.find('=') + 1));
+			else if (line.substr(0, line.find('=')) == "PORT")
+				this->setPort(line.substr(line.find('=') + 1, line.size() - line.find('=') + 1));
 		}
 		myfile.close();
 	}
@@ -46,18 +48,30 @@ const std::string			&SettingsParser::getServer(void) const
 	return this->_server;
 }
 
+const std::string			&SettingsParser::getPort(void) const
+{
+	return this->_port;
+}
+
+void						SettingsParser::setPort(const std::string &port)
+{
+	this->_port = port;
+	this->writeConfig();
+}
+
 void						SettingsParser::setNick(const std::string &nick)
 {
 	this->_nick = nick;
+	this->writeConfig();
 }
 
 void						SettingsParser::setServer(const std::string &server)
 {
 	this->_server = server;
-	this->writeServer(this->_server);
+	this->writeConfig();
 }
 
-void						SettingsParser::writeServer(const std::string &server)
+void						SettingsParser::writeConfig()
 {
 	std::string line;
 	std::ofstream myfile (this->_fname.c_str());
@@ -67,6 +81,7 @@ void						SettingsParser::writeServer(const std::string &server)
 	{
 		myfile << "NICK=" << this->_nick << std::endl;
 		myfile << "SERVER=" << this->_server << std::endl;
+		myfile << "PORT=" << this->_port << std::endl;
 	}
 }
 

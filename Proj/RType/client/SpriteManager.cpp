@@ -62,11 +62,13 @@ SpriteManager::SpriteManager(void)
 	this->_sprites[SETT_NICK].setTextureRect(sf::IntRect(0, 510, 450, 54));
 	this->_sprites[SETT_SRVL].setTextureRect(sf::IntRect(0, 560, 450, 54));
 	this->_sprites[BACK_MAIN].setTextureRect(sf::IntRect(0, 620, 450, 54));
+	this->_sprites[SETT_PORT].setTextureRect(sf::IntRect(0, 675, 450, 54));
 	this->_sprites[SETT_RESO_ON].setTextureRect(sf::IntRect(480, 400, 450, 54));
 	this->_sprites[SETT_SOUN_ON].setTextureRect(sf::IntRect(480, 450, 450, 54));
 	this->_sprites[SETT_NICK_ON].setTextureRect(sf::IntRect(480, 510, 450, 54));
 	this->_sprites[SETT_SRVL_ON].setTextureRect(sf::IntRect(480, 560, 450, 54));
 	this->_sprites[BACK_MAIN_ON].setTextureRect(sf::IntRect(480, 620, 450, 54));
+	this->_sprites[SETT_PORT_ON].setTextureRect(sf::IntRect(480, 675, 450, 54));
 }
 
 SpriteManager::~SpriteManager(void)

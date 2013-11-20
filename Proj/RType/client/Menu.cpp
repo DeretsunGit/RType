@@ -93,7 +93,7 @@ void			Menu::menuLoop()
 			if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return ||
 				(event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Num9) ||
 				event.key.code == sf::Keyboard::BackSpace || event.key.code == sf::Keyboard::Period ||
-				event.key.code == sf::Keyboard::Subtract)) //peu élégant
+				event.key.code == sf::Keyboard::Subtract)) //peu élégant voir meme totalement disgracieux
 				this->_buttons[this->_active]->action(event.key.code, this->_window, &running);
 		}
 		this->_window->clear();
