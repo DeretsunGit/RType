@@ -583,8 +583,8 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
       total = readsize;
       while (total < ntohs(datasize))
 	{
-	  block.elements.push_back(std::pair<char, t_coord>());
-	  if ((readsize = socket.recv(reinterpret_cast<char*>(&block.elements.back().first), 1)) != 1)
+	  block.elements.push_back(std::pair<u_long, t_coord>());
+	  if ((readsize = socket.recv(reinterpret_cast<char*>(&block.elements.back().first), sizeof(u_long))) != sizeof(u_long))
 	    {
 	      socket.putback(reinterpret_cast<char*>(&block.elements.back().first), readsize);
 	      stack.put_back(socket);

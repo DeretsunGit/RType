@@ -76,5 +76,7 @@ SpriteManager::~SpriteManager(void)
 
 sf::Sprite	SpriteManager::getSpritebyId(int id)
 {
+	if (id > this->_sprites.size())
+		return this->_defaultSprite;
 	return (this->_sprites[id]);
 }

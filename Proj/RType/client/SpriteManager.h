@@ -43,6 +43,7 @@ class SpriteManager
 {
 private:
 	std::vector<sf::Sprite>	_sprites;
+	sf::Sprite				_defaultSprite;
 	sf::Texture				_shiptexture;
 	sf::Texture				_menutexture;
 	sf::Texture				_bgtexture;

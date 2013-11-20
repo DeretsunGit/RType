@@ -97,7 +97,7 @@ struct s_error
 struct s_screen_state
 {
 	unsigned int score;
-	std::list<std::pair<unsigned char, t_coord> > elements;
+	std::list<std::pair<u_long, t_coord> > elements;
 };
 
 struct s_inputs

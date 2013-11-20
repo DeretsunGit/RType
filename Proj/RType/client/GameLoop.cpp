@@ -29,8 +29,8 @@ GameLoop::~GameLoop(void)
 void	GameLoop::handleScreenState(void *data)
 {
 	s_screen_state*	state(static_cast<s_screen_state*>(data));
-	std::list<std::pair<unsigned char, t_coord> >::iterator  it(state->elements.begin());
-	std::list<std::pair<unsigned char, t_coord> >::iterator  end(state->elements.end());
+	std::list<std::pair<u_long, t_coord> >::iterator  it(state->elements.begin());
+	std::list<std::pair<u_long, t_coord> >::iterator  end(state->elements.end());
 
 	while (it != end)
 	{
