@@ -80,7 +80,6 @@ void			Menu::menuLoop()
 	{
 		this->childAction();
 		sf::Event event;
-		Sleep(300);
         while (this->_window->pollEvent(event))
         {
 			if(event.type == sf::Event::Closed)
@@ -91,7 +90,9 @@ void			Menu::menuLoop()
 				this->decActive();
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down)
 				this->incActive();
-			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return)
+			if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return ||
+				(event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Num9) ||
+				event.key.code == sf::Keyboard::BackSpace || event.key.code == sf::Keyboard::Period))
 				this->_buttons[this->_active]->action(event.key.code, this->_window, &running);
 		}
 		this->_window->clear();

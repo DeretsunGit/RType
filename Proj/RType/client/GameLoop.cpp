@@ -26,21 +26,29 @@ GameLoop::~GameLoop(void)
 
 }
 
+void	GameLoop::drawScreenState(void)
+{
+	std::list<std::pair<unsigned int, t_coord> >::iterator  it(this->_screenstate.elements.begin());
+	std::list<std::pair<unsigned int, t_coord> >::iterator  end(this->_screenstate.elements.end());
+
+	if (this->_screenstate.elements.size() > 0)
+	{
+		while (it != end)
+		{
+			this->displaySprite(it->second._posX, it->second._posY, static_cast<eSprites>(it->first));
+			++it;
+		}
+		//std::cout << "--- END SCREEN STATE ---" << std::endl;
+	}
+}
+
 void	GameLoop::handleScreenState(void *data)
 {
 	s_screen_state*	state(static_cast<s_screen_state*>(data));
-	std::list<std::pair<unsigned int, t_coord> >::iterator  it(state->elements.begin());
-	std::list<std::pair<unsigned int, t_coord> >::iterator  end(state->elements.end());
 
-	while (it != end)
-	{
-		this->displaySprite(it->second._posX, it->second._posY, static_cast<eSprites>(it->first));
-		std::cout << "\tSprite" << static_cast<eSprites>(it->first) << " at ("
-		<< it->second._posX << ", "
-		<< it->second._posY << ')' << std::endl;
-		++it;
-	}
-	std::cout << "--- END SCREEN STATE ---" << std::endl;
+	if (state->elements.size() == 0)
+		return;
+	this->_screenstate = *state;
 }
 
 void	GameLoop::handleStartLoading(void *data)
@@ -54,6 +62,10 @@ void	GameLoop::handleStartLoading(void *data)
 }
 
 void			GameLoop::defaultCallback(char opcode, IReadableSocket& sock)
+
+
+
+
 {
 	//std::cout << "default callbak opcode :" << (int)opcode << std::endl;
 }
@@ -89,22 +101,22 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 	{
 		this->openBackMenu(running);
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		player->setPosY(player->getPosY() + 1);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		player->setPosY(player->getPosY() - 1);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		player->setPosX(player->getPosX() - 1);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		player->setPosX(player->getPosX() + 1);
-	}
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	//{
+	//	player->setPosY(player->getPosY() + 1);
+	//}
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	//{
+	//	player->setPosY(player->getPosY() - 1);
+	//}
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	//{
+	//	player->setPosX(player->getPosX() - 1);
+	//}
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	//{
+	//	player->setPosX(player->getPosX() + 1);
+	//}
 }
 
 void	GameLoop::displaySprite(short x, short y, eSprites id)
@@ -113,6 +125,7 @@ void	GameLoop::displaySprite(short x, short y, eSprites id)
 
 	tmp.setPosition(x, y);
 	this->_window->draw(tmp);
+
 }
 
 //void	GameLoop::handleNetwork()
@@ -151,15 +164,17 @@ void	GameLoop::mainLoop(void)
 	std::cout << "after initnet" << std::endl;
 	while (running)
     {
+		this->_window->clear();
 		loopTimer.initialise();
 		this->handleNetwork();
         this->manageEvent(&running, &ship);
 		if (running)
 		{
-			this->_window->clear();
+			
 			bg.moveBackground();
 			this->_window->draw(bg.getSprite());
-			this->_window->draw(ship.getSprite());
+			this->drawScreenState();
+			//this->_window->draw(ship.getSprite());
 			this->_window->display();
 		}
 		execTime = loopTimer.getTimeBySec();

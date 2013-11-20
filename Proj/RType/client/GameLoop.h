@@ -24,6 +24,7 @@ private:
 	TCPSocketClient					*_tcpsock;
 	//eSocketType						_socktype;
 	Packet							_p;
+	s_screen_state					_screenstate;
 	
 public:
 	GameLoop(sf::RenderWindow*, TCPSocketClient*, short);
@@ -39,6 +40,7 @@ public:
 	void	mainLoop(void);
 	//void	drawWalls(void);
 	void	initNetwork(void);
+	void	drawScreenState(void);
 	~GameLoop(void);
 };
 
