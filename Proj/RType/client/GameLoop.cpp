@@ -2,8 +2,8 @@
 #include "PlayerShip.h"
 #include "Background.h"
 #include "IngameMenu.h"
-#include "ClientCommunication.cpp"
 #include "Clock.h"
+#include "ClientCommunication.cpp"
 
 template class ClientCommunication<GameLoop>;
 
@@ -34,7 +34,8 @@ void	GameLoop::handleScreenState(void *data)
 
 	while (it != end)
 	{
-		std::cout << "\tSprite " << static_cast<eSprites>(it->first) << " at ("
+		this->displaySprite(it->second._posX, it->second._posY, static_cast<eSprites>(it->first));
+		std::cout << "\tSprite " << static_cast<int>(it->first) << " at ("
 		<< it->second._posX << ", "
 		<< it->second._posY << ')' << std::endl;
 		++it;
@@ -135,6 +136,7 @@ void	GameLoop::initNetwork(void)
 void	GameLoop::handleNetwork(void)
 {
 	this->_comm.interpretCommand(*this->_udpsock);
+	this->_comm.UDPscreenState(*this->_udpsock);
 }
 
 void	GameLoop::mainLoop(void)

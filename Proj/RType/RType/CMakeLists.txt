@@ -229,6 +229,8 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/SettingsParser.cpp
 	${CMAKE_BINARY_DIR}/client/SettingsParser.h
 	ESprites.h
+	Clock.cpp
+	Clock.h
 	)
 
 add_executable (DebugClient

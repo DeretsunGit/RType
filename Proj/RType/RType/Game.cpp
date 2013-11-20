@@ -206,7 +206,7 @@ void	Game::gameLoop()
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
 			this->_endGame = true;
 		execTime = loopTimer.getTimeBySec();
-		//Sleep((unsigned long)(LOOPTIME - execTime));
+		Sleep((unsigned long)(LOOPTIME - execTime));
 	}
 }
 
