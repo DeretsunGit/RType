@@ -95,7 +95,7 @@ void	Element::setSendPriority(char newPriority)
 	this->_sendPriority = newPriority;
 }
 
-void	Element::setPos(t_coord *newCoord)
+void	Element::setPos(const t_coord *newCoord)
 {
 	this->_pos = *newCoord;
 }
@@ -115,12 +115,12 @@ void		Element::setSprite(std::list<eSprites> sprites)
 	this->_sprites = sprites;
 }
 
-t_coord	Element::getPos() const
+const t_coord&	Element::getPos() const
 {
 	return (this->_pos);
 }
 
-t_coord	Element::getHitboxSize() const
+const t_coord&	Element::getHitboxSize() const
 {
 	return (this->_hitboxSize);
 }

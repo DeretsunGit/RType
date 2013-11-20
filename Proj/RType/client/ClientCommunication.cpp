@@ -5,7 +5,7 @@
 // Login   <edmond_j@epitech.net>
 //
 // Started on  Fri Nov  8 15:05:51 2013 julien edmond
-// Last update Thu Nov 14 11:13:54 2013 julien edmond
+// Last update Wed Nov 20 10:49:35 2013 julien edmond
 //
 
 #include	<algorithm>
@@ -581,7 +581,7 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 	}
       stack.push(block.score);
       total = readsize;
-      while (total != datasize)
+      while (total < ntohs(datasize))
 	{
 	  block.elements.push_back(std::pair<char, t_coord>());
 	  if ((readsize = socket.recv(reinterpret_cast<char*>(&block.elements.back().first), 1)) != 1)
@@ -612,7 +612,7 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 	    }
 	}
       block.score = ntohl(block.score);
-      (_handler->*_callableMap.at(Opcodes::screenState))(reinterpret_cast<void*>(&block));
+      (_handler->*_callableMap.at(Opcodes::screenState))(&block);
       return true;
     }
   return false;
