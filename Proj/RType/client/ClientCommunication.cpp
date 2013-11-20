@@ -562,7 +562,7 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
   s_screen_state block;
   unsigned short datasize;
   unsigned int readsize, total;
-  std::list<std::pair<u_long, t_coord> >::iterator ite;
+  std::list<std::pair<unsigned int, t_coord> >::iterator ite;
   SocketStack stack;
 
   if (socket.readable())
@@ -583,8 +583,8 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
       total = readsize;
       while (total < ntohs(datasize))
 	{
-	  block.elements.push_back(std::pair<u_long, t_coord>());
-	  if ((readsize = socket.recv(reinterpret_cast<char*>(&block.elements.back().first), sizeof(u_long))) != sizeof(u_long))
+	  block.elements.push_back(std::pair<unsigned int, t_coord>());
+	  if ((readsize = socket.recv(reinterpret_cast<char*>(&block.elements.back().first), sizeof(unsigned int))) != sizeof(unsigned int))
 	    {
 	      socket.putback(reinterpret_cast<char*>(&block.elements.back().first), readsize);
 	      stack.put_back(socket);
@@ -606,6 +606,7 @@ bool ClientCommunication<T>::UDPscreenState(IReadableSocket& socket) const
 	  ite = block.elements.begin();
 	  while (ite != block.elements.end())
 	    {
+			ite->first = ntohl(ite->first);
 	      ite->second._posX = ntohs(ite->second._posX);
 	      ite->second._posY = ntohs(ite->second._posY);
 	      ++ite;

@@ -29,13 +29,13 @@ GameLoop::~GameLoop(void)
 void	GameLoop::handleScreenState(void *data)
 {
 	s_screen_state*	state(static_cast<s_screen_state*>(data));
-	std::list<std::pair<u_long, t_coord> >::iterator  it(state->elements.begin());
-	std::list<std::pair<u_long, t_coord> >::iterator  end(state->elements.end());
+	std::list<std::pair<unsigned int, t_coord> >::iterator  it(state->elements.begin());
+	std::list<std::pair<unsigned int, t_coord> >::iterator  end(state->elements.end());
 
 	while (it != end)
 	{
 		this->displaySprite(it->second._posX, it->second._posY, static_cast<eSprites>(it->first));
-		std::cout << "\tSprite " << static_cast<int>(it->first) << " at ("
+		std::cout << "\tSprite" << static_cast<eSprites>(it->first) << " at ("
 		<< it->second._posX << ", "
 		<< it->second._posY << ')' << std::endl;
 		++it;
