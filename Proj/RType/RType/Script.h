@@ -12,7 +12,7 @@
 
 typedef struct	s_scriptWave
 {
-	short int	_time;
+	Clock	_time;
 	// stockage de wave, si possible un truc genre enum mais dynamique
 }				t_scriptWave;
 

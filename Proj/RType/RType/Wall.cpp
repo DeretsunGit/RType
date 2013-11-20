@@ -6,6 +6,7 @@ Wall::Wall()
 	this->setShipProof(true);
 	this->setFaction(WALL);
 	this->setSendPriority(2);
+	this->addSprite(WALL_UP);
 }
 
 Wall::~Wall()

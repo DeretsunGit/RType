@@ -40,6 +40,7 @@ public:
 	void					setColor(char);
 	void					setSide(bool);
 	void					setSprite(std::list<eSprites>);
+	void					addSprite(eSprites);
 
 	const t_coord&				getPos() const;
 	const t_coord&				getHitboxSize() const;

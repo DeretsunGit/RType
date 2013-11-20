@@ -115,6 +115,11 @@ void		Element::setSprite(std::list<eSprites> sprites)
 	this->_sprites = sprites;
 }
 
+void		Element::addSprite(eSprites newsprite)
+{
+	this->_sprites.push_front(newsprite);
+}
+
 const t_coord&	Element::getPos() const
 {
 	return (this->_pos);

@@ -20,6 +20,7 @@ private:
 
 	const std::vector<Player*>&	_players;
 	std::list<Wave>			_livingThings;
+	//std::list<Clock &>		_waveTime;
 
 	// maps
 	Script					*_script;
@@ -31,6 +32,7 @@ private:
 	// pools
 	std::list<Wall*>		_wallPool;
 	std::list<Bullet*>		_bulletPool;
+	std::list<Ennemy*>		_ennemyPool;
 	Packet					_pack;
 
 public:
