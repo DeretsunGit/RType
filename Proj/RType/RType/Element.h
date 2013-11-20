@@ -33,7 +33,7 @@ public:
 	void					setShipProof(bool);
 	void					setFaction(char);
 	void					setSendPriority(char);
-	void					setPos(t_coord *);
+	void					setPos(const t_coord *);
 	void					setSpeed(short int);
 	void					setHitboxSize(t_coord *);
 	void					setId(int);
@@ -41,8 +41,8 @@ public:
 	void					setSide(bool);
 	void					setSprite(std::list<eSprites>);
 
-	t_coord					getPos() const;
-	t_coord					getHitboxSize() const;
+	const t_coord&				getPos() const;
+	const t_coord&				getHitboxSize() const;
 	std::vector<t_coord>	getCurrentCell() const;
 	char					getSpriteId() const;
 	int						getHP() const;
