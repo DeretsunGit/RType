@@ -7,11 +7,14 @@
 class Ennemy : public Element
 {
 private:
+	int							_idWave;
 	unsigned short				_powerShoot;
 public:
-	Ennemy(int, t_coord, std::list<eSprites>);
+	Ennemy(int);
 	~Ennemy();
 
-	void setShipAttributes();
-	void setBullet(std::list<Bullet*> &);
+	void	setBullet(std::list<Bullet*> &);
+	void	setIdWave(int);
+
+	int		getIdWave();
 };
