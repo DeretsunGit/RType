@@ -20,7 +20,7 @@
 
 #define DEBUGSTATE	8
 
-#define PATTERNFILE	"..\\ServerRessources\\PatternList.txt"
+#define PATTERNFILE	"../ServerRessources/PatternList.txt"
 
 #define LOOPTIME	25 // 16 would be a good value
 

@@ -32,11 +32,22 @@ public:
       }
   }
 
+  Packet(const Packet&)
+  {
+    _size = 0;
+    _ite = _buffer.begin();
+  }
+
+  Packet& operator=(const Packet&)
+  {
+    return (*this);
+  }
+
   void write(const char* data, unsigned int size)
   {
     while (size > 0)
       {
-	if (_ite == _buffer.end())
+	if (this->_ite == this->_buffer.end())
 	  {
 	    _buffer.push_back(new char[1024]);
 	    _ite = --_buffer.end();
@@ -71,6 +82,20 @@ public:
   {
     _size = 0;
     _ite = _buffer.begin();
+  }
+
+  void	pop_front()
+  {
+    if (_size)
+      {
+	delete[] this->_buffer.front();
+	this->_buffer.pop_front();
+	if (!this->_buffer.empty())
+	  this->_ite = --this->_buffer.end();
+	else
+	  this->_ite = this->_buffer.end();
+	_size -= std::min<unsigned int>(1024, _size);
+      }
   }
 
 private:

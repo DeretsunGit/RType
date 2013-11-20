@@ -6,7 +6,7 @@
 #include "WinUDPSocketServer.h"
 #include  "WSAException.h"
 
-#define READ_SIZE 500
+#define READ_SIZE 1024
 
 WinUDPSocketServer::WinUDPSocketServer(unsigned short port)
   : _sock(WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0)), _live(true)
@@ -71,7 +71,7 @@ unsigned int  WinUDPSocketServer::recvFrom(char* buff, unsigned int size, in_add
 void  WinUDPSocketServer::sendTo(const char* buff, unsigned int size, const in_addr& to)
 {
   ScopedLock	    lock(this->_m);
-  this->_map[to.S_un.S_addr]._output.writeSome(buff, size);
+  this->_map[to.S_un.S_addr]._output.write(buff, size);
 }
 
 void  WinUDPSocketServer::sendTo(const Packet& p, const in_addr& to)
@@ -97,7 +97,7 @@ void	WinUDPSocketServer::broadcast(const char* buff, unsigned int size)
 
   while (it != end)
     {
-      it->second._output.writeSome(buff, size);
+      it->second._output.write(buff, size);
       ++it;
     }
 }
@@ -128,7 +128,7 @@ bool			  WinUDPSocketServer::wantToWrite() const
 
   while (!sent && it != end)
   {
-    sent = !!it->second._output.readableSize();
+    sent = !!it->second._output.getSize();
     ++it;
   }
   return (sent);
@@ -161,11 +161,11 @@ void	WinUDPSocketServer::writeToSock()
   BuffMap::iterator   it(this->_map.begin());
   BuffMap::iterator   end(this->_map.end());
   WSABUF	      buff;
-  char		      buf[READ_SIZE];
+  // char		      buf[READ_SIZE];
   struct sockaddr_in  sin;
 
-  buff.buf = buf;
-  while (it != end && !it->second._output.readableSize())
+  // buff.buf = buf;
+  while (it != end && !it->second._output.getSize())
     ++it;
   if (it != end)
   {
@@ -174,9 +174,13 @@ void	WinUDPSocketServer::writeToSock()
     sin.sin_family = AF_INET;
     this->_m.lock();
     sin.sin_port = it->second._port;
-    buff.len = it->second._output.readSome(buf, READ_SIZE);
+    buff.len = std::min<unsigned int>(it->second._output.getSize(), 1024);
+    buff.buf = it->second._output.getBuffer().front();
+    // buff.len = it->second._output.readSome(buf, READ_SIZE);
     if (WSASendTo(this->_sock, &buff, 1, &buff.len, 0, reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin), NULL, NULL) == SOCKET_ERROR)
       this->_map.erase(it);
+    else
+      it->second._output.pop_front();
     this->_m.unlock();
   }
 }

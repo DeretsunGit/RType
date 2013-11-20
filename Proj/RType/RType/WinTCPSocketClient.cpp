@@ -67,7 +67,7 @@ void  WinTCPSocketClient::send(const Packet& p)
 void WinTCPSocketClient::send(const char *buff, unsigned int size)
 {
 	this->_lock.lock();
-	this->_buff._output.writeSome(buff, size);
+	this->_buff._output.write(buff, size);
 	this->_lock.unlock();
 }
 
@@ -100,7 +100,7 @@ bool		WinTCPSocketClient::wantToWrite() const
 {
 	if (!this->_live)
 		return (false);
-	return (this->_buff._output.readableSize() > 0 ? true : false);
+	return (this->_buff._output.getSize() > 0 ? true : false);
 }
 
 void	    WinTCPSocketClient::readFromSock()
@@ -133,23 +133,22 @@ void	    WinTCPSocketClient::readFromSock()
 
 void	    WinTCPSocketClient::writeToSock()
 {
-	int		rc, err;
-	DWORD	sendBytes;
-	WSABUF	dataBuf;
-	char	buffer[DATA_BUFSIZE] = { 0 };
+  int		rc, err;
+  DWORD	sendBytes;
+  WSABUF	dataBuf;
+  //  char	buffer[DATA_BUFSIZE] = { 0 };
 
-	if (!this->_live)
-		return ;
-	this->_lock.lock();
-	dataBuf.len = this->_buff._output.readSome(buffer, DATA_BUFSIZE);
-	this->_lock.unlock();
-  	dataBuf.buf = buffer;
-	rc = WSASend(this->_sock, &dataBuf, 1, &sendBytes, 0, NULL, NULL);
-	if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
-	{
-		this->_live = false;
-		return ;
-	}
+  if (!this->_live)
+    return ;
+  this->_lock.lock();
+  //  dataBuf.len = this->_buff._output.readSome(buffer, DATA_BUFSIZE);
+  //  dataBuf.buf = buffer;
+  dataBuf.len = std::min<unsigned int>(_buff._output.getSize(), 1024);
+  dataBuf.buf = _buff._output.front();
+  rc = WSASend(this->_sock, &dataBuf, 1, &sendBytes, 0, NULL, NULL);
+  if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError())))
+    this->_live = false;
+  this->_lock.unlock();
 }
 
 #endif // _WIN32

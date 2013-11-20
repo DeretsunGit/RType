@@ -12,7 +12,7 @@
 # include	"UnixSysException.h"
 # include	"UnixHostException.h"
 
-#define	READ_SIZE 500
+#define	READ_SIZE 1024
 
 UnixUDPSocketClient::UnixUDPSocketClient(const char* hostname, unsigned short port)
   : _sock(socket(AF_INET, SOCK_DGRAM, 0)), _live(true), _port(port)
@@ -56,7 +56,7 @@ void  UnixUDPSocketClient::send(const char* buff, unsigned int size)
 {
   ScopedLock  lock(this->_m);
 
-  this->_buff._output.writeSome(buff, size);
+  this->_buff._output.write(buff, size);
 }
 
 void  UnixUDPSocketClient::send(const Packet& p)
@@ -81,7 +81,7 @@ ISocket::SocketId UnixUDPSocketClient::getId() const
 
 bool  UnixUDPSocketClient::wantToWrite() const
 {
-  return (!!this->_buff._output.readableSize());
+  return (!!this->_buff._output.getSize());
 }
 
 void  UnixUDPSocketClient::readFromSock()
@@ -104,7 +104,7 @@ void  UnixUDPSocketClient::readFromSock()
 
 void	UnixUDPSocketClient::writeToSock()
 {
-  char		      buff[READ_SIZE];
+  //  char		      buff[READ_SIZE];
   struct sockaddr_in  sin;
   int		      len;
 
@@ -113,10 +113,12 @@ void	UnixUDPSocketClient::writeToSock()
   sin.sin_family = AF_INET;
   sin.sin_port = htons(this->_port);
   this->_m.lock();
-  len = this->_buff._output.readSome(buff, READ_SIZE);
-  this->_m.unlock();
-  if (sendto(this->_sock, buff, len, 0, reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin)) == -1)
+  //  len = this->_buff._output.readSome(buff, READ_SIZE);
+  len = std::min<unsigned int>(this->_buff._output.getSize(), 1024);
+  if (sendto(this->_sock, this->_buff._output.getBuffer().front(), len, 0, reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin)) == -1)
     this->_live = false;
+  this->_buff._output.pop_front();
+  this->_m.unlock();
 }
 
 bool  UnixUDPSocketClient::isLive() const

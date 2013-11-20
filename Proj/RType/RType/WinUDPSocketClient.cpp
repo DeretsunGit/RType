@@ -6,7 +6,7 @@
 #include "WinUDPSocketClient.h"
 #include  "WSAException.h"
 
-#define	READ_SIZE 500
+#define	READ_SIZE 1024
 
 WinUDPSocketClient::WinUDPSocketClient(const char* hostname, unsigned short port)
   : _sock(WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0)), _live(true), _port(port)
@@ -48,7 +48,7 @@ void  WinUDPSocketClient::send(const char* buff, unsigned int size)
 {
   ScopedLock  lock(this->_m);
 
-  this->_buff._output.writeSome(buff, size);
+  this->_buff._output.write(buff, size);
 }
 
 void  WinUDPSocketClient::send(const Packet& p)
@@ -73,7 +73,7 @@ ISocket::SocketId WinUDPSocketClient::getId() const
 
 bool  WinUDPSocketClient::wantToWrite() const
 {
-  return (!!this->_buff._output.readableSize());
+  return (!!this->_buff._output.getSize());
 }
 
 void  WinUDPSocketClient::readFromSock()
@@ -101,19 +101,22 @@ void  WinUDPSocketClient::readFromSock()
 void	WinUDPSocketClient::writeToSock()
 {
   WSABUF	      buff;
-  char		      buf[READ_SIZE];
+  //  char		      buf[READ_SIZE];
   struct sockaddr_in  sin;
 
-  buff.buf = buf;
+  //  buff.buf = buf;
   ZeroMemory(&sin, sizeof(sin));
   sin.sin_addr.S_un.S_addr = this->_host.S_un.S_addr;
   sin.sin_family = AF_INET;
   sin.sin_port = htons(this->_port);
   this->_m.lock();
-  buff.len = this->_buff._output.readSome(buf, READ_SIZE);
-  this->_m.unlock();
+  //  buff.len = this->_buff._output.readSome(buf, READ_SIZE);
+  buff.len = std::min<unsigned int>(it->_buff.output.getSize(), 1024);
+  buff.buf = this->_buff._output.getBuffer().front();
   if (WSASendTo(this->_sock, &buff, 1, &buff.len, 0, reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin), NULL, NULL) == SOCKET_ERROR)
     this->_live = false;
+  this->_buff._output.pop_front();
+  this->_m.unlock();
 }
 
 bool  WinUDPSocketClient::isLive() const

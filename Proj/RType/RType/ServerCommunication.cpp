@@ -182,27 +182,26 @@ void ServerCommunication<T>::TCPsendError(Packet& packet, char errorCode, const 
 template<class T>
 void ServerCommunication<T>::UDPscreenState(Packet& packet, unsigned int score, std::list<Element*>& elements) // elements pour idSprite et CoordSprite
 {
-	char opcode = Opcodes::screenState;
-	unsigned short datasize = htons(sizeof(unsigned int) + (static_cast<unsigned short>(elements.size()) * (sizeof(unsigned int) + sizeof(t_coord))));
-	unsigned int score_to_send = htonl(score);
-	unsigned int id = 24;
-	t_coord coord;
-	std::list<Element*>::const_iterator ite = elements.begin();
+  char opcode = Opcodes::screenState;
+  unsigned short datasize = htons(sizeof(unsigned int) + (static_cast<unsigned short>(elements.size()) * (sizeof(unsigned int) + sizeof(t_coord))));
+  unsigned int score_to_send = htonl(score);
+  unsigned int id = 24;
+  t_coord coord;
+  std::list<Element*>::const_iterator ite = elements.begin();
 
-	packet.reset();
-	packet.write(&opcode, sizeof(char));
-	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
-	packet.write(reinterpret_cast<char*>(&score_to_send), sizeof(unsigned int));
-
-	while (ite != elements.end())
-	{
-		id = htonl((*ite)->getSprite().front());
-		coord._posX = htons((*ite)->getPos()._posX);
-		coord._posY = htons((*ite)->getPos()._posY);
-		packet.write(reinterpret_cast<char*>(&id), sizeof(unsigned int));
-		packet.write(reinterpret_cast<char*>(&coord), sizeof(t_coord));
-		++ite;
-	}
+  packet.reset();
+  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
+  packet.write(reinterpret_cast<char*>(&score_to_send), sizeof(unsigned int));
+  while (ite != elements.end())
+    {
+      id = htonl((*ite)->getSprite().front());
+      coord._posX = htons((*ite)->getPos()._posX);
+      coord._posY = htons((*ite)->getPos()._posY);
+      packet.write(reinterpret_cast<char*>(&id), sizeof(unsigned int));
+      packet.write(reinterpret_cast<char*>(&coord), sizeof(t_coord));
+      ++ite;
+    }
 }
 
 template<class T>

@@ -6,7 +6,7 @@
 # include "UnixUDPSocketServer.h"
 # include "UnixSysException.h"
 
-#define READ_SIZE 500
+#define READ_SIZE 1024
 
 UnixUDPSocketServer::UnixUDPSocketServer(unsigned short port)
   : _sock(socket(AF_INET, SOCK_DGRAM, 0)), _live(true)
@@ -74,7 +74,7 @@ void  UnixUDPSocketServer::sendTo(const char* buff, unsigned int size, const in_
 {
   ScopedLock	    lock(this->_m);
 
-  this->_map[to.s_addr]._output.writeSome(buff, size);
+  this->_map[to.s_addr]._output.write(buff, size);
 }
 
 void  UnixUDPSocketServer::sendTo(const Packet& p, const in_addr& to)
@@ -101,14 +101,13 @@ void			UnixUDPSocketServer::broadcast(const char* buff,
 
   while (it != end)
     {
-      it->second._output.writeSome(buff, size);
+      it->second._output.write(buff, size);
       ++it;
     }
 }
 
 void			UnixUDPSocketServer::broadcast(const Packet& p)
 {
-  ScopedLock		lock(this->_m);
   BuffMap::iterator	it(this->_map.begin());
   BuffMap::iterator	end(this->_map.end());
 
@@ -132,7 +131,7 @@ bool			  UnixUDPSocketServer::wantToWrite() const
 
   while (!sent && it != end)
   {
-    sent = !!it->second._output.readableSize();
+    sent = !!it->second._output.getSize();
     ++it;
   }
   return (sent);
@@ -160,11 +159,11 @@ void	UnixUDPSocketServer::writeToSock()
 {
   BuffMap::iterator   it(this->_map.begin());
   BuffMap::iterator   end(this->_map.end());
-  char		      buff[READ_SIZE];
+  // char		      buff[READ_SIZE];
   struct sockaddr_in  sin;
   int		      len;
 
-  while (it != end && !it->second._output.readableSize())
+  while (it != end && !it->second._output.getSize())
     ++it;
   if (it != end)
   {
@@ -173,10 +172,13 @@ void	UnixUDPSocketServer::writeToSock()
     sin.sin_family = AF_INET;
     this->_m.lock();
     sin.sin_port = it->second._port;
-    len = it->second._output.readSome(buff, READ_SIZE);
-    if (sendto(this->_sock, buff, len, 0,
+    len = std::min<unsigned int>(1024, it->second._output.getSize());
+    // len = it->second._output.readSome(buff, READ_SIZE);
+    if (sendto(this->_sock, it->second._output.getBuffer().front(), len, 0,
 	       reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin)) == -1)
       this->_map.erase(it);
+    else
+      it->second._output.pop_front();
     this->_m.unlock();
   }
 }

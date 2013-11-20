@@ -58,7 +58,7 @@ void	      UnixTCPSocketClient::putback(const char* buff, unsigned int size)
 void	UnixTCPSocketClient::send(const char* buff, unsigned int size)
 {
   this->_m.lock();
-  this->_buff._output.writeSome(buff, size);
+  this->_buff._output.write(buff, size);
   this->_m.unlock();
 }
 
@@ -99,7 +99,7 @@ ISocket::SocketId	UnixTCPSocketClient::getId() const
 
 bool		UnixTCPSocketClient::wantToWrite() const
 {
-  return (this->_buff._output.readableSize() > 0);
+  return (this->_buff._output.getSize() > 0);
 }
 
 void		UnixTCPSocketClient::readFromSock()
@@ -115,11 +115,14 @@ void		UnixTCPSocketClient::readFromSock()
 
 void		UnixTCPSocketClient::writeToSock()
 {
-  char		buff[READ_SIZE];
-  unsigned int	ret(this->_buff._output.readSome(buff, READ_SIZE));
+  // char		buff[READ_SIZE];
+  // unsigned int	ret(this->_buff._output.readSome(buff, READ_SIZE));
+  unsigned int		ret(std::min<unsigned int>(1024, this->_buff._output.getSize()));
 
-  if (::send(this->_sock, buff, ret, 0) <= 0)
+  if (::send(this->_sock, this->_buff._output.getBuffer().front(),
+	     ret, 0) <= 0)
     this->_live = false;
+  this->_buff._output.pop_front();
 }
 
 bool	UnixTCPSocketClient::isLive() const
