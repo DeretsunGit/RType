@@ -15,7 +15,7 @@ PlayMenu::PlayMenu(sf::RenderWindow *window, SpriteManager *spritemgr) : Menu(wi
 	this->_buttons.resize(0);
 	this->_comm.setHandler(this);
 	this->_comm.setCallback(Opcodes::roomList, &PlayMenu::parseRoomList);
-	this->_comm.setCallback(Opcodes::startLoading, &PlayMenu::handleStartLoading);
+	//this->_comm.setCallback(Opcodes::startLoading, &PlayMenu::handleStartLoading);
 	this->_comm.setDefaultCallback(&PlayMenu::defaultCallback);
 	try
 	{
@@ -30,16 +30,7 @@ PlayMenu::PlayMenu(sf::RenderWindow *window, SpriteManager *spritemgr) : Menu(wi
 	{
 		this->_comm.TCPsayHello(p, "ledp", res);
 		this->_tcpsock->send(p);
-		this->_comm.TCPsetReady(p);
-		this->_tcpsock->send(p);
 	}
-}
-
-void			PlayMenu::handleStartLoading(void *data)
-{
-	s_start_loading*	loader(static_cast<s_start_loading*>(data));
-
-	this->_udpport = loader->udp;
 }
 
 void			PlayMenu::defaultCallback(char opcode, IReadableSocket& sock)
@@ -56,7 +47,7 @@ void			PlayMenu::parseRoomList(void *data)
 	this->_buttons.resize(this->_size);
 	for (std::list<s_room_info>::iterator it = list->begin(); it != list->end(); it++)
 	{
-		this->_buttons[i] = new RoomButton(this->_spritemgr, "1 room", it->id, this->_udpport);
+		this->_buttons[i] = new RoomButton(this->_spritemgr, "1 room", this->_tcpsock, it->id, this->_udpport);
 		i = i + 1;
 	}
 }

@@ -25,14 +25,17 @@ protected:
 	SpriteManager				*_spritemgr;
 public:
 	Menu(sf::RenderWindow *, SpriteManager *);
-	void					displayMenu() const;
-	void					menuLoop();
-	void					setMenuContent(eMenus);
-	void					setActive(unsigned int);
-	void					incActive(void);
-	void					decActive(void);
-	unsigned int			getActive(void) const;
-	unsigned int			getSize(void) const;
-	virtual void			childAction();
+	Menu(Menu&);
+	void						displayMenu() const;
+	void						menuLoop();
+	void						setMenuContent(eMenus);
+	void						setActive(unsigned int);
+	void						incActive(void);
+	void						decActive(void);
+	unsigned int				getActive(void) const;
+	unsigned int				getSize(void) const;
+	virtual void				childAction();
+	sf::RenderWindow*			getWindow(void) const;
+	SpriteManager*				getSpriteMgr(void) const;
 	~Menu();
 };

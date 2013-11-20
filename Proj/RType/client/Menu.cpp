@@ -12,7 +12,19 @@ Menu::Menu(sf::RenderWindow *window, SpriteManager *spritemgr)
 	this->_active = 0;
 	this->_spritemgr = spritemgr;
 	this->_window = window;
-	//this->setMenuContent(menu);
+}
+
+Menu::Menu(Menu &ref)
+{
+	this->_active = ref.getActive();
+	this->_size = ref.getSize();
+	this->_buttons.resize(this->_size);
+	this->_window = ref.getWindow();
+	this->_spritemgr = ref.getSpriteMgr();
+	for (int i = 0 ; i < this->_size ; i++)
+	{
+		this->_buttons[i] = ref._buttons[i];
+	}
 
 }
 
@@ -28,14 +40,14 @@ void			Menu::setMenuContent(eMenus menu)
 		this->_buttons[2] = new CreditsButton(this->_spritemgr);
 		this->_buttons[3] = new QuitButton(this->_spritemgr);
 		break;
-	case	PLAY:
+	/*case	PLAY:
 		this->_size = 4;
 		this->_buttons.resize(this->_size);
 		this->_buttons[0] = new RoomButton(this->_spritemgr, "LA ROOM 2 LA MOR");
 		this->_buttons[1] = new RoomButton(this->_spritemgr, "[EASY][NO AWP][16000$]");
 		this->_buttons[2] = new RoomButton(this->_spritemgr, "only fags");
 		this->_buttons[3] = new RoomButton(this->_spritemgr, "give diretide");
-		break;
+		break;*/
 	case	INGAME:
 		this->_size = 2;
 		this->_buttons.resize(this->_size);
@@ -109,17 +121,26 @@ void			Menu::decActive(void)
 }
 
 
-unsigned int	Menu::getActive(void) const
+unsigned int				Menu::getActive(void) const
 {
-	return (this->_active);
+	return this->_active;
 }
 
 
-unsigned int	Menu::getSize(void) const
+unsigned int				Menu::getSize(void) const
 {
-	return (this->_size);
+	return this->_size;
 }
 
+sf::RenderWindow*			Menu::getWindow() const
+{
+	return this->_window;
+}
+
+SpriteManager*				Menu::getSpriteMgr(void) const
+{
+	return this->_spritemgr;
+}
 
 void			Menu::childAction()
 {
