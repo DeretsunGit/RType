@@ -39,7 +39,7 @@ void	Wave::action(std::list<Ennemy*> ennemies, std::list<Bullet*> bullets, float
 		this->_timeFireEnnemy.initialise();
 		this->_live = true;
 		this->popEnnemy(ennemies);
-		this->_nbEnnemies--;
+		--this->_nbEnnemies;
 	}
 	if (this->_nbEnnemies <= 0 && !this->checkEnemiesStillAlive(ennemies))
 		this->_live = false;
@@ -53,7 +53,7 @@ void	Wave::action(std::list<Ennemy*> ennemies, std::list<Bullet*> bullets, float
 		if (this->_timePopEnnemy.getTimeBySec() >= this->_popInterval)
 		{
 			this->popEnnemy(ennemies);
-			this->_nbEnnemies--;
+			--this->_nbEnnemies;
 			this->_timePopEnnemy.initialise();
 		}
 		this->moveEnnemy(ennemies);
@@ -80,7 +80,7 @@ void	Wave::popEnnemy(std::list<Ennemy*> ennemies)
 	Randomisation<bool>				rand;
 	t_coord							hitBoxSize;
 
-	for (it = ennemies.begin(); ((it != ennemies.end()) || ((*it)->getHP() == 0)); ++it) {}
+	for (it = ennemies.begin(); ((it != ennemies.end()) && ((*it)->getHP() == 0)); ++it) {}
 	if ((*it)->getHP() == 0)
 	{
 		(*it)->setHP(1);
@@ -104,7 +104,7 @@ void	Wave::moveEnnemy(std::list<Ennemy*> ennemies)
 	{
 		if (((*it)->getIdWave() == this->_id) && ((*it)->getHP() > 0))
 		{
-			//là il faut faire un truc (ou pas) !
+			//là il faut coder les mouvements des ennemies
 		}
 	}
 }
@@ -117,7 +117,7 @@ void	Wave::moveBullet(std::list<Bullet*> bullets)
 	{
 		if (((*it)->getIdWave() == this->_id) && ((*it)->getHP() > 0))
 		{
-			//là il faut faire un truc (ou pas) !
+			//là il faut coder les mouvements des boulettes
 		}
 	}
 }
