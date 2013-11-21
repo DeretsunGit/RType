@@ -178,6 +178,6 @@ void	GameLoop::mainLoop(void)
 			this->_window->display();
 		}
 		execTime = loopTimer.getTimeBySec();
-		Sleep((unsigned long)(LOOPTIME - execTime));
+		Sleep((unsigned long)(GAMELOOPTIME - execTime));
     }
 }

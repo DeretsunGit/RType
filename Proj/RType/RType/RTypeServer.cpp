@@ -65,7 +65,7 @@ bool		RTypeServer::serverLoop()
 		}
 		this->CheckClientAnswer();
 		execTime = loopTimer.getTimeBySec();
-		Sleep((unsigned long)(/*SERVLOOPTIME*/100 - execTime));
+		Sleep((unsigned long)(SERVLOOPTIME - execTime));
 	}
 	return (1);
 }

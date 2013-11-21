@@ -168,7 +168,7 @@ void	Game::gameLoop()
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
 			this->_endGame = true;
 		execTime = loopTimer.getTimeBySec();
-		Sleep((unsigned long)(LOOPTIME - execTime));
+		Sleep((unsigned long)(GAMELOOPTIME - execTime));
 		this->_udpSock->broadcast(this->_pack);
 	}
 }
@@ -243,7 +243,7 @@ void	Game::sendPriority()
 //		std::cout << (*it)->getPos()._posX << std::endl;
 		it++;
 	}
-	std::cout << "Sended " << i << "Walls" << std::endl;
+	//std::cout << "Sended " << i << "Walls" << std::endl;
 	this->_GameCom.UDPscreenState(this->_pack, 0, elemToSend);
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
 	// on déclare un Packet qui va etre alloué dans la méthode
@@ -355,7 +355,7 @@ void	Game::moveWall()
 				{
 					temp._posX = 16;
 					temp._posY = y;
-					std::cout << "CREATED !top" <<std::endl;
+				//	std::cout << "CREATED !top" <<std::endl;
 					assign = assignWall(*it_wall, false, temp, true);
 				}
 				it_wall ++;
@@ -373,14 +373,14 @@ void	Game::moveWall()
 				{
 					temp._posX = 16;
 					temp._posY = y;
-					std::cout << "CREATED !bot" <<std::endl;
+					//std::cout << "CREATED !bot" <<std::endl;
 					assign = assignWall(*it_wall, false, temp, false);
 				}
 				it_wall ++;
 			}
 			--y;
 		}
-		std::cout << "--------------NEW Screen " << this->_firstColumn <<"/" << this->_globalPos << " ------------" << std::endl;
+	//	std::cout << "--------------NEW Screen " << this->_firstColumn <<"/" << this->_globalPos << " ------------" << std::endl;
 		this->_globalPos ++;
 		if (this->_firstColumn < 16)
 			this->_firstColumn++;

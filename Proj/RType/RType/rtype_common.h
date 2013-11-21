@@ -22,7 +22,9 @@
 
 #define PATTERNFILE	"../ServerRessources/PatternList.txt"
 
-#define LOOPTIME	16 // 16 would be a good value
+#define GAMELOOPTIME	16 // 16 would be a good value
+#define SERVLOOPTIME	100
+#define ROOMLOOPTIME	100
 
 #define MAXROOM		100
 #define MAXCLIENT	400

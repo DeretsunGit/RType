@@ -136,7 +136,7 @@ void	Room::roomLoop()
 			finish = true;
 		}
 		execTime = loopTimer.getTimeBySec();
-	Sleep((unsigned long)(/*ROOMLOOPTIME*/100 - execTime));
+	Sleep((unsigned long)(ROOMLOOPTIME - execTime));
 	}
 	
 	std::cout << "Room " << this->_name << ": no more player. exit..." << std::endl;
