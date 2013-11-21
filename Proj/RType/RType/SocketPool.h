@@ -14,7 +14,7 @@
 #include "Socket.h"
 
 #define	  SPTOSEC   0
-#define	  SPTOUSEC  500000
+#define	  SPTOUSEC  500
 
 class SocketPool: public Singleton<SocketPool>
 {

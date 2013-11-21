@@ -3,7 +3,7 @@
 #include "CircularBuffer.h"
 #include "Packet.hpp"
 
-template<typename Type = char, unsigned long isize = 4096>
+template<typename Type = char, unsigned long isize = 8192>
 struct IOBuff
 {
   CircularBuffer<Type, isize>  _input;
