@@ -18,17 +18,16 @@ class Wave
 	float				_fireInterval;
 	bool				_live;
 public:
-	Wave(int, std::list<float>);
+	Wave(int, std::list<float>&);
 	~Wave();
 
-	void				action(std::list<Ennemy*>, std::list<Bullet*>, float);
+	void				action(std::list<Ennemy*>&, std::list<Bullet*>&, float);
 	std::list<eSprites>	fillSpriteEnemy(eSprites, int);
-	void				popEnnemy(std::list<Ennemy*>);
-	void				moveEnnemy(std::list<Ennemy*>);
-	void				moveBullet(std::list<Bullet*>);
-	void				shoot(std::list<Ennemy*>, std::list<Bullet*>);
-	bool				checkEnemiesStillAlive(std::list<Ennemy*>);
+	void				popEnnemy(std::list<Ennemy*>&);
+	void				moveEnnemy(std::list<Ennemy*>&);
+	void				moveBullet(std::list<Bullet*>&);
+	void				shoot(std::list<Ennemy*>&, std::list<Bullet*>&);
+	bool				checkEnemiesStillAlive(std::list<Ennemy*>&);
 
 	int					getNbEnnemies();
-	std::list<eSprites>	getSpritesEnnemies();
 };

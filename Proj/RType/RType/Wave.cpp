@@ -3,7 +3,7 @@
 #include "Randomisation.cpp"
 template class Randomisation<bool>;
 
-Wave::Wave(int id, std::list<float> timePopWave)
+Wave::Wave(int id, std::list<float> &timePopWave)
 : _id(id), _timePopWave(timePopWave)
 {
 	this->_pos._posX = 1650;
@@ -18,7 +18,7 @@ Wave::~Wave()
 {
 }
 
-bool	Wave::checkEnemiesStillAlive(std::list<Ennemy*> ennemies)
+bool	Wave::checkEnemiesStillAlive(std::list<Ennemy*> &ennemies)
 {
 	std::list<Ennemy*>::iterator	it;
 
@@ -30,7 +30,7 @@ bool	Wave::checkEnemiesStillAlive(std::list<Ennemy*> ennemies)
 	return (false);
 }
 
-void	Wave::action(std::list<Ennemy*> ennemies, std::list<Bullet*> bullets, float gameTime)
+void	Wave::action(std::list<Ennemy*> &ennemies, std::list<Bullet*> &bullets, float gameTime)
 {
 	if (!this->_live && this->_timePopWave.front() >= gameTime)
 	{
@@ -74,7 +74,7 @@ std::list<eSprites>	Wave::fillSpriteEnemy(eSprites firstSprite, int nb)
 	return (sprites);
 }
 
-void	Wave::popEnnemy(std::list<Ennemy*> ennemies)
+void	Wave::popEnnemy(std::list<Ennemy*> &ennemies)
 {
 	std::list<Ennemy*>::iterator	it;
 	Randomisation<bool>				rand;
@@ -96,7 +96,7 @@ void	Wave::popEnnemy(std::list<Ennemy*> ennemies)
 	}
 }
 
-void	Wave::moveEnnemy(std::list<Ennemy*> ennemies)
+void	Wave::moveEnnemy(std::list<Ennemy*> &ennemies)
 {
 	std::list<Ennemy*>::iterator	it;
 
@@ -109,7 +109,7 @@ void	Wave::moveEnnemy(std::list<Ennemy*> ennemies)
 	}
 }
 
-void	Wave::moveBullet(std::list<Bullet*> bullets)
+void	Wave::moveBullet(std::list<Bullet*> &bullets)
 {
 	std::list<Bullet*>::iterator	it;
 
@@ -122,7 +122,7 @@ void	Wave::moveBullet(std::list<Bullet*> bullets)
 	}
 }
 
-void	Wave::shoot(std::list<Ennemy*> ennemies, std::list<Bullet*> bullets)
+void	Wave::shoot(std::list<Ennemy*> &ennemies, std::list<Bullet*> &bullets)
 {
 	std::list<Ennemy*>::iterator	it;
 
