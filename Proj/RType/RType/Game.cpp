@@ -87,15 +87,9 @@ void	Game::mapGeneration()
 				{
 					if ((*it)->getHP() == 0)
 					{
-						assign = true;
-						this->_map[y][x].push_back(*it);
-						(*it)->setHP(1);
-						coord._posX = x * 100;
-						coord._posY = y * 50;
-						(*it)->setPos(&coord);
 						coord._posX = x;
 						coord._posY = y;
-						(*it)->addToCurrentCell(coord);
+						assign = assignWall(*it, false, coord, true);
 					}
 					it ++;
 				}
@@ -110,15 +104,9 @@ void	Game::mapGeneration()
 				{
 					if ((*it)->getHP() == 0)
 					{
-						assign = true;
-						this->_map[y][x].push_back(*it);
-						(*it)->setHP(1);
-						coord._posX = x * 100;
-						coord._posY = y * 50;
-						(*it)->setPos(&coord);
 						coord._posX = x;
 						coord._posY = y;
-						(*it)->addToCurrentCell(coord);
+						assign = assignWall(*it, false, coord, false);
 					}
 					it ++;
 				}
@@ -181,6 +169,7 @@ void	Game::gameLoop()
 			this->_endGame = true;
 		execTime = loopTimer.getTimeBySec();
 		Sleep((unsigned long)(LOOPTIME - execTime));
+		this->_udpSock->broadcast(this->_pack);
 	}
 }
 
@@ -256,7 +245,6 @@ void	Game::sendPriority()
 	}
 	std::cout << "Sended " << i << "Walls" << std::endl;
 	this->_GameCom.UDPscreenState(this->_pack, 0, elemToSend);
-	this->_udpSock->broadcast(this->_pack);
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
 	// on déclare un Packet qui va etre alloué dans la méthode
 	//Packet pack;
@@ -365,16 +353,10 @@ void	Game::moveWall()
 			{
 				if ((*it_wall)->getHP() == 0)
 				{
-					std::cout << "CREATED !top" <<std::endl;
-					assign = true;
-					this->_map[y][this->_firstColumn].push_back(*it_wall);
-					(*it_wall)->setHP(1);
-					temp._posX = 1600;
-					temp._posY = y * 50;
-					(*it_wall)->setPos(&temp);
-					temp._posX = this->_firstColumn;
+					temp._posX = 16;
 					temp._posY = y;
-					(*it_wall)->addToCurrentCell(temp);
+					std::cout << "CREATED !top" <<std::endl;
+					assign = assignWall(*it_wall, false, temp, true);
 				}
 				it_wall ++;
 			}
@@ -389,16 +371,10 @@ void	Game::moveWall()
 			{
 				if ((*it_wall)->getHP() == 0)
 				{
-					std::cout << "CREATED !bot "<< std::endl;
-					assign = true;
-					this->_map[y][this->_firstColumn].push_back(*it_wall);
-					(*it_wall)->setHP(1);
-					temp._posX = 1600;
-					temp._posY = y * 50;
-					(*it_wall)->setPos(&temp);
-					temp._posX = this->_firstColumn;
+					temp._posX = 16;
 					temp._posY = y;
-					(*it_wall)->addToCurrentCell(temp);
+					std::cout << "CREATED !bot" <<std::endl;
+					assign = assignWall(*it_wall, false, temp, false);
 				}
 				it_wall ++;
 			}
@@ -410,7 +386,7 @@ void	Game::moveWall()
 			this->_firstColumn++;
 		else
 			this->_firstColumn = 0;
-		short x;
+/*		short x;
 		y = 0;
 	while (y < 18)
 	{
@@ -434,22 +410,29 @@ void	Game::moveWall()
 		}
 		std::cout << "-" << std::endl;
 		y ++;
-	}
-
+	}*/
 	}
 }
 
-bool	Game::assignWall(Wall * vWall, bool isfirst, short x, short y)
+bool	Game::assignWall(Wall * vWall, bool isfirst, t_coord &temp, bool isTop)
 {
 	t_coord						coord;
 
-	this->_map[y][x].push_back(vWall);
+	//vWall->cleanSprite();
+	if (isTop)
+		vWall->addSprite(WALL_UP);
+	else
+		vWall->addSprite(WALL_DOWN);
 	vWall->setHP(1);
-	coord._posX = x * 100;
-	coord._posY = y * 50;
+	coord._posX = temp._posX * 100;
+	coord._posY = temp._posY * 50;
 	vWall->setPos(&coord);
-	coord._posX = x;
-	coord._posY = y;
+	if (isfirst)
+		coord._posX = temp._posX;
+	else
+		coord._posX = this->_firstColumn;
+	coord._posY = temp._posY;
+	this->_map[coord._posY][coord._posX].push_back(vWall);
 	vWall->addToCurrentCell(coord);
 	return (true);
 }

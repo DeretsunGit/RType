@@ -57,7 +57,8 @@ public:
 	bool	isPlayerAlive();
 	
 	void	moveWall();
-	bool	assignWall(Wall *, bool, short, short);
+	//bool	assignWall(Wall *, bool, short, short, bool);
+	bool	assignWall(Wall *, bool, t_coord &, bool);
 
 	void	playerShoot(Player *);
 	void	moveBullets();
