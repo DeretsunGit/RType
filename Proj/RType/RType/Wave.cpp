@@ -10,33 +10,54 @@ Wave::Wave(int id, std::list<float> timePopWave)
 	this->_pos._posY = 450;
 	this->_nbEnnemies = 10;
 	this->_popInterval = 1;
+	this->_fireInterval = 1;
+	this->_live = false;
 }
 
 Wave::~Wave()
 {
 }
 
+bool	Wave::checkEnemiesStillAlive(std::list<Ennemy*> ennemies)
+{
+	std::list<Ennemy*>::iterator	it;
+
+	for (it = ennemies.begin(); it != ennemies.end(); ++it)
+	{
+		if (((*it)->getIdWave() == this->_id) && ((*it)->getHP() > 0))
+			return (true);
+	}
+	return (false);
+}
+
 void	Wave::action(std::list<Ennemy*> ennemies, std::list<Bullet*> bullets, float gameTime)
 {
-	if (gameTime >= this->_timePopWave.front())
+	if (!this->_live && this->_timePopWave.front() >= gameTime)
 	{
 		this->_timePopWave.pop_front();
 		this->_timePopEnnemy.initialise();
 		this->_timeFireEnnemy.initialise();
+		this->_live = true;
+		this->popEnnemy(ennemies);
+		this->_nbEnnemies--;
 	}
-
-	// check 
-
-	if (this->_nbEnnemies > 0)
+	if (this->_nbEnnemies <= 0 && !this->checkEnemiesStillAlive(ennemies))
+		this->_live = false;
+	if (this->_live)
 	{
+		if (this->_timeFireEnnemy.getTimeBySec() >= this->_fireInterval)
+		{
+			this->shoot(ennemies, bullets);
+			this->_timeFireEnnemy.initialise();
+		}
 		if (this->_timePopEnnemy.getTimeBySec() >= this->_popInterval)
 		{
 			this->popEnnemy(ennemies);
 			this->_nbEnnemies--;
+			this->_timePopEnnemy.initialise();
 		}
 		this->moveEnnemy(ennemies);
 		this->moveBullet(bullets);
-		this->shoot(ennemies, bullets);
 	}
 }
 

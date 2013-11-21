@@ -15,6 +15,8 @@ class Wave
 	std::list<float>	_timePopWave;
 	int					_nbEnnemies;
 	float				_popInterval;
+	float				_fireInterval;
+	bool				_live;
 public:
 	Wave(int, std::list<float>);
 	~Wave();
@@ -25,6 +27,7 @@ public:
 	void				moveEnnemy(std::list<Ennemy*>);
 	void				moveBullet(std::list<Bullet*>);
 	void				shoot(std::list<Ennemy*>, std::list<Bullet*>);
+	bool				checkEnemiesStillAlive(std::list<Ennemy*>);
 
 	int					getNbEnnemies();
 	std::list<eSprites>	getSpritesEnnemies();
