@@ -9,6 +9,7 @@ Wave::Wave(int id, std::list<float> timePopWave)
 	this->_pos._posX = 1650;
 	this->_pos._posY = 450;
 	this->_nbEnnemies = 10;
+	this->_popInterval = 1;
 }
 
 Wave::~Wave()
@@ -17,11 +18,26 @@ Wave::~Wave()
 
 void	Wave::action(std::list<Ennemy*> ennemies, std::list<Bullet*> bullets, float gameTime)
 {
-	//il faut faire la gestion des clocks pour appeler les methodes
-	this->popEnnemy(ennemies);
-	this->moveEnnemy(ennemies);
-	this->moveBullet(bullets);
-	this->shoot(ennemies, bullets);
+	if (gameTime >= this->_timePopWave.front())
+	{
+		this->_timePopWave.pop_front();
+		this->_timePopEnnemy.initialise();
+		this->_timeFireEnnemy.initialise();
+	}
+
+	// check 
+
+	if (this->_nbEnnemies > 0)
+	{
+		if (this->_timePopEnnemy.getTimeBySec() >= this->_popInterval)
+		{
+			this->popEnnemy(ennemies);
+			this->_nbEnnemies--;
+		}
+		this->moveEnnemy(ennemies);
+		this->moveBullet(bullets);
+		this->shoot(ennemies, bullets);
+	}
 }
 
 std::list<eSprites>	Wave::fillSpriteEnemy(eSprites firstSprite, int nb)

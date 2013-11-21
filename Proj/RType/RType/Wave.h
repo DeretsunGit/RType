@@ -14,6 +14,7 @@ class Wave
 	char				_color;
 	std::list<float>	_timePopWave;
 	int					_nbEnnemies;
+	float				_popInterval;
 public:
 	Wave(int, std::list<float>);
 	~Wave();
