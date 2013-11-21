@@ -133,10 +133,14 @@ void	Room::roomLoop()
 		{
 			std::cout << this->_nbReady <<" - "<< this->_party.size() << std::endl;
 			this->startGame();
+			std::cout << "----------------------GAME ENDED-----------------------"<< std::endl;
 			finish = true;
 		}
-		execTime = loopTimer.getTimeBySec();
-	Sleep((unsigned long)(ROOMLOOPTIME - execTime));
+		else
+		{
+			execTime = loopTimer.getTimeBySec();
+			Sleep((unsigned long)(ROOMLOOPTIME - execTime));
+		}
 	}
 	
 	std::cout << "Room " << this->_name << ": no more player. exit..." << std::endl;
