@@ -10,6 +10,7 @@
 #include "ServerCommunication.hpp"
 #include "Clock.h"
 #include "Script.h"
+#include "Ennemy.h"
 
 class Game
 {

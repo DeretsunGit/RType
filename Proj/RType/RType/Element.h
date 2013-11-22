@@ -10,6 +10,8 @@ class Element
 	t_coord					_hitboxSize;
 	t_coord					_spritePos;
 	t_coord					_center;
+	t_coord					_cellPosTL;
+	t_coord					_cellPosBR;
 
 	short int				_speed;
 	bool					_bulletProof;
@@ -60,5 +62,7 @@ public:
 	void					move();
 	int						isCollision(std::list<Element*>);
 	void					addToCurrentCell(t_coord);
+	void					setCell(t_coord);
+	void					checkCell();
 	void					cleanCurrentCell();
 };

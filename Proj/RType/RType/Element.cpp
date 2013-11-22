@@ -45,6 +45,37 @@ int Element::isCollision(std::list<Element*> cell)
 	return (-1);
 }
 
+void	Element::checkCell()
+{
+	t_coord		temp;
+
+	temp._posX = this->_pos._posX / 100;
+	temp._posY = this->_pos._posY / 50;
+
+	// si il ya changement de case
+	if (temp._posX != this->_cellPosTL._posX || temp._posY != this->_cellPosTL._posY)
+	{
+		this->cleanCurrentCell();
+		setCell(temp);
+	}
+
+	temp._posX = this->_pos._posX + this->_hitboxSize._posX / 100;
+	temp._posY = this->_pos._posY + this->_hitboxSize._posY / 50;
+
+	// si il ya  changement de case
+	if (temp._posX != this->_cellPosBR._posX || temp._posY != this->_cellPosBR._posY)
+	{
+		
+	}
+}
+
+void Element::setCell(t_coord temp)
+{
+		this->_cellPosTL._posX = temp._posX;
+		this->_cellPosTL._posY = temp._posY;
+		this->addToCurrentCell(this->_cellPosTL);
+}
+
 void	Element::addToCurrentCell(t_coord coord)
 {
 	this->_currentCells.push_back(coord);

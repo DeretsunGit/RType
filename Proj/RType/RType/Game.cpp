@@ -6,11 +6,10 @@ template class ServerCommunication<Room>;
 Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
   : _players(p), _script(s), _udpSock(UDPsock)
 {
-	this->_GameCom.setCallback(0x0D, &Game::inputs);
-	this->_GameCom.setCallback(0x0E, &Game::pauseOk);
+	this->_GameCom.setCallback(Opcodes::inputs, &Game::inputs);
+//	this->_GameCom.setCallback(, &Game::pauseOk);
 	this->_GameCom.setDefaultCallback(&Game::callBackError);
 	this->_GameCom.setHandler(this);
-
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	this->_globalPos = 17;
@@ -20,7 +19,6 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 	this->mapGeneration();
 	std::cout << "Map generation finished !" << std::endl;
 	this->startGame();
-	std::cout << "___________________Loop starting________________________" << std::endl;
 	this->gameLoop();
 }
 
@@ -33,19 +31,25 @@ void	Game::callBackError(char opcode, IReadableSocket&)
 
 void	Game::inputs(void *data)
 {
+	s_inputs	*dataStruct = reinterpret_cast<s_inputs *>(data);;
+	short		i = 0;
 
-}
-
-void	Game::pauseOk(void *data)
-{
-
+	while (i <= this->_players.size())
+	{
+		if (dataStruct->from == this->_players[i]->getClient()->getInaddr())
+		{
+			//this->_players[i]->move(dataStruct->x, dataStruct->y);
+			//this->_players[i]->setshoot(dataStruct->fire);
+			//this->_players[i]->setSide(dataStruct->shield);
+		}
+	}
 }
 
 void		Game::sendError(char errorCode, const char *message)
 {
 	this->_GameCom.TCPsendError(this->_pack, errorCode, message);
 }
-
+/*
 void	Game::TCPsend(Packet& tosend)
 {
   std::cout << __LINE__ << std::endl;
@@ -64,7 +68,7 @@ void	Game::TCPsend(Packet& tosend)
     }
   }
 }
-
+*/
 void	Game::mapGeneration()
 {
 	bool						assign = false;
@@ -125,26 +129,13 @@ void	Game::genPool()
 	{
 		this->_wallPool.push_back(new Wall);
 		this->_bulletPool.push_back(new Bullet);
+		this->_ennemyPool.push_back(new Ennemy(i));
 		i++;
 	}
 }
 
 bool	Game::startGame()
 {
-	/*unsigned short i = 1;
-	// On gère l'attente des players
-	// Lorsqu'on recoit des packets TCP, on les traite ici
-	Packet* tmp = NULL; // tmp sera remplacé par le vrai packet recu
-
-/*	if (_com.TCPgetReady(tmp->getBuffer()))
-		;// la méthode retourne vrai, le joueur a donc envoyé ready
-	else
-		;// la méthode retourne false, le joueur a envoyé un packet eronné
-	// si tous les joueurs sont prêts
-	Packet* pack = _com.TCPsendStartGame();
-	if (pack != NULL)
-	  TCPsend(pack);
-	delete pack;*/
 	return (true);
 }
 
@@ -158,11 +149,11 @@ void	Game::gameLoop()
 	{
 	//	std::cout << "loop" << std::endl;
 		loopTimer.initialise();
-		this->getInputs();
-		// déplacement de Waves en fonction du script
-	//	this->moveBullets();
+		//this->getInputs();
+		// concerne uniquement les joueurs
 		this->moveWall();
 		this->collision();
+		// sychronisation de la map avec les elements
 		// (pop de Wave)
 		this->sendPriority();
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
@@ -172,6 +163,14 @@ void	Game::gameLoop()
 		this->_udpSock->broadcast(this->_pack);
 		execTime = loopTimer.getTimeBySec();
 		Sleep((unsigned long)(GAMELOOPTIME - execTime));
+	}
+	if (this->_globalPos == 256)
+	{
+		// send win
+	}
+	else
+	{
+		// send lose
 	}
 }
 
@@ -255,20 +254,6 @@ void	Game::sendPriority()
 	// ici, pack contient les données sérialisées à écrire sur la socket.
 }
 
-void	Game::getInputs()
-{
-	//  !! ceci fonctionne pour 1 joueur !!
-	//s_inputs inputs;
-	char *buff = NULL;
-	// recuperer les packets sur la socket
-	// passer en paramètre de la fonction le buffer du packet
-	// remplacé ici par un buffer vide
-	//_com.UDPinterpretInputs(inputs, buff);
-
-	// ici la struct inputs contient les inputs utilisateur
-	// comme définie dans la RFC.
-}
-
 void	Game::moveBullets()
 {
 	std::list<Bullet*>::iterator		it_bullet;
@@ -328,7 +313,7 @@ void	Game::moveWall()
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				temp._posX = (*it_wall)->getPos()._posX - (2 * (*it_wall)->getSpeed());
+				temp._posX = (*it_wall)->getPos()._posX - (3 * (*it_wall)->getSpeed());
 				temp._posY = (*it_wall)->getPos()._posY;
 				(*it_wall)->setPos(&temp);
 				if ((*it_wall)->getPos()._posX <= -100 )
