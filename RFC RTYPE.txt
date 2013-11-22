@@ -162,16 +162,16 @@ RFC ....              RTYPE network specification          October 2013
    2.3.1.  Server Side
 
       send room list
-      : opcode = 0x01
-      : [room_id_1][nb_player][room_id_2]:...
-
-      send player list
       : opcode = 0x02
-      : [room_id][player_1][player_2]:...
+      : [data size][data ...]
+      The data contains N blocks of 34 bytes, 32 bytes for room name
+      1 byte for room id and 1 byte for the number of player inside.
 
-      ask if file is owned by client
-      : opcode = 0x03
-      : [filename_X1];[filename_X2];...
+      send room state
+      : opcode = 0x06
+      : [data size][room name][player names][player status]
+      The room name is set on 32 bytes.  Player names are 4 times 32
+      bytes.  Player status are 4 boolean (1 byte).
 
 
 
@@ -180,62 +180,122 @@ Gilmaire                      Informational                    [Page 3]
 RFC ....              RTYPE network specification          October 2013
 
 
-      send file
-      : opcode = 0x04
-      : [filename]\n[filedata]
+      send alert due to a wrong map
+      : opcode = 0x0A
+      : [data size to 0]
 
-      start loading
-      : opcode = 0x05
-      : No_Data
+      send UDP port and the file list to start the UDP connection
+      : opcode = 0x0C
+      : [data size][UDP port][file block ...]
+      The UDP port is set on 2 bytes.  The file block contains N blocks 
+      of 160 bytes, 128 of file path (absolute) and 32 of md5 hash.
 
-      start game
-      : opcode = 0x06
-      : [UDP port]
-
-   2.3.2.  Client Side
-
-      choose a room
-      : opcode = 0x07
-      : [player_nickname][room_id]
-
-      update nickname info
-      : opcode = 0x08
-      : [new_player_nickname]
-
-      update user resolution info
+      send a file part
       : opcode = 0x09
-      : [new_resolution]
+      : [data size][file name][file data size][file data]
+      The file name is set on 32 bytes, file data size on 4 bytes and
+      file data on "data size" bytes.
 
-      send owned file
-      : opcode = 0x0a
-      : [filename_1]:[file_1_version];[filename_2]:...
+      send association between files and sprites
+      : opcode = 0x0E
+      : [data size][file name][sprite blocks ...]
+      The file name is set on 32 bytes.  The sprite block contains N
+      blocks of 12 bytes, 4 bytes sprite id and 4 times 2 bytes of 
+      position in the file.
 
-      confirm file reception
-      : opcode = 0x0b
-      : [filename]:[file_version]
+      send error to the client
+      : opcode = 0x13
+      : [data size][error id][error message]
+      The error id is set on 1 byte and the error message on 256 bytes.
 
-      send confirmation to start the game
-      : opcode = 0x0c
-      : No_Data
+   2.3.2. Client Side
 
-      ask for map download
-      : opcode = 0x0d
-      : No_Data
+      send communication "start"
+      : opcode = 0x01
+      : [data size][nick name][magic][resolution]
+      The nickname is set on 32 bytes, the magic is set on 7 bytes and
+      The resolution is set on 2 times 2 bytes.
 
-      upload map
-      : opcode = 0x0e
-      : [filename]\n[filedata]
+      send request for the list of rooms
+      : opcode = 0x17
+      : [data size to 0]
+
+      send request to create a new room
+      : opcode = 0x03
+      : [data size][room name]
+      The room name is set on 32 bytes.
 
 
-
-
-
+      send request to select a room
+      : opcode = 0x04
+      : [data size][room id]
+      The room id is set on 1 byte.
 
 
 
 
 
 Gilmaire                      Informational                    [Page 4]
+
+RFC ....              RTYPE network specification          October 2013
+
+      send request to leave a room
+      : opcode = 0x05
+      : [data size to 0]
+
+      send request to change difficulty
+      : opcode = 0x07
+      : [data size][difficulty]
+      The difficulty is set on 1 byte.
+
+      send request to set the map
+      : opcode = 0x08
+      : [data size][status][file name]
+      The status is a boolean (1 byte) and the file name is set on
+      128 bytes (absolute path)
+
+      send a file part
+      : opcode = 0x09
+      : [data size][file name][file data size][file data]
+      The file name is set on 32 bytes, file data size on 4 bytes and
+      file data on "data size" bytes.
+
+      send information to the server that the client is ready to
+      receive game resources and content.
+      : opcode = 0x0B
+      : [data size to 0]
+
+      send request to download resources
+      : opcode = 0x0D
+      : [data size][file name]
+      The file name is set on 128 bytes (absolute path)
+
+      send information to the server that the client is ready to play
+      : opcode = 0x11
+      : [data size to 0]
+
+      send request to the server to download the map
+      : opcode = 0x12
+      : [data size][file name]
+      The file name is set on 128 bytes (absolute path)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gilmaire                      Informational                    [Page 5]
 
 RFC ....              RTYPE network specification          October 2013
 
@@ -308,17 +368,37 @@ RFC ....              RTYPE network specification          October 2013
 
    2.3.1.  Server Side
 
-      send infos and status (players, ennemis, bullets, walls)
+      send confirmation about the reception of UDP test from client
       : opcode = 0x10
-      : 100 x [2 bytes X][2 bytes Y][1 byte sprite id]
-      : 4 x [1 byte alive][1 byte win][1 byte defeat][1 byte shield]
+      : [data size to 0]
+   
+      send game status score and sprite positions
+      : opcode = 0x15
+      : [data size][score][sprite blocks ...]
+      The score is set on 4 bytes. The sprite block contains N blocks
+      of 8 bytes, 4 bytes sprite id and 2 times 2 bytes of position in
+      the screen (x, y).
 
+      send end of game   
+      : opcode = 0x16
+      : [data size][final score]
+      The final score is set on 4 bytes.
+  
    2.3.2.  Client Side
 
-      send input to server
-      : opcode = 0x12
-      : [1 byte X orientation][1 byte Y orientation][1 byte fire]
-      : [1 byte shield][1 byte pause]
+      send the nickname of the player to the server, allowing it to
+      get UDP network information of the player.
+      : opcode = 0x0F
+      : [data size][nickname]
+      The nickname of the player is set on 32 bytes.
+
+      send client inputs to the server
+      : opcode = 0x14
+      : [data size][inputs block]
+      The input block is set on 14 bytes, 8 bytes (u_long) in_addr
+      info, 2 bytes x input (0 is left, 1 is off, 2 is right),
+      2 bytes y input (0 is bottom, 1 is off, 2 is top), 1 byte fire
+      (0 is off, 1 is on) and 1 byte shield (0 is off, 1 is on).
 
 
 
@@ -331,26 +411,9 @@ RFC ....              RTYPE network specification          October 2013
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	  
+	  
+	  
 
 Gilmaire                      Informational                    [Page 6]
 
@@ -366,26 +429,15 @@ RFC ....              RTYPE network specification          October 2013
    limited of eleven bytes.  The blocks sent by the server has a
    506 bytes data unit.
 
-   UDP Data Unit Format, client side
-   (one tick mark represents one bit position):
-
-      0                   1
-      0 1 2 3 4 5 6 7 8 9 0 1
-     +-+-+-+-+-+-+-+-+-+-+
-     |      opcode       |
-     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     | DATA  (total of 5 bytes)  |
-     +-+-+-+-+-+-+//-+-+-+-+-+-+-+
-
    UDP Data Unit Format, server side
    (one tick mark represents one bit position):
 
       0                   1                   2                   3
       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |       opcode      |                  DATA                     |
+     |      opcode       |                 data size                 |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |                  DATA (total of 516 bytes)                    |
+     |                            DATA                               |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    
 4.  Internationalization Considerations   
@@ -410,6 +462,17 @@ RFC ....              RTYPE network specification          October 2013
 
 
 
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
 
 
 Gilmaire                      Informational                    [Page 7]

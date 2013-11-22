@@ -110,15 +110,17 @@ template<class T>
 void ServerCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size)
 {
 	char opcode = Opcodes::fileTrunk;
-	unsigned short datasize = htons((32 + static_cast<unsigned short>(size)) * sizeof(char));
-	char name[32];
+  unsigned short datasize = htons((32 * sizeof(char)) + (sizeof(unsigned int)) + (static_cast<unsigned short>(size) * sizeof(char)));
+  char name[32];
 
-	memset(name, 0, 32);
-	packet.reset();
-	packet.write(&opcode, sizeof(char));
-	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
-	packet.write(name, 32 * sizeof(char));
-	packet.write(data, static_cast<unsigned short>(size) * sizeof(char));
+  strncpy(name, filename, 32);
+  packet.reset();
+
+  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
+  packet.write(name, 32 * sizeof(char));
+  packet.write(reinterpret_cast<char*>(&size), sizeof(unsigned int));
+  packet.write(data, static_cast<unsigned short>(size) * sizeof(char));
 }
 
 template<class T>
