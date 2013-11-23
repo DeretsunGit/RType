@@ -27,7 +27,7 @@ private:
 	s_screen_state					_screenstate;
 	
 public:
-	GameLoop(sf::RenderWindow*, TCPSocketClient*, short);
+	GameLoop(sf::RenderWindow*, TCPSocketClient*);
 	void	manageEvent(bool *, PlayerShip *);
 	void	openBackMenu(bool *);
 	void	drawBackground(void);

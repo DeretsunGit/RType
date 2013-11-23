@@ -30,7 +30,7 @@ SpriteManager::SpriteManager(void)
 	{
 		this->_sprites[i].setTexture(this->_shiptexture);
 	}
-	for (int i = GAME_LOGO ; i <= BACK_MAIN_ON ; i++)
+	for (int i = GAME_LOGO ; i <= JOIN_ROOM_ON ; i++)
 	{
 		this->_sprites[i].setTexture(this->_menutexture);
 	}
@@ -63,12 +63,16 @@ SpriteManager::SpriteManager(void)
 	this->_sprites[SETT_SRVL].setTextureRect(sf::IntRect(0, 560, 450, 54));
 	this->_sprites[BACK_MAIN].setTextureRect(sf::IntRect(0, 620, 450, 54));
 	this->_sprites[SETT_PORT].setTextureRect(sf::IntRect(0, 675, 450, 54));
+	this->_sprites[CREATE_ROOM].setTextureRect(sf::IntRect(0, 730, 450, 54));
+	this->_sprites[JOIN_ROOM].setTextureRect(sf::IntRect(0, 790, 450, 54));
 	this->_sprites[SETT_RESO_ON].setTextureRect(sf::IntRect(480, 400, 450, 54));
 	this->_sprites[SETT_SOUN_ON].setTextureRect(sf::IntRect(480, 450, 450, 54));
 	this->_sprites[SETT_NICK_ON].setTextureRect(sf::IntRect(480, 510, 450, 54));
 	this->_sprites[SETT_SRVL_ON].setTextureRect(sf::IntRect(480, 560, 450, 54));
 	this->_sprites[BACK_MAIN_ON].setTextureRect(sf::IntRect(480, 620, 450, 54));
 	this->_sprites[SETT_PORT_ON].setTextureRect(sf::IntRect(480, 675, 450, 54));
+	this->_sprites[CREATE_ROOM_ON].setTextureRect(sf::IntRect(480, 730, 450, 54));
+	this->_sprites[JOIN_ROOM_ON].setTextureRect(sf::IntRect(480, 790, 450, 54));
 }
 
 SpriteManager::~SpriteManager(void)

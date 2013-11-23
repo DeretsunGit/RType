@@ -15,7 +15,7 @@ class RoomButton :
 	TCPSocketClient					*_tcpsock;
 	Packet							_p;
 public:
-	RoomButton(SpriteManager *, std::string, TCPSocketClient*, int, short);
+	RoomButton(SpriteManager *, std::string, TCPSocketClient*, int);
 	virtual void		action(sf::Keyboard::Key, sf::RenderWindow *, bool *);
 	virtual void		displayButton(unsigned int, unsigned int, sf::RenderWindow *);
 	~RoomButton(void);

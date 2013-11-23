@@ -197,6 +197,8 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/GameLoop.h
 	${CMAKE_BINARY_DIR}/client/Menu.h
 	${CMAKE_BINARY_DIR}/client/PlayMenu.h
+	${CMAKE_BINARY_DIR}/client/RoomMenu.h
+	${CMAKE_BINARY_DIR}/client/JoinRoomMenu.h
 	${CMAKE_BINARY_DIR}/client/IngameMenu.h
 	${CMAKE_BINARY_DIR}/client/MainMenu.h
 	${CMAKE_BINARY_DIR}/client/SettingsMenu.h
@@ -212,6 +214,8 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/Menu.cpp
 	${CMAKE_BINARY_DIR}/client/MainMenu.cpp
 	${CMAKE_BINARY_DIR}/client/PlayMenu.cpp
+	${CMAKE_BINARY_DIR}/client/RoomMenu.cpp
+	${CMAKE_BINARY_DIR}/client/JoinRoomMenu.cpp
 	${CMAKE_BINARY_DIR}/client/IngameMenu.cpp
 	${CMAKE_BINARY_DIR}/client/SettingsMenu.cpp
 	${CMAKE_BINARY_DIR}/client/Background.cpp
@@ -238,6 +242,10 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/SetPortButton.cpp
 	${CMAKE_BINARY_DIR}/client/SetNickButton.h
 	${CMAKE_BINARY_DIR}/client/SetNickButton.cpp
+	${CMAKE_BINARY_DIR}/client/CreateRoomButton.h
+	${CMAKE_BINARY_DIR}/client/CreateRoomButton.cpp
+	${CMAKE_BINARY_DIR}/client/JoinRoomButton.h
+	${CMAKE_BINARY_DIR}/client/JoinRoomButton.cpp
 	${CMAKE_BINARY_DIR}/client/SettingsButton.h
 	${CMAKE_BINARY_DIR}/client/SettingsButton.cpp
 	${CMAKE_BINARY_DIR}/client/SettingsParser.cpp

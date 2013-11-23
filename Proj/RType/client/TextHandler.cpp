@@ -42,6 +42,7 @@ TextHandler::TextHandler()
 	this->_assoc[sf::Keyboard::Num9] = '9';
 	this->_assoc[sf::Keyboard::Dash] = '-';
 	this->_assoc[sf::Keyboard::Subtract] = '-';
+	this->_assoc[sf::Keyboard::Space] = ' ';
 }
 
 TextHandler::TextHandler(TextHandler &ref)

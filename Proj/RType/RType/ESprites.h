@@ -1,6 +1,6 @@
 #pragma once
 
-#define NB_SPRITES	(60)
+#define NB_SPRITES	(67)
 
 enum eSprites
 {
@@ -61,6 +61,10 @@ enum eSprites
 	SETT_SRVL_ON,
 	SETT_PORT_ON,
 	BACK_MAIN_ON,
+	CREATE_ROOM,
+	CREATE_ROOM_ON,
+	JOIN_ROOM,
+	JOIN_ROOM_ON,
 	BG_IMG,
 	CREDITS
 };

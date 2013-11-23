@@ -4,13 +4,11 @@
 
 template class ClientCommunication<RoomButton>;
 
-RoomButton::RoomButton(SpriteManager *sprmgr, std::string name, TCPSocketClient *tcpsock, int id, short udpport) //virer dernier param
+RoomButton::RoomButton(SpriteManager *sprmgr, std::string name, TCPSocketClient *tcpsock, int id)
 {
-	this->_udpport = udpport;
 	this->_name = name;
 	this->_roomId = id;
 	this->_tcpsock = tcpsock;
-	//this->_comm.setCallback(Opcodes::startLoading, &RoomButton::handleStartLoading);
 }
 
 void	RoomButton::action(sf::Keyboard::Key, sf::RenderWindow *window, bool *running)
@@ -19,7 +17,7 @@ void	RoomButton::action(sf::Keyboard::Key, sf::RenderWindow *window, bool *runni
 	this->_tcpsock->send(this->_p);
 
 	std::cout << "room button action" << std::endl;
-	GameLoop	loop(window, this->_tcpsock, 1234); //virer dernier param
+	GameLoop	loop(window, this->_tcpsock); //virer dernier param
 
 	*running = false;
 	loop.mainLoop();

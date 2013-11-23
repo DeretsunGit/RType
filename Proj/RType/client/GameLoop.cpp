@@ -7,7 +7,7 @@
 
 template class ClientCommunication<GameLoop>;
 
-GameLoop::GameLoop(sf::RenderWindow *window, TCPSocketClient* tcpsock, short udpport)
+GameLoop::GameLoop(sf::RenderWindow *window, TCPSocketClient* tcpsock)
 {
 	this->_window = window;
 	this->_udpsock = NULL;
@@ -38,7 +38,6 @@ void	GameLoop::drawScreenState(void)
 			this->displaySprite(it->second._posX, it->second._posY, static_cast<eSprites>(it->first));
 			++it;
 		}
-		//std::cout << "--- END SCREEN STATE ---" << std::endl;
 	}
 }
 
