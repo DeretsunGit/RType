@@ -4,7 +4,7 @@
 template<typename T>
 Randomisation<T>::Randomisation()
 {
-  srand(::time(NULL));
+  srand((unsigned)::time(NULL));
 }
 
 template<typename T>
