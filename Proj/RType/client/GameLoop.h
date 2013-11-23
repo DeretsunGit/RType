@@ -5,6 +5,7 @@
 #include "ClientCommunication.hpp"
 #include "UDPSocketClient.h"
 #include "TCPSocketClient.h"
+#include "SettingsParser.h"
 
 #pragma once
 
@@ -18,6 +19,7 @@ class GameLoop
 {
 private:
 	SpriteManager					_spritemgr;
+	SettingsParser					*_set;
 	sf::RenderWindow				*_window;
 	ClientCommunication<GameLoop>	_comm;
 	UDPSocketClient					*_udpsock;
@@ -36,7 +38,7 @@ public:
 	void	handleUDPOkay(void *);
 	void	handleStartLoading(void *);
 	void	handleScreenState(void *);
-	void	defaultCallback(char, IReadableSocket&);
+	void	defaultCallback(unsigned int, IReadableSocket&);
 	void	handleNetwork();
 	void	mainLoop(void);
 	//void	drawWalls(void);

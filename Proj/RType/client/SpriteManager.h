@@ -49,6 +49,7 @@ private:
 	sf::Texture				_bgtexture;
 	sf::Texture				_creditstexture;
 	sf::Texture				_walltexture;
+	sf::Texture				_enemyTexture;
 public:
 	SpriteManager(void);
 	sf::Sprite	getSpritebyId(int);

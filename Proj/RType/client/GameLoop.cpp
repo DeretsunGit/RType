@@ -20,6 +20,7 @@ GameLoop::GameLoop(sf::RenderWindow *window, TCPSocketClient* tcpsock)
 	this->_comm.setCallback(Opcodes::startLoading, &GameLoop::handleStartLoading);
 	this->_comm.TCPsetReady(this->_p);
 	this->_tcpsock->send(this->_p);
+	this->_set = new SettingsParser("assets/settings.ini");
 }
 
 GameLoop::~GameLoop(void)
@@ -36,6 +37,7 @@ void	GameLoop::drawScreenState(void)
 	{
 		while (it != end)
 		{
+			std::cout << "id sprite : " << static_cast<eSprites>(it->first) << " pakasté : " << it->first << std::endl;
 			this->displaySprite(it->second._posX, it->second._posY, static_cast<eSprites>(it->first));
 			++it;
 		}
@@ -56,16 +58,12 @@ void	GameLoop::handleStartLoading(void *data)
 	s_start_loading*	loader(static_cast<s_start_loading*>(data));
 
 	std::cout << loader->udp << std::endl;
-	this->_udpsock = new UDPSocketClient("127.0.0.1", loader->udp);
-	this->_comm.UDPReady(this->_p, "ledp");
+	this->_udpsock = new UDPSocketClient(this->_set->getServer().c_str(), loader->udp);
+	this->_comm.UDPReady(this->_p, this->_set->getNick().c_str());
 	this->_udpsock->send(this->_p);
 }
 
-void			GameLoop::defaultCallback(char opcode, IReadableSocket& sock)
-
-
-
-
+void			GameLoop::defaultCallback(unsigned int opcode, IReadableSocket& sock)
 {
 	//std::cout << "default callbak opcode :" << (int)opcode << std::endl;
 }
@@ -106,6 +104,7 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 					this->openBackMenu(running);
 					break;
 				case sf::Keyboard::Up:
+					std::cout << "upe" << std::endl;
 					this->_input.y = 2;
 					break;
 				case sf::Keyboard::Right:
@@ -185,7 +184,6 @@ void	GameLoop::mainLoop(void)
 		this->sendMovement();
 		if (running)
 		{
-			
 			bg.moveBackground();
 			this->_window->draw(bg.getSprite());
 			this->drawScreenState();
@@ -193,6 +191,6 @@ void	GameLoop::mainLoop(void)
 			this->_window->display();
 		}
 		execTime = loopTimer.getTimeBySec();
-		Sleep((unsigned long)(GAMELOOPTIME - execTime));
+		Sleep((unsigned long)(GAMELOOPTIME - execTime + 1));
     }
 }

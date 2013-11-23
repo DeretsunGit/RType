@@ -25,6 +25,10 @@ SpriteManager::SpriteManager(void)
 	{
 		std::cerr << "Error opening texture file" << std::endl;
 	}
+	if (!this->_enemyTexture.loadFromFile("assets/enemy.gif"))
+	{
+		std::cerr << "Error opening texture file" << std::endl;
+	}
 	this->_sprites.resize(NB_SPRITES);
 	for (int i = SHIP_BLUE_IDLE ; i <= SHIP_BLUE_UPMAX ; i++)
 	{
@@ -33,6 +37,10 @@ SpriteManager::SpriteManager(void)
 	for (int i = GAME_LOGO ; i <= JOIN_ROOM_ON ; i++)
 	{
 		this->_sprites[i].setTexture(this->_menutexture);
+	}
+	for (int i = ENEMY_RED_1 ; i <= ENEMY_RED_8 ; i++)
+	{
+		this->_sprites[i].setTexture(this->_enemyTexture);
 	}
 	this->_sprites[WALL_DOWN].setTexture(this->_walltexture);
 	this->_sprites[WALL_UP].setTexture(this->_walltexture);
@@ -73,6 +81,14 @@ SpriteManager::SpriteManager(void)
 	this->_sprites[SETT_PORT_ON].setTextureRect(sf::IntRect(480, 675, 450, 54));
 	this->_sprites[CREATE_ROOM_ON].setTextureRect(sf::IntRect(480, 730, 450, 54));
 	this->_sprites[JOIN_ROOM_ON].setTextureRect(sf::IntRect(480, 790, 450, 54));
+	this->_sprites[ENEMY_RED_1].setTextureRect(sf::IntRect(2, 3, 25, 30));
+	this->_sprites[ENEMY_RED_2].setTextureRect(sf::IntRect(35, 3, 25, 30));
+	this->_sprites[ENEMY_RED_3].setTextureRect(sf::IntRect(70, 3, 25, 30));
+	this->_sprites[ENEMY_RED_4].setTextureRect(sf::IntRect(95, 3, 25, 30));
+	this->_sprites[ENEMY_RED_5].setTextureRect(sf::IntRect(120, 3, 25, 30));
+	this->_sprites[ENEMY_RED_6].setTextureRect(sf::IntRect(145, 3, 25, 30));
+	this->_sprites[ENEMY_RED_7].setTextureRect(sf::IntRect(170, 3, 25, 30));
+	this->_sprites[ENEMY_RED_8].setTextureRect(sf::IntRect(195, 3, 25, 30));
 }
 
 SpriteManager::~SpriteManager(void)

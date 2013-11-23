@@ -13,7 +13,7 @@ public:
 	virtual void					childAction();
 	void							parseRoomList(void *);
 	//void							handleStartLoading(void *);
-	void							defaultCallback(char, IReadableSocket &);
+	void							defaultCallback(unsigned int, IReadableSocket &);
 	~RoomMenu(void);
 };
 

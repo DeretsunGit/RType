@@ -1,5 +1,7 @@
 #pragma once
 #include "Menu.h"
+#include "SettingsParser.h"
+
 class PlayMenu :
 	public Menu
 {
@@ -8,12 +10,13 @@ private:
 	TCPSocketClient					*_tcpsock;
 	bool							_tcp_success;
 	short							_udpport;
+	SettingsParser					*_set;
 public:
 	PlayMenu(sf::RenderWindow *, SpriteManager *);
 	virtual void					childAction();
 	void							parseRoomList(void *);
 	//void							handleStartLoading(void *);
-	void							defaultCallback(char, IReadableSocket &);
+	void							defaultCallback(unsigned int, IReadableSocket &);
 	~PlayMenu(void);
 };
 

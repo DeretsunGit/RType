@@ -4,6 +4,8 @@
 #include "ClientCommunication.cpp"
 #include "CreateRoomButton.h"
 #include "JoinRoomButton.h"
+#include <sstream>
+
 
 template class ClientCommunication<PlayMenu>;
 
@@ -11,7 +13,9 @@ PlayMenu::PlayMenu(sf::RenderWindow *window, SpriteManager *spritemgr) : Menu(wi
 {
 	Packet			p;
 	unsigned short	res[2] = {1600, 900};
+
 	
+	this->_set = new SettingsParser("assets/settings.ini");
 	this->_tcp_success = true;
 	this->_size = 0;
 	this->_buttons.resize(this->_size);
@@ -22,7 +26,10 @@ PlayMenu::PlayMenu(sf::RenderWindow *window, SpriteManager *spritemgr) : Menu(wi
 	this->_comm.setDefaultCallback(&PlayMenu::defaultCallback);
 	try
 	{
-		this->_tcpsock = new TCPSocketClient("127.0.0.1", 1234);
+		std::istringstream buffer(this->_set->getPort());
+		short port;
+		buffer >> port;
+		this->_tcpsock = new TCPSocketClient(this->_set->getServer().c_str(), port);
 	}
 	catch (SystemException &e)
 	{
@@ -32,12 +39,12 @@ PlayMenu::PlayMenu(sf::RenderWindow *window, SpriteManager *spritemgr) : Menu(wi
 	}
 	if (this->_tcp_success)
 	{
-		this->_comm.TCPsayHello(p, "ledp", res);
+		this->_comm.TCPsayHello(p, this->_set->getNick().c_str(), res);
 		this->_tcpsock->send(p);
 	}
 }
 
-void			PlayMenu::defaultCallback(char opcode, IReadableSocket& sock)
+void			PlayMenu::defaultCallback(unsigned int opcode, IReadableSocket& sock)
 {
 	//std::cout << "default callbak opcode :" << (int)opcode << std::endl;
 }
