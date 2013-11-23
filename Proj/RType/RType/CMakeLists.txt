@@ -160,12 +160,10 @@ add_executable (Server
 	Player.cpp
 	Client.h
 	Player.h
-	Clock.cpp
 	Vector2.hpp
-	Clock.h
-	Wave.cpp
+	Clock.hpp
 	RTypeServer.cpp
-	Wave.h
+	Wave.hpp
 	RTypeServer.h
 	Element.cpp
 	Room.cpp
@@ -255,8 +253,7 @@ add_executable (Client
 	${CMAKE_BINARY_DIR}/client/TextHandler.h
 	${CMAKE_BINARY_DIR}/client/TextHandler.cpp
 	ESprites.h
-	Clock.cpp
-	Clock.h
+	Clock.hpp
 	)
 
 add_executable (DebugClient

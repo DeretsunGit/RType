@@ -6,7 +6,7 @@
 #include <iterator>
 #include <algorithm>
 #include "rtype_common.h"
-#include "Wave.h"
+#include "Wave.hpp"
 #include "Script.h"
 #include "Randomisation.h"
 
