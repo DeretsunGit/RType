@@ -36,7 +36,6 @@ RoomMenu::RoomMenu(sf::RenderWindow *window, SpriteManager *spritemgr) : Menu(wi
 		this->_comm.TCPsayHello(p, "ledp", res);
 		this->_tcpsock->send(p);
 	}
-	std::cout << "psyduk" << std::endl;
 }
 
 void			RoomMenu::defaultCallback(unsigned int, IReadableSocket& sock)

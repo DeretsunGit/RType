@@ -5,30 +5,13 @@
 SpriteManager::SpriteManager(void)
 {
 	//segfault, faire une gestion derreur un peu moins inexistante
-	if (!this->_shiptexture.loadFromFile("assets/ship.gif"))
-	{
+	if (!this->_shiptexture.loadFromFile("assets/ship.gif") ||
+		!this->_menutexture.loadFromFile("assets/menu.png") ||
+		!this->_bgtexture.loadFromFile("assets/bg.png")		||
+		!this->_creditstexture.loadFromFile("assets/credits.png") ||
+		!this->_walltexture.loadFromFile("assets/mur.png")	||
+		!this->_enemyTexture.loadFromFile("assets/enemy.gif"))
 		std::cerr << "Error opening texture file" << std::endl;
-	}
-	if (!this->_menutexture.loadFromFile("assets/menu.png"))
-	{
-		std::cerr << "Error opening texture file" << std::endl;
-	}
-	if (!this->_bgtexture.loadFromFile("assets/bg.png"))
-	{
-		std::cerr << "Error opening texture file" << std::endl;
-	}
-	if (!this->_creditstexture.loadFromFile("assets/credits.png"))
-	{
-		std::cerr << "Error opening texture file" << std::endl;
-	}
-	if (!this->_walltexture.loadFromFile("assets/mur.png"))
-	{
-		std::cerr << "Error opening texture file" << std::endl;
-	}
-	if (!this->_enemyTexture.loadFromFile("assets/enemy.gif"))
-	{
-		std::cerr << "Error opening texture file" << std::endl;
-	}
 	this->_sprites.resize(NB_SPRITES);
 	for (int i = SHIP_BLUE_IDLE ; i <= SHIP_BLUE_UPMAX ; i++)
 	{

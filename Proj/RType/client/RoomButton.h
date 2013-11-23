@@ -8,6 +8,8 @@
 class RoomButton :
 	public Button
 {
+	sf::Font						_font;
+	sf::Text						_text;
 	std::string						_name;
 	short							_udpport;
 	int								_roomId;

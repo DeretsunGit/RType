@@ -9,39 +9,38 @@ RoomButton::RoomButton(SpriteManager *sprmgr, std::string name, TCPSocketClient 
 	this->_name = name;
 	this->_roomId = id;
 	this->_tcpsock = tcpsock;
+	if (!_font.loadFromFile("assets/arial.ttf"))
+	{
+		std::cerr << "Error loading font" << std::endl;
+	}
+	_text.setFont(_font);
+	_text.setString(this->_name);
+	_text.setCharacterSize(30);
 }
 
 void	RoomButton::action(sf::Keyboard::Key, sf::RenderWindow *window, bool *running)
 {
-	this->_comm.TCPsetRoom(this->_p, "jougiere");
+	GameLoop	loop(window, this->_tcpsock);
+	this->_comm.TCPselectRoom(this->_p, this->_roomId);
 	this->_tcpsock->send(this->_p);
 
-	std::cout << "room button action" << std::endl;
-	GameLoop	loop(window, this->_tcpsock); //virer dernier param
-
+	while (loop.getUdpState() == LOADING);
 	*running = false;
-	loop.mainLoop();
+	if (loop.getUdpState() == SUCCESS)
+		loop.mainLoop();
+	else
+		return;
 }
 
 void	RoomButton::displayButton(unsigned int pos, unsigned int max, sf::RenderWindow *window)
 {
-	sf::Font font;
-	sf::Text text;
-	if (!font.loadFromFile("assets/arial.ttf"))
-	{
-	}
-	text.setFont(font);
-	text.setString(this->_name);
-	text.setCharacterSize(30);
 	if (this->_highlight)
-		text.setColor(sf::Color::Magenta);
+		_text.setColor(sf::Color::Magenta);
 	else
-		text.setColor(sf::Color::Cyan);
-	text.setPosition(static_cast<float>(SIZEX / 2) - text.getGlobalBounds().width,
+		_text.setColor(sf::Color::Cyan);
+	_text.setPosition(static_cast<float>(SIZEX / 2) - _text.getGlobalBounds().width,
 		250 + static_cast<float>(pos) * ((SIZEY - 250) / static_cast<float>(max)));
-	window->draw(text);
-
-	//temp
+	window->draw(_text);
 }
 
 

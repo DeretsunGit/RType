@@ -9,10 +9,11 @@
 
 #pragma once
 
-enum eSocketType
+enum eUdpState
 {
-	TCP,
-	UDP
+	LOADING,
+	SUCCESS,
+	FAILURE
 };
 
 class GameLoop
@@ -24,27 +25,27 @@ private:
 	ClientCommunication<GameLoop>	_comm;
 	UDPSocketClient					*_udpsock;
 	TCPSocketClient					*_tcpsock;
-	//eSocketType						_socktype;
 	Packet							_p;
 	s_screen_state					_screenstate;
 	s_inputs						_input;
+	eUdpState						_udpState;
 	
 public:
 	GameLoop(sf::RenderWindow*, TCPSocketClient*);
-	void	manageEvent(bool *, PlayerShip *);
-	void	openBackMenu(bool *);
-	void	drawBackground(void);
-	void	displaySprite(short, short, eSprites);
-	void	handleUDPOkay(void *);
-	void	handleStartLoading(void *);
-	void	handleScreenState(void *);
-	void	defaultCallback(unsigned int, IReadableSocket&);
-	void	handleNetwork();
-	void	mainLoop(void);
-	//void	drawWalls(void);
-	void	initNetwork(void);
-	void	drawScreenState(void);
-	void	sendMovement(void);
+	void		manageEvent(bool *, PlayerShip *);
+	void		openBackMenu(bool *);
+	void		drawBackground(void);
+	void		displaySprite(short, short, eSprites);
+	void		handleUDPOkay(void *);
+	void		handleStartLoading(void *);
+	void		handleScreenState(void *);
+	void		defaultCallback(unsigned int, IReadableSocket&);
+	void		handleNetwork();
+	void		mainLoop(void);
+	void		initNetwork(void);
+	void		drawScreenState(void);
+	void		sendMovement(void);
+	eUdpState	getUdpState(void) const;
 	~GameLoop(void);
 };
 

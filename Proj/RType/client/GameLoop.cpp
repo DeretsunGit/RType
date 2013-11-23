@@ -5,11 +5,13 @@
 #include "Clock.h"
 #include "ClientCommunication.cpp"
 #include "rtype_common.h"
+#include "SystemException.h"
 
 template class ClientCommunication<GameLoop>;
 
 GameLoop::GameLoop(sf::RenderWindow *window, TCPSocketClient* tcpsock)
 {
+	this->_udpState = LOADING;
 	this->_window = window;
 	this->_udpsock = NULL;
 	this->_tcpsock = tcpsock;
@@ -53,12 +55,27 @@ void	GameLoop::handleScreenState(void *data)
 	this->_screenstate = *state;
 }
 
+eUdpState	GameLoop::getUdpState(void) const
+{
+	return this->_udpState;
+}
+
 void	GameLoop::handleStartLoading(void *data)
 {
 	s_start_loading*	loader(static_cast<s_start_loading*>(data));
 
 	std::cout << loader->udp << std::endl;
-	this->_udpsock = new UDPSocketClient(this->_set->getServer().c_str(), loader->udp);
+	try
+	{
+		this->_udpsock = new UDPSocketClient(this->_set->getServer().c_str(), loader->udp);
+	}
+	catch (SystemException &e)
+	{
+		std::cerr << e.what() << std::endl;
+		this->_udpState = FAILURE;
+		return;
+	}
+	this->_udpState = SUCCESS;
 	this->_comm.UDPReady(this->_p, this->_set->getNick().c_str());
 	this->_udpsock->send(this->_p);
 }
@@ -141,14 +158,6 @@ void	GameLoop::displaySprite(short x, short y, eSprites id)
 
 }
 
-//void	GameLoop::handleNetwork()
-//{
-//	if (this->_socktype == UDP)
-//		this->_comm.interpretCommand(*this->_udpsock);
-//	else
-//		this->_comm.interpretCommand(*this->_tcpsock);
-//}
-
 void	GameLoop::initNetwork(void)
 {
 	while (this->_udpsock == NULL)
@@ -187,7 +196,6 @@ void	GameLoop::mainLoop(void)
 			bg.moveBackground();
 			this->_window->draw(bg.getSprite());
 			this->drawScreenState();
-			//this->_window->draw(ship.getSprite());
 			this->_window->display();
 		}
 		execTime = loopTimer.getTimeBySec();

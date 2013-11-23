@@ -33,15 +33,20 @@ PlayMenu::PlayMenu(sf::RenderWindow *window, SpriteManager *spritemgr) : Menu(wi
 	}
 	catch (SystemException &e)
 	{
-		std::cout << e.what() << std::endl;
-		static_cast<void>(e);
+		std::cerr << e.what() << std::endl;
 		this->_tcp_success = false;
+
 	}
 	if (this->_tcp_success)
 	{
 		this->_comm.TCPsayHello(p, this->_set->getNick().c_str(), res);
 		this->_tcpsock->send(p);
 	}
+}
+
+bool			PlayMenu::getTcpSuccess(void) const
+{
+	return this->_tcp_success;
 }
 
 void			PlayMenu::defaultCallback(unsigned int opcode, IReadableSocket& sock)
