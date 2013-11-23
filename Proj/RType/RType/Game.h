@@ -23,7 +23,7 @@ private:
 	const std::vector<Player*>&	_players;
 	std::list<Wave>			_livingThings;
 	//std::list<Clock &>		_waveTime;
-	
+	Movement					_move;
 
 	// maps
 	Script					*_script;
@@ -45,7 +45,7 @@ public:
 //ServerCommunication
 	void	inputs(void *);
 	void	pauseOk(void *);
-	void	callBackError(char, IReadableSocket&);
+	void	callBackError(unsigned int, IReadableSocket&);
 	void	sendError(char, const char *);
 
 	void	genPool();
