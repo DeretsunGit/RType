@@ -37,7 +37,7 @@ void	GameLoop::drawScreenState(void)
 	{
 		while (it != end)
 		{
-			std::cout << "id sprite : " << static_cast<eSprites>(it->first) << " pakasté : " << it->first << std::endl;
+			//std::cout << "id sprite : " << static_cast<eSprites>(it->first) << " pakasté : " << it->first << std::endl;
 			this->displaySprite(it->second._posX, it->second._posY, static_cast<eSprites>(it->first));
 			++it;
 		}
