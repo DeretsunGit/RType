@@ -143,7 +143,8 @@ void	Element::setSendPriority(char newPriority)
 
 void	Element::setPos(const t_coord *newCoord)
 {
-	this->_pos = *newCoord;
+	this->_pos._posX = newCoord->_posX;
+	this->_pos._posY = newCoord->_posY;
 }
 
 void		Element::setColor(char color)

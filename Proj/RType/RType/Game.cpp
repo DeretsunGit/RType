@@ -15,6 +15,9 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 	this->_globalPos = 17;
 	this->genPool();
 
+	std::cout << (this->_players[0])->getPos()._posX << "/" << (this->_players[0])->getPos()._posY << std::endl;
+
+
 	std::cout << "Pools fully created" << std::endl;
 	this->mapGeneration();
 	std::cout << "Map generation finished !" << std::endl;
@@ -35,10 +38,8 @@ void	Game::inputs(void *data)
 	s_recv_inputs	*dataStruct = reinterpret_cast<s_recv_inputs *>(data);;
 	short		i = 0;
 
-	std::cout << "KAKOUK"<< std::endl;
 	while (i < this->_players.size())
 	{
-	std::cout << this->_players[i]->getClient()->getInaddr() << std::endl;
 		if (dataStruct->from == this->_players[i]->getClient()->getInaddr())
 		{
 			this->_move.genericMove(PlayerMove, this->_players[i], dataStruct->in.x, dataStruct->in.y);
@@ -232,7 +233,9 @@ void	Game::sendPriority()
 
 	while (i < this->_players.size())
 	{
-		elemToSend.push_back(this->_players[i]);
+/*	std::cout << "Player : x->" << this->_players[i]->getPos()._posX << ", y->"<<
+			this->_players[i]->getPos()._posY << std::endl;
+	*/	elemToSend.push_back(this->_players[i]);
 		i++;
 	}
 	//std::cout << "Sended " << i << "Players" << std::endl;

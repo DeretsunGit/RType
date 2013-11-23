@@ -11,6 +11,7 @@ Player::Player(Client* c, int id)
 	this->_alive =		true;
 	this->_isShooting = false;
 	this->_shield =		LIGHT;
+	this->setSpeed(8);
 
 	temp._posX = 50;
 	temp._posY = 30;
@@ -22,6 +23,7 @@ Player::Player(Client* c, int id)
 	this->setHP(	3);
 	this->setId(id);
 	this->addSprite(SHIP_BLUE_IDLE);
+	std::cout << this->getPos()._posX << "/" << this->getPos()._posY << std::endl;
 }
 
 bool	Player::getIsShooting() const
