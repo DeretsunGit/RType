@@ -4,10 +4,10 @@
 #include <list>
 #include <iterator>
 //#include "rtype_common.h"
-#include "Clock.h"
+#include "Clock.hpp"
 #include "Script.h"
-#include "Movement.h"
-#include "Wave.h"
+//#include "Movement.h"
+#include "Wave.hpp"
 #include "Wall.h"
 #include "Bullet.h"
 #include "Ennemy.h"
@@ -23,7 +23,7 @@ private:
 	const std::vector<Player*>&	_players;
 	std::list<Wave>			_livingThings;
 	//std::list<Clock &>		_waveTime;
-	Movement					_move;
+	//Movement					_move;
 
 	// maps
 	Script					*_script;

@@ -54,11 +54,16 @@ struct s_udp_ready
 
 struct s_inputs
 {
-  u_long	  from;
   unsigned short  x;
   unsigned short  y;
   char		  fire;
   char		  shield;
+};
+
+struct s_recv_inputs
+{
+	u_long from;
+	s_inputs in;
 };
 /* END OF BLOCK STRUCTURES DEFINITION */
 
@@ -122,10 +127,13 @@ public:
 		{
 		socket.recv(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
 		opcode = ntohl(opcode);
-			if ((ite = _commandMap.find(opcode)) != _commandMap.end())
+			if (_handler && (ite = _commandMap.find(opcode)) != _commandMap.end())
 			{
 				if ((this->*(ite->second))(socket) == false)
+				{
+					opcode = htonl(opcode);
 					socket.putback(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+				}
 			}
 			else if (_handler != NULL && _defaultCallback != NULL)
 				(this->_handler->*_defaultCallback)(opcode, socket);

@@ -579,7 +579,7 @@ bool ServerCommunication<T>::UDPinputs(IReadableSocket& socket)
 {
   unsigned short datasize;
   unsigned int readsize;
-  s_inputs in;
+  s_recv_inputs in;
 
   if (socket.readable())
     {
@@ -588,9 +588,9 @@ bool ServerCommunication<T>::UDPinputs(IReadableSocket& socket)
 	  socket.putback(reinterpret_cast<char*>(&datasize), readsize);
 	  return false;
 	}
-      if ((readsize = socket.recv(reinterpret_cast<char*>(&in), sizeof(in))) != sizeof(in))
+	  if ((readsize = socket.recv(reinterpret_cast<char*>(&in.in), sizeof(in.in))) != sizeof(in.in))
 	{
-	  socket.putback(reinterpret_cast<char*>(&in), readsize);
+		socket.putback(reinterpret_cast<char*>(&in.in), readsize);
 	  socket.putback(reinterpret_cast<char*>(&datasize), 2);
 	  return false;
 	}

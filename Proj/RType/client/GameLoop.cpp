@@ -180,8 +180,8 @@ void	GameLoop::mainLoop(void)
 		this->_window->clear();
 		loopTimer.initialise();
 		this->handleNetwork();
-        this->manageEvent(&running, &ship);
-		this->sendMovement();
+        //this->manageEvent(&running, &ship);
+		//this->sendMovement();
 		if (running)
 		{
 			bg.moveBackground();
@@ -191,6 +191,6 @@ void	GameLoop::mainLoop(void)
 			this->_window->display();
 		}
 		execTime = loopTimer.getTimeBySec();
-		Sleep((unsigned long)(GAMELOOPTIME - execTime + 1));
+		Sleep((unsigned long)(GAMELOOPTIME - execTime));
     }
 }
