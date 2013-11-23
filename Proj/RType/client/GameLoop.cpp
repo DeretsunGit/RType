@@ -4,6 +4,7 @@
 #include "IngameMenu.h"
 #include "Clock.h"
 #include "ClientCommunication.cpp"
+#include "rtype_common.h"
 
 template class ClientCommunication<GameLoop>;
 
@@ -87,6 +88,10 @@ void	GameLoop::openBackMenu(bool *running)
 void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 {
 	sf::Event event;
+	this->_input.fire = 0;
+	this->_input.shield = LIGHT;
+	this->_input.x = 0;
+	this->_input.y = 0;
     while (this->_window->pollEvent(event))
     {
 		switch (event.type)
@@ -94,28 +99,38 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 			case sf::Event::Closed:
 				this->_window->close();
 				break;
+			case sf::Event::KeyPressed:
+				switch (event.key.code)
+				{
+				case sf::Keyboard::Escape:
+					this->openBackMenu(running);
+					break;
+				case sf::Keyboard::Up:
+					this->_input.y = 2;
+					break;
+				case sf::Keyboard::Right:
+					this->_input.x = 1;
+					break;
+				case sf::Keyboard::Left:
+					this->_input.x = 2;
+					break;
+				case sf::Keyboard::Down:
+					this->_input.y = 1;
+					break;
+				}
+				break;
 		}
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
 		this->openBackMenu(running);
 	}
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	//{
-	//	player->setPosY(player->getPosY() + 1);
-	//}
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	//{
-	//	player->setPosY(player->getPosY() - 1);
-	//}
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	//{
-	//	player->setPosX(player->getPosX() - 1);
-	//}
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	//{
-	//	player->setPosX(player->getPosX() + 1);
-	//}
+}
+
+void	GameLoop::sendMovement()
+{
+	this->_comm.UDPinputs(this->_p, this->_input);
+	this->_udpsock->send(this->_p);
 }
 
 void	GameLoop::displaySprite(short x, short y, eSprites id)
@@ -167,6 +182,7 @@ void	GameLoop::mainLoop(void)
 		loopTimer.initialise();
 		this->handleNetwork();
         this->manageEvent(&running, &ship);
+		this->sendMovement();
 		if (running)
 		{
 			
