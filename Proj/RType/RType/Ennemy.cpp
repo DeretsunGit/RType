@@ -13,24 +13,21 @@ Ennemy::~Ennemy(void)
 {
 }
 
-void Ennemy::setBullet(std::list<Bullet*> &bullets)
+void Ennemy::setBullet(std::list<Bullet*> &bullets, t_bullet &bullet)
 {
 	std::list<Bullet*>::iterator	it;
-	t_coord							hitBoxSize;
 
 	for (it = bullets.begin(); ((it != bullets.end()) || (*it)->getHP() == 0); ++it) {}
 	if ((*it)->getHP() == 0)
 	{
-		(*it)->setHP(1);
+		(*it)->setHP(bullet.hp);
 		(*it)->setPos(&(this->getPos()));
 		(*it)->setFaction(ENNEMY);
-		(*it)->setSpeed(2);
+		(*it)->setSpeed(bullet.speed);
 		(*it)->setSide(this->getSide());
 		(*it)->setSprite(std::list<eSprites>(BULLETS_AI));
 		(*it)->setIdWave(this->_idWave);
-		hitBoxSize._posX = 5;
-		hitBoxSize._posY = 5;
-		(*it)->setHitboxSize(&hitBoxSize);
+		(*it)->setHitboxSize(&bullet.hitBoxSize);
 	}
 }
 

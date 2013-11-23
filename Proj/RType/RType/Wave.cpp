@@ -6,12 +6,24 @@ template class Randomisation<bool>;
 Wave::Wave(int id, std::list<float> &timePopWave)
 : _id(id), _timePopWave(timePopWave)
 {
-	this->_pos._posX = 1650;
-	this->_pos._posY = 450;
-	this->_nbEnnemies = 10;
-	this->_popInterval = 1;
-	this->_fireInterval = 1;
+	this->_pos._posX =					1650;
+	this->_pos._posY =					450;
+	this->_nbEnnemies =					10;
+	this->_popInterval =				1;
+	this->_fireInterval =				1;
 	this->_live = false;
+
+	this->_ennemy.hitBoxSize._posX =	10;
+	this->_ennemy.hitBoxSize._posY =	10;
+	this->_ennemy.firstSprite =			ENEMY_RED_1;
+	this->_ennemy.nbSprites =			8;
+	this->_ennemy.hp =					1;
+	this->_ennemy.speed =				1;
+
+	this->_bullet.hitBoxSize._posX =	5;
+	this->_bullet.hitBoxSize._posY =	5;
+	this->_bullet.hp =					1;
+	this->_bullet.speed =				2;
 }
 
 Wave::~Wave()
@@ -78,21 +90,18 @@ void	Wave::popEnnemy(std::list<Ennemy*> &ennemies)
 {
 	std::list<Ennemy*>::iterator	it;
 	Randomisation<bool>				rand;
-	t_coord							hitBoxSize;
 
 	for (it = ennemies.begin(); ((it != ennemies.end()) && ((*it)->getHP() == 0)); ++it) {}
 	if ((*it)->getHP() == 0)
 	{
-		(*it)->setHP(1);
+		(*it)->setHP(this->_ennemy.hp);
 		(*it)->setPos(&this->_pos);
 		(*it)->setFaction(ENNEMY);
-		(*it)->setSpeed(1);
+		(*it)->setSpeed(this->_ennemy.speed);
 		(*it)->setSide(rand.tRand(1));
-		(*it)->setSprite(this->fillSpriteEnemy(ENEMY_RED_1, 8));
+		(*it)->setSprite(this->fillSpriteEnemy(this->_ennemy.firstSprite, this->_ennemy.nbSprites));
 		(*it)->setIdWave(this->_id);
-		hitBoxSize._posX = 10;
-		hitBoxSize._posY = 10;
-		(*it)->setHitboxSize(&hitBoxSize);
+		(*it)->setHitboxSize(&this->_ennemy.hitBoxSize);
 	}
 }
 
@@ -129,7 +138,7 @@ void	Wave::shoot(std::list<Ennemy*> &ennemies, std::list<Bullet*> &bullets)
 	for (it = ennemies.begin(); it != ennemies.end(); ++it)
 	{
 		if (((*it)->getIdWave() == this->_id) && ((*it)->getHP() > 0))
-			(*it)->setBullet(bullets);
+			(*it)->setBullet(bullets, this->_bullet);
 	}
 }
 
