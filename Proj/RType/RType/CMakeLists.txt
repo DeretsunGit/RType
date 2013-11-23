@@ -133,6 +133,12 @@ add_library(Abstract
 	UnixUDPSocketClient.h
 	UnixUDPSocketServer.cpp
 	UnixUDPSocketServer.h
+	File.cpp
+	File.h
+	FileManager.cpp
+	FileManager.h
+	IFile.h
+	Path.hpp
 	)
 
 add_executable (Server
