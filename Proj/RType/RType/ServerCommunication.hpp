@@ -116,16 +116,16 @@ public:
 
 	void interpretCommand(IReadableSocket& socket)
 	{
-		typename std::map<char, bool (ServerCommunication::*)(IReadableSocket&) >::const_iterator ite;
+		typename std::map<unsigned int, bool (ServerCommunication::*)(IReadableSocket&) >::const_iterator ite;
 		unsigned int opcode ;
 		if (socket.readable())
 		{
-		socket.recv(&opcode, sizeof(unsigned int));
+		socket.recv(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
 		opcode = ntohl(opcode);
 			if ((ite = _commandMap.find(opcode)) != _commandMap.end())
 			{
 				if ((this->*(ite->second))(socket) == false)
-					socket.putback(&opcode, sizeof(unsigned int));
+					socket.putback(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
 			}
 			else if (_handler != NULL && _defaultCallback != NULL)
 				(this->_handler->*_defaultCallback)(opcode, socket);

@@ -5,6 +5,11 @@ Movement::Movement()
 
 }
 
+Movement::~Movement()
+{
+
+}
+
 void	Movement::genericMove(MoveTypes mt, Element *elem, short int mult = 1, short int y = 0)
 {
 	if (mt = PlayerMove)
@@ -14,13 +19,13 @@ void	Movement::genericMove(MoveTypes mt, Element *elem, short int mult = 1, shor
 	else
 	{
 		std::cout << "This Movement is not yet implemented" << std::endl;
+		return;
 	}
-//	elem->setCells();
+	elem->checkCell();
 }
 
 void Movement::linearMove(Element *elem, short int mult)
 {
-	t_coord temp;
 	this->_temp._posX = (elem->getPos()._posX - elem->getSpeed() * mult);
 	this->_temp._posY = elem->getPos()._posY;
 	elem->setPos(&(this->_temp));
@@ -29,6 +34,7 @@ void Movement::linearMove(Element *elem, short int mult)
 void Movement::playerMove(Element *elem, short int x, short int y)
 {
 // 0->rien 2->haut/arriere 1->bas/avant
+	std::cout << "//////////////////////////" << std::endl;
 	if (x == 1)
 		this->_temp._posX = (elem->getPos()._posX + elem->getSpeed());
 	else if (x == 2)

@@ -26,7 +26,7 @@ RTypeServer::~RTypeServer()
 	// quitter tous les clients proprement
 }
 
-void		RTypeServer::callBackError(char opcode, IReadableSocket& clientSock)
+void		RTypeServer::callBackError(unsigned int opcode, IReadableSocket& clientSock)
 {
 	// faire un fichier qui resume les opcodes d'erreur
 	std::cout << "Impossible Action : -"<<//0x" << std::hex <<

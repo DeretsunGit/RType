@@ -49,7 +49,7 @@ void	Element::checkCell()
 {
 	t_coord		temp;
 
-	this->_isToUp + false;
+	this->_isToUp = false;
 	temp._posX = this->_pos._posX / 100;
 	temp._posY = this->_pos._posY / 50;
 	// si il ya changement de case

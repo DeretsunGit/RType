@@ -37,7 +37,7 @@ public:
 	void	setRoom(void *);//(Client *, char*);
 	void	selectRoom(void *);//(Client *, int);
 	void	leaveRoom(void *);//(Client *);
-	void	callBackError(char, IReadableSocket&);
+	void	callBackError(unsigned int, IReadableSocket&);
 
 	//Send Gestion
 	void	sendRoomList();

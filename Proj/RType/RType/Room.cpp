@@ -34,11 +34,11 @@ Room::~Room(void)
 {
 }
 
-void	Room::callBackError(char opcode, IReadableSocket& client)
+void	Room::callBackError(unsigned int opcode, IReadableSocket& client)
 {
 	// faire un fichier qui resume les opcodes d'erreur
-	std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;
-	std::cout << " can't be done while _isWaiting = true" << std::endl;
+	/*std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;
+	std::cout << " can't be done while _isWaiting = true" << std::endl;*/
 	this->sendError(61, "You can't perform this action by now.");
 }
 

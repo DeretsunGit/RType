@@ -22,10 +22,11 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 	this->gameLoop();
 }
 
-void	Game::callBackError(char opcode, IReadableSocket&)
+void	Game::callBackError(unsigned int opcode, IReadableSocket&)
 {
-		std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;
-	std::cout << " can't be done while Game is already lauched" << std::endl;
+	std::cout << "Callbackerror, opcode :"<< opcode << std::endl; 
+	/*	std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;
+	std::cout << " can't be done while Game is already lauched" << std::endl;*/
 	this->sendError(61, "You can't perform this action by now.");
 }
 
@@ -34,14 +35,16 @@ void	Game::inputs(void *data)
 	s_inputs	*dataStruct = reinterpret_cast<s_inputs *>(data);;
 	short		i = 0;
 
-	while (i <= this->_players.size())
+	while (i < this->_players.size())
 	{
+	std::cout << this->_players[i]->getClient()->getInaddr() << std::endl;
 		if (dataStruct->from == this->_players[i]->getClient()->getInaddr())
 		{
-			//this->_players[i]->move(dataStruct->x, dataStruct->y);
+			this->_move.genericMove(PlayerMove, this->_players[i], dataStruct->x, dataStruct->y);
 			//this->_players[i]->setshoot(dataStruct->fire);
 			//this->_players[i]->setSide(dataStruct->shield);
 		}
+		i++;
 	}
 }
 
@@ -143,16 +146,22 @@ void	Game::gameLoop()
 {
 	Clock	loopTimer;
 	float	execTime;
+	unsigned int i;
 
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
 	//	std::cout << "loop" << std::endl;
 		loopTimer.initialise();
-		//this->getInputs();
-		// concerne uniquement les joueurs
+		i = 0;
+		while (i < this->_players.size())
+		{
+			this->_GameCom.interpretCommand(*this->_udpSock);
+			i ++;
+		}
+		std::cout << "interpret ok " << std::endl;
 		this->moveWall();
-		this->collision();
+//		this->collision();
 		// (pop de Wave)
 		//syncMap();
 		this->sendPriority();
@@ -221,39 +230,22 @@ void	Game::sendPriority()
 	std::list<Wall*>::iterator		it_wall;
 	int								i = 0;
 
-	std::cout << "KOUK" << std::endl;
 	while (i < this->_players.size())
 	{
 		elemToSend.push_back(this->_players[i]);
 		i++;
 	}
-	std::cout << "Sended " << i << "Players" << std::endl;
+	//std::cout << "Sended " << i << "Players" << std::endl;
 	i = 0;
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				//if ((*it_wall)->getSendPriority() > maxPriority)
-				//	maxPriority = (*it_wall)->getSendPriority();
-				/*if (elemToSend.size() < 100)
-					{*/
 						elemToSend.push_back(*it_wall);
 						i++;
-				//		(*it_wall)->setSendPriority(2);
-				//	}
-				/*else
-					(*it_wall)->setSendPriority((*it_wall)->getSendPriority() + 1);
-*/			}
+			}
 		}
-	// ajouter les ennemis et les bullets
-	std::cout << "Sended " << i << "Walls" << std::endl;
 	this->_GameCom.UDPscreenState(this->_pack, 0, elemToSend);
-	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
-	// on déclare un Packet qui va etre alloué dans la méthode
-	//Packet pack;
-	//_com.UDPsendGameElements(pack, elemToSend, this->_players);
-
-	// ici, pack contient les données sérialisées à écrire sur la socket.
 }
 
 void	Game::moveBullets()
@@ -315,9 +307,10 @@ void	Game::moveWall()
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				temp._posX = (*it_wall)->getPos()._posX - (3 * (*it_wall)->getSpeed());
+				this->_move.genericMove(Linear, (*it_wall), 1, 0);
+				/*temp._posX = (*it_wall)->getPos()._posX - (3 * (*it_wall)->getSpeed());
 				temp._posY = (*it_wall)->getPos()._posY;
-				(*it_wall)->setPos(&temp);
+				(*it_wall)->setPos(&temp);*/
 				if ((*it_wall)->getPos()._posX <= -100 )
 				{
 					temp._posX = 0;

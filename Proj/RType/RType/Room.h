@@ -51,7 +51,7 @@ public:
 	void	UDPReady(void *);
 	void	letsPlay(void *);
 	void	saveMap(void *);
-	void	callBackError(char, IReadableSocket&);
+	void	callBackError(unsigned int, IReadableSocket&);
 
 	void	startLoading();
 
