@@ -4,13 +4,14 @@
 #include <list>
 #include <iterator>
 //#include "rtype_common.h"
+#include "Clock.h"
+#include "Script.h"
+#include "Movement.h"
 #include "Wave.h"
 #include "Wall.h"
 #include "Bullet.h"
-#include "ServerCommunication.hpp"
-#include "Clock.h"
-#include "Script.h"
 #include "Ennemy.h"
+#include "ServerCommunication.hpp"
 
 class Game
 {
@@ -22,6 +23,7 @@ private:
 	const std::vector<Player*>&	_players;
 	std::list<Wave>			_livingThings;
 	//std::list<Clock &>		_waveTime;
+	
 
 	// maps
 	Script					*_script;

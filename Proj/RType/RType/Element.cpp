@@ -49,9 +49,9 @@ void	Element::checkCell()
 {
 	t_coord		temp;
 
+	this->_isToUp + false;
 	temp._posX = this->_pos._posX / 100;
 	temp._posY = this->_pos._posY / 50;
-
 	// si il ya changement de case
 	if (temp._posX != this->_cellPosTL._posX || temp._posY != this->_cellPosTL._posY)
 	{
@@ -59,21 +59,36 @@ void	Element::checkCell()
 		setCell(temp);
 	}
 
-	temp._posX = this->_pos._posX + this->_hitboxSize._posX / 100;
-	temp._posY = this->_pos._posY + this->_hitboxSize._posY / 50;
-
+	temp._posX = (this->_pos._posX + this->_hitboxSize._posX) / 100;
+	temp._posY = (this->_pos._posY + this->_hitboxSize._posY) / 50;
 	// si il ya  changement de case
 	if (temp._posX != this->_cellPosBR._posX || temp._posY != this->_cellPosBR._posY)
 	{
-		
+		this->cleanCurrentCell();
+		setCell(temp);
 	}
 }
 
 void Element::setCell(t_coord temp)
 {
-		this->_cellPosTL._posX = temp._posX;
-		this->_cellPosTL._posY = temp._posY;
-		this->addToCurrentCell(this->_cellPosTL);
+	this->_isToUp = true;
+	this->_cellPosTL._posX = this->_pos._posX / 100;
+	this->_cellPosTL._posY = this->_pos._posY / 100;
+	this->addToCurrentCell(this->_cellPosTL);
+	this->_cellPosBR._posX = (this->_pos._posX + this->_hitboxSize._posX) / 100;
+	this->_cellPosBR._posY = (this->_pos._posY + this->_hitboxSize._posY) / 50;
+	this->addToCurrentCell(this->_cellPosBR);
+
+	if (this->_cellPosTL._posX != this->_cellPosBR._posX &&
+		this->_cellPosTL._posY != this->_cellPosBR._posY)
+	{
+		temp._posX = this->_pos._posX / 100;
+		temp._posY = (this->_pos._posY + this->_hitboxSize._posY) / 50;
+		this->addToCurrentCell(temp);
+		temp._posX = (this->_pos._posX + this->_hitboxSize._posX) / 100;
+		temp._posY = this->_pos._posY / 50;
+		this->addToCurrentCell(temp);
+	}
 }
 
 void	Element::addToCurrentCell(t_coord coord)

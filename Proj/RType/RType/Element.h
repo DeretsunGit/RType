@@ -25,6 +25,7 @@ class Element
 	bool					_side; // 0 LIGHT ; 1 DARK
 	char					_color;
 	std::list<eSprites>		_sprites;
+	bool					_isToUp;
 
 public:
 	Element();

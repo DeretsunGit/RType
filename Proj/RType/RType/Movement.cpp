@@ -7,7 +7,7 @@ Movement::Movement()
 
 void	Movement::genericMove(MoveTypes mt, Element *elem, short int mult = 1, short int y = 0)
 {
-	if (mt = Player)
+	if (mt = PlayerMove)
 		playerMove(elem, mult, y);
 	if (mt = Linear)
 		linearMove(elem, mult);

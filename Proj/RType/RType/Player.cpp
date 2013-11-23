@@ -21,6 +21,7 @@ Player::Player(Client* c, int id)
 	this->setPos(&temp);
 	this->setHP(	3);
 	this->setId(id);
+	this->addSprite(SHIP_BLUE_IDLE);
 }
 
 bool	Player::getIsShooting() const

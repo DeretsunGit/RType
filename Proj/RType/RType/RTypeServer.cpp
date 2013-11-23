@@ -80,7 +80,7 @@ void		RTypeServer::CheckClientAnswer()
 			if ((*it_client)->getDelete() == true)
 			{
 				temp = *it_client;
-	//			this->_clientList.erase(it_client);
+		//	this->_clientList.erase(it_client);
 		//		delete temp;
 			}
 			else if ((*it_client)->getWaiting() == true)
@@ -121,12 +121,12 @@ void		RTypeServer::setRoom(void *data)
 			{
 				(*it_room)->setName(reinterpret_cast<char*>(data));
 				(*it_room)->addClient(this->_currentClient);
-				(*it_room)->getThread()->start();
 				this->_currentClient->setWaiting(false);
 				std::cout << "6 on " << DEBUGSTATE << " Finished : " <<
 					*(this->_currentClient->getName()) << " Joined Room " <<
 					((*it_room)->getName()) << " of id : " <<
 					static_cast<int>((*it_room)->getId()) << std::endl;
+				(*it_room)->getThread()->start();
 				return;
 			}
 		}

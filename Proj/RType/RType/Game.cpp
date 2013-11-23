@@ -153,8 +153,8 @@ void	Game::gameLoop()
 		// concerne uniquement les joueurs
 		this->moveWall();
 		this->collision();
-		// sychronisation de la map avec les elements
 		// (pop de Wave)
+		//syncMap();
 		this->sendPriority();
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
 			this->_endGame = true;
@@ -219,7 +219,16 @@ void	Game::sendPriority()
 	short int					maxPriority = 0;
 	std::list<Element *>		elemToSend;
 	std::list<Wall*>::iterator		it_wall;
+	int								i = 0;
 
+	std::cout << "KOUK" << std::endl;
+	while (i < this->_players.size())
+	{
+		elemToSend.push_back(this->_players[i]);
+		i++;
+	}
+	std::cout << "Sended " << i << "Players" << std::endl;
+	i = 0;
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 		{
 			if ((*it_wall)->getHP() != 0)
@@ -229,6 +238,7 @@ void	Game::sendPriority()
 				/*if (elemToSend.size() < 100)
 					{*/
 						elemToSend.push_back(*it_wall);
+						i++;
 				//		(*it_wall)->setSendPriority(2);
 				//	}
 				/*else
@@ -236,14 +246,6 @@ void	Game::sendPriority()
 */			}
 		}
 	// ajouter les ennemis et les bullets
-	std::list<Element *>::iterator	it = elemToSend.begin();
-	int i = 0;
-	while (it != elemToSend.end())
-	{
-		i++;
-	//	std::cout << (*it)->getPos()._posX << std::endl;
-		it++;
-	}
 	std::cout << "Sended " << i << "Walls" << std::endl;
 	this->_GameCom.UDPscreenState(this->_pack, 0, elemToSend);
 	// UDPsendGameElements(const std::list<Element*>, const std::vector<&Player>);
@@ -324,7 +326,7 @@ void	Game::moveWall()
 					(*it_wall)->setHP(0);
 					(*it_wall)->setPos(&temp);
 					(*it_wall)->setSendPriority(2);
-					this->_map[((*it_wall)->getCurrentCell().front()._posY)][((*it_wall)->getCurrentCell().front()._posX)].clear();
+					//this->_map[((*it_wall)->getCurrentCell().front()._posY)][((*it_wall)->getCurrentCell().front()._posX)].clear();
 					(*it_wall)->cleanCurrentCell();
 				}
 			}
@@ -419,7 +421,7 @@ bool	Game::assignWall(Wall * vWall, bool isfirst, t_coord &temp, bool isTop)
 	else
 		coord._posX = this->_firstColumn;
 	coord._posY = temp._posY;
-	this->_map[coord._posY][coord._posX].push_back(vWall);
+	//this->_map[coord._posY][coord._posX].push_back(vWall);
 	vWall->addToCurrentCell(coord);
 	return (true);
 }

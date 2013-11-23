@@ -3,7 +3,7 @@
 
 enum MoveTypes
 {
-	Player,
+	PlayerMove,
 	Linear
 };
 
