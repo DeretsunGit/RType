@@ -69,12 +69,12 @@ template<typename T>
 class ServerCommunication
 {
 private:
-  std::map<char, bool (ServerCommunication::*)(IReadableSocket&)> _commandMap;
-  std::map<char, void (T::*)(void*)> _callableMap;
+  std::map<unsigned int, bool (ServerCommunication::*)(IReadableSocket&)> _commandMap;
+  std::map<unsigned int, void (T::*)(void*)> _callableMap;
   u_long			     from;
 
   T* _handler;
-  void (T::*_defaultCallback)(char, IReadableSocket&);
+  void (T::*_defaultCallback)(unsigned int, IReadableSocket&);
 
 public:
 	ServerCommunication()
@@ -99,12 +99,12 @@ public:
 
 	~ServerCommunication() {}
 
-	void setCallback(char opcode, void (T::*mthd)(void* data))
+	void setCallback(unsigned int opcode, void (T::*mthd)(void* data))
 	{
 	  this->_callableMap[opcode] = mthd;
 	}
 
-	void setDefaultCallback(void (T::*cb)(char, IReadableSocket&))
+	void setDefaultCallback(void (T::*cb)(unsigned int, IReadableSocket&))
 	{
 		_defaultCallback = cb;
 	}
@@ -117,14 +117,15 @@ public:
 	void interpretCommand(IReadableSocket& socket)
 	{
 		typename std::map<char, bool (ServerCommunication::*)(IReadableSocket&) >::const_iterator ite;
-		char opcode ;
+		unsigned int opcode ;
 		if (socket.readable())
 		{
-		socket.recv(&opcode, 1);
+		socket.recv(&opcode, sizeof(unsigned int));
+		opcode = ntohl(opcode);
 			if ((ite = _commandMap.find(opcode)) != _commandMap.end())
 			{
 				if ((this->*(ite->second))(socket) == false)
-					socket.putback(&opcode, 1);
+					socket.putback(&opcode, sizeof(unsigned int));
 			}
 			else if (_handler != NULL && _defaultCallback != NULL)
 				(this->_handler->*_defaultCallback)(opcode, socket);

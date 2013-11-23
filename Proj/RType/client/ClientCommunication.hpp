@@ -116,13 +116,13 @@ class ClientCommunication
 {
 private:
   typedef bool	(ClientCommunication::*Command)(IReadableSocket&) const;
-  typedef std::map<char, Command>	CommandMap;
+  typedef std::map<unsigned int, Command>	CommandMap;
 
   CommandMap _commandMap;
-  std::map<char, void (T::*)(void*)> _callableMap;
+  std::map<unsigned int, void (T::*)(void*)> _callableMap;
 
   T* _handler;
-  void (T::*_defaultCallback)(char, IReadableSocket&);
+  void (T::*_defaultCallback)(unsigned int, IReadableSocket&);
 
 public:
 	ClientCommunication()
@@ -143,12 +143,12 @@ public:
 
 	~ClientCommunication() {}
 
-	void setCallback(char opcode, void (T::*mthd)(void* data))
+	void setCallback(unsigned int opcode, void (T::*mthd)(void* data))
 	{
 	  _callableMap[opcode] = mthd;
 	}
 
-	void setDefaultCallback(void (T::*cb)(char, IReadableSocket&))
+	void setDefaultCallback(void (T::*cb)(unsigned int, IReadableSocket&))
 	{
 		_defaultCallback = cb;
 	}
@@ -161,16 +161,17 @@ public:
 	void interpretCommand(IReadableSocket& socket) const
 	{
 	  typename CommandMap::const_iterator ite;
-	  char opcode;
+	  unsigned int opcode;
 
 	  if (socket.readable())
 	  {
-	      socket.recv(&opcode, 1);
+	      socket.recv(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+		  opcode = ntohl(opcode);
 	      if ((ite = _commandMap.find(opcode)) != _commandMap.end()
 		  && _callableMap.find(opcode) != _callableMap.end())
 	      {
 		      if ((this->*(ite->second))(socket) == false)
-			      socket.putback(&opcode, 1);
+			      socket.putback(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
 	      }
 	      else if (_handler != NULL && _defaultCallback != NULL)
 		(this->_handler->*_defaultCallback)(opcode, socket);

@@ -23,7 +23,7 @@
 template<typename T>
 void ClientCommunication<T>::TCPsayHello(Packet& packet, const char* nickname, unsigned short resolution[2])
 {
-  char opcode = Opcodes::sayHello;
+  unsigned int opcode = htonl(Opcodes::sayHello);
   unsigned short datasize = htons(sizeof("KOUKOU") + (32 * sizeof(char)) + (2 * (sizeof(unsigned short))));
   char nickname_to_write[32];
   unsigned short res[2] = {htons(resolution[0]), htons(resolution[1])};
@@ -31,7 +31,7 @@ void ClientCommunication<T>::TCPsayHello(Packet& packet, const char* nickname, u
   strncpy(nickname_to_write, nickname, 32);
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write("KOUKOU", sizeof("KOUKOU"));
   packet.write(nickname_to_write, 32 * sizeof(char));
@@ -41,25 +41,25 @@ void ClientCommunication<T>::TCPsayHello(Packet& packet, const char* nickname, u
 template<typename T>
 void ClientCommunication<T>::TCPaskRoomList(Packet& packet)
 {
-	char opcode = Opcodes::askRoomList;
+	unsigned int opcode = htonl(Opcodes::askRoomList);
 	unsigned short datasize = htons(0);
 
 	packet.reset();
-	packet.write(&opcode, sizeof(char));
+	packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(datasize));
 }
 
 template<typename T>
 void ClientCommunication<T>::TCPsetRoom(Packet& packet, const char* roomName)
 {
-  char opcode = Opcodes::setRoom;
+  unsigned int opcode = htonl(Opcodes::setRoom);
   unsigned short datasize = htons(32 * sizeof(char));
   char name[32];
 
   strncpy(name, roomName, 32);
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(name, 32 * sizeof(char));
 }
@@ -67,11 +67,11 @@ void ClientCommunication<T>::TCPsetRoom(Packet& packet, const char* roomName)
 template<typename T>
 void ClientCommunication<T>::TCPselectRoom(Packet& packet, const char roomId)
 {
-  char opcode = Opcodes::selectRoom;
+  unsigned int opcode = htonl(Opcodes::selectRoom);
   unsigned short datasize = htons(sizeof(char));
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(&roomId, sizeof(char));
 }
@@ -79,21 +79,21 @@ void ClientCommunication<T>::TCPselectRoom(Packet& packet, const char roomId)
 template<typename T>
 void ClientCommunication<T>::TCPleaveRoom(Packet& packet)
 {
-  char opcode = Opcodes::leaveRoom;
+  unsigned int opcode = htonl(Opcodes::leaveRoom);
   unsigned short datasize = htons(0);
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 }
 
 template<typename T>
 void ClientCommunication<T>::TCPchangeDifficulty(Packet& packet, char difficulty)
 {
-  char opcode = Opcodes::changeDifficulty;
+  unsigned int opcode = htonl(Opcodes::changeDifficulty);
   unsigned short datasize = htons(sizeof(char));
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(&difficulty, sizeof(char));
 }
@@ -101,14 +101,14 @@ void ClientCommunication<T>::TCPchangeDifficulty(Packet& packet, char difficulty
 template<typename T>
 void ClientCommunication<T>::TCPsetMap(Packet& packet, bool mapStatus, const char* filename)
 {
-  char opcode = Opcodes::setMap;
+  unsigned int opcode = htonl(Opcodes::setMap);
   unsigned short datasize = htons(sizeof(bool) + (128 * sizeof(char)));
   char name[128];
 
   strncpy(name, filename, 128);
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(reinterpret_cast<char*>(&mapStatus), sizeof(bool));
   packet.write(name, 128 * sizeof(char));
@@ -117,14 +117,14 @@ void ClientCommunication<T>::TCPsetMap(Packet& packet, bool mapStatus, const cha
 template<typename T>
 void ClientCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size)
 {
-  char opcode = Opcodes::fileTrunk;
+  unsigned int opcode = htonl(Opcodes::fileTrunk);
   unsigned short datasize = htons((32 * sizeof(char)) + (sizeof(unsigned int)) + (static_cast<unsigned short>(size) * sizeof(char)));
   char name[32];
 
   strncpy(name, filename, 32);
   packet.reset();
 
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(name, 32 * sizeof(char));
   packet.write(reinterpret_cast<char*>(&size), sizeof(unsigned int));
@@ -134,25 +134,25 @@ void ClientCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filena
 template<typename T>
 void ClientCommunication<T>::TCPsetReady(Packet& packet)
 {
-  char opcode = Opcodes::setReady;
+  unsigned int opcode = htonl(Opcodes::setReady);
   unsigned short datasize = htons(0);
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 }
 
 template<typename T>
 void ClientCommunication<T>::TCPdownloadRessource(Packet& packet, const char* filename)
 {
-  char opcode = Opcodes::downloadRsrc;
+  unsigned int opcode = htons(Opcodes::downloadRsrc);
   unsigned short datasize = htons(128 * sizeof(char));
   char name[128];
 
   strncpy(name, filename, 128);
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(name, 128 * sizeof(char));
 }
@@ -160,14 +160,14 @@ void ClientCommunication<T>::TCPdownloadRessource(Packet& packet, const char* fi
 template<typename T>
 void ClientCommunication<T>::UDPReady(Packet& packet, const char *nickname)
 {
-  char opcode = Opcodes::UDPReady;
+  unsigned int opcode = htonl(Opcodes::UDPReady);
   unsigned short datasize = htons(32 * sizeof(char));
   char nickname_to_write[32];
 
   strncpy(nickname_to_write, nickname, 32);
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(nickname_to_write, 32 * sizeof(char));
 
@@ -176,25 +176,25 @@ void ClientCommunication<T>::UDPReady(Packet& packet, const char *nickname)
 template<typename T>
 void ClientCommunication<T>::TCPletsPlay(Packet& packet)
 {
-  char opcode = Opcodes::letsPlay;
+  unsigned int opcode = htonl(Opcodes::letsPlay);
   unsigned short datasize = htons(0);
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 }
 
 template<typename T>
 void ClientCommunication<T>::TCPsaveMap(Packet& packet, const char* mapName)
 {
-  char opcode = Opcodes::saveMap;
+  unsigned int opcode = htonl(Opcodes::saveMap);
   unsigned short datasize = htons(128 * sizeof(char));
   char map[128];
 
   strncpy(map, mapName, 128);
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(map, 128 * sizeof(char));
 }
@@ -202,7 +202,7 @@ void ClientCommunication<T>::TCPsaveMap(Packet& packet, const char* mapName)
 template<typename T>
 void ClientCommunication<T>::UDPinputs(Packet& packet, s_inputs& inputs)
 {
-  char opcode = Opcodes::inputs;
+  unsigned int opcode = htonl(Opcodes::inputs);
   unsigned short datasize = htons(sizeof(s_inputs));
   s_inputs in;
 
@@ -212,7 +212,7 @@ void ClientCommunication<T>::UDPinputs(Packet& packet, s_inputs& inputs)
   in.y = htons(inputs.y);
 
   packet.reset();
-  packet.write(&opcode, sizeof(char));
+  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(reinterpret_cast<char*>(&in), sizeof(s_inputs));
 }

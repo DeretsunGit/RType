@@ -110,7 +110,7 @@ bool File::_update()
 int File::append(const char* data, int size)
 {
 	if (strlen(data) < static_cast<size_t>(size))
-		size = strlen(data);
+		size = static_cast<int>(strlen(data));
 
 	_fs.open(_path.getAbsolutePath().c_str(), std::fstream::out | std::fstream::app | std::fstream::binary);
 	if (!_fs)
@@ -136,7 +136,7 @@ int File::get(int start, char* data, int size)
 	}
 	_fs.read(data, size);
 	_fs.close();
-	return (strlen(data));
+	return (static_cast<int>(strlen(data)));
 }
 
 bool File::copy(const char* dest)
@@ -172,14 +172,14 @@ bool File::copy(const char* dest)
 		return false;
 	}
 	_fs.read(buff, 1024);
-	rsize = strlen(buff);
+	rsize = static_cast<int>(strlen(buff));
 	while (rsize > 0)
 	{
 		new_fs.write(buff, rsize);
 		offset += rsize;
 		memset(buff, 0, 1024);
 		_fs.read(buff, 1024);
-		rsize = strlen(buff);
+		rsize = static_cast<int>(strlen(buff));
 	}
 	_fs.close();
 	new_fs.close();
