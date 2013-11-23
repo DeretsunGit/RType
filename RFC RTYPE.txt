@@ -303,7 +303,7 @@ RFC ....              RTYPE network specification          October 2013
 2.4.  Data Unit Format
 
    The data unit used for the TCP communication contains three fields:
-   a byte opcode, a 2 byte data size, and the data unit.
+   a 4 bytes opcode, a 2 byte data size, and the data unit.
    A receiver MUST successfully read that many octets to retrieve the
    complete data and send an answer with success opcode, or send an
    answer with error opcode.
@@ -313,10 +313,10 @@ RFC ....              RTYPE network specification          October 2013
       0                   1                   2                   3
       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |      opcode       |                 data size                 |
+     |                         opcode                                |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |                            DATA                               |
-     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |               data size               |          Data         |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+//-+-+-+-+-+
  
 2.5.  Transport Considerations	
 
@@ -423,7 +423,7 @@ RFC ....              RTYPE network specification          October 2013
 2.4.   Data Unit Format
 
    The data unit used for the UDP communication contains two fields:
-   a byte opcode and the data unit.
+   a 4 bytes opcode and the data unit.
    A receiver MUST successfully read that many octets to retrieve the
    complete data. The blocks sent by the client has a data unit
    limited of eleven bytes.  The blocks sent by the server has a
@@ -435,10 +435,10 @@ RFC ....              RTYPE network specification          October 2013
       0                   1                   2                   3
       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |      opcode       |                 data size                 |
+     |                           opcode                              |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |                            DATA                               |
-     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |              data size                |         DATA          |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    
 4.  Internationalization Considerations   
    
