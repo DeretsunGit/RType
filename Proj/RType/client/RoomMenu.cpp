@@ -38,7 +38,7 @@ RoomMenu::RoomMenu(sf::RenderWindow *window, SpriteManager *spritemgr) : Menu(wi
 	}
 }
 
-void			RoomMenu::defaultCallback(unsigned int, IReadableSocket& sock)
+void			RoomMenu::defaultCallback(char, IReadableSocket& sock)
 {
 	//std::cout << "default callbak opcode :" << (int)opcode << std::endl;
 }

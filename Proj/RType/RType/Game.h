@@ -6,7 +6,7 @@
 //#include "rtype_common.h"
 #include "Clock.hpp"
 #include "Script.h"
-//#include "Movement.h"
+#include "Movement.h"
 #include "Wave.hpp"
 #include "Wall.h"
 #include "Bullet.h"
@@ -23,7 +23,7 @@ private:
 	const std::vector<Player*>&	_players;
 	std::list<Wave>			_livingThings;
 	//std::list<Clock &>		_waveTime;
-	//Movement					_move;
+	Movement					_move;
 
 	// maps
 	Script					*_script;
@@ -45,7 +45,7 @@ public:
 //ServerCommunication
 	void	inputs(void *);
 	void	pauseOk(void *);
-	void	callBackError(unsigned int, IReadableSocket&);
+	void	callBackError(char, IReadableSocket&);
 	void	sendError(char, const char *);
 
 	void	genPool();

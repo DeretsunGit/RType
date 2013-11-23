@@ -39,7 +39,7 @@ public:
 	void		handleUDPOkay(void *);
 	void		handleStartLoading(void *);
 	void		handleScreenState(void *);
-	void		defaultCallback(unsigned int, IReadableSocket&);
+	void		defaultCallback(char, IReadableSocket&);
 	void		handleNetwork();
 	void		mainLoop(void);
 	void		initNetwork(void);

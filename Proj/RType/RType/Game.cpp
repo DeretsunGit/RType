@@ -7,6 +7,7 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
   : _players(p), _script(s), _udpSock(UDPsock)
 {
 	this->_GameCom.setCallback(Opcodes::inputs, &Game::inputs);
+//	this->_GameCom.setCallback(, &Game::pauseOk);
 	this->_GameCom.setDefaultCallback(&Game::callBackError);
 	this->_GameCom.setHandler(this);
 	this->_endGame = false;
@@ -21,7 +22,7 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 	this->gameLoop();
 }
 
-void	Game::callBackError(unsigned int opcode, IReadableSocket&)
+void	Game::callBackError(char opcode, IReadableSocket&)
 {
 	std::cout << "Callbackerror, opcode :"<< opcode << std::endl; 
 	/*	std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;
@@ -31,17 +32,18 @@ void	Game::callBackError(unsigned int opcode, IReadableSocket&)
 
 void	Game::inputs(void *data)
 {
-	s_recv_inputs	*dataStruct = reinterpret_cast<s_recv_inputs *>(data);
+	s_recv_inputs	*dataStruct = reinterpret_cast<s_recv_inputs *>(data);;
 	short		i = 0;
 
+	std::cout << "KAKOUK"<< std::endl;
 	while (i < this->_players.size())
 	{
+	std::cout << this->_players[i]->getClient()->getInaddr() << std::endl;
 		if (dataStruct->from == this->_players[i]->getClient()->getInaddr())
 		{
-			//this->_move.genericMove(MoveTypes::PlayerMove, this->_players[i], dataStruct->in.x, dataStruct->in.y);
+			this->_move.genericMove(PlayerMove, this->_players[i], dataStruct->in.x, dataStruct->in.y);
 			//this->_players[i]->setshoot(dataStruct->fire);
 			//this->_players[i]->setSide(dataStruct->shield);
-			return;
 		}
 		i++;
 	}
@@ -54,6 +56,12 @@ void		Game::sendError(char errorCode, const char *message)
 /*
 void	Game::TCPsend(Packet& tosend)
 {
+  std::cout << __LINE__ << std::endl;
+	std::vector<Player*>::const_iterator	it_player(this->_players.begin());
+  std::cout << __LINE__ << std::endl;
+	std::vector<Player*>::const_iterator	end(this->_players.end());
+  std::cout << __LINE__ << std::endl;
+
   if (tosend.getSize())
   {
     while (it_player != end)
@@ -75,7 +83,7 @@ void	Game::mapGeneration()
 	std::list<Wall*>::iterator	it;
 
 	// on génère maintenant visibleMap
-		while (x < 18)
+		while (x < 17)
 		{
 			// on parcours topmap
 			y = 0;
@@ -144,13 +152,14 @@ void	Game::gameLoop()
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
+	//	std::cout << "loop" << std::endl;
 		loopTimer.initialise();
-		/*i = 0;
+		i = 0;
 		while (i < this->_players.size())
 		{
 			this->_GameCom.interpretCommand(*this->_udpSock);
 			i ++;
-		}*/
+		}
 		this->moveWall();
 //		this->collision();
 		// (pop de Wave)
@@ -159,7 +168,7 @@ void	Game::gameLoop()
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
 			this->_endGame = true;
 		execTime = loopTimer.getTimeBySec();
-		//Sleep((unsigned long)(GAMELOOPTIME - execTime -1));
+		Sleep((unsigned long)(GAMELOOPTIME - execTime -1));
 		this->_udpSock->broadcast(this->_pack);
 		execTime = loopTimer.getTimeBySec();
 		Sleep((unsigned long)(GAMELOOPTIME - execTime));
@@ -221,12 +230,11 @@ void	Game::sendPriority()
 	std::list<Wall*>::iterator		it_wall;
 	int								i = 0;
 
-	/*
 	while (i < this->_players.size())
 	{
 		elemToSend.push_back(this->_players[i]);
 		i++;
-	}*/
+	}
 	//std::cout << "Sended " << i << "Players" << std::endl;
 	i = 0;
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
@@ -262,7 +270,7 @@ void Game::playerShoot(Player *currentPlayer)
 	{
 		if ((*it_bullet)->getHP() == 0)
 		{
-		  //(*it_bullet)->setPos(&(currentPlayer->getPos())); // faux car tir en haut a gauche
+		  //			(*it_bullet)->setPos(&(currentPlayer->getPos())); // faux car tir en haut a gauche
 			(*it_bullet)->setHP(1);
 			(*it_bullet)->setFaction(PLAYER);
 		}
@@ -299,10 +307,10 @@ void	Game::moveWall()
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-				//this->_move.genericMove(Linear, (*it_wall), 1, 0);
-				temp._posX = (*it_wall)->getPos()._posX - (3 * (*it_wall)->getSpeed());
+				this->_move.genericMove(Linear, (*it_wall), 1, 0);
+				/*temp._posX = (*it_wall)->getPos()._posX - (3 * (*it_wall)->getSpeed());
 				temp._posY = (*it_wall)->getPos()._posY;
-				(*it_wall)->setPos(&temp);
+				(*it_wall)->setPos(&temp);*/
 				if ((*it_wall)->getPos()._posX <= -100 )
 				{
 					temp._posX = 0;
@@ -329,6 +337,7 @@ void	Game::moveWall()
 				{
 					temp._posX = 16;
 					temp._posY = y;
+				//	std::cout << "CREATED !top" <<std::endl;
 					assign = assignWall(*it_wall, false, temp, true);
 				}
 				it_wall ++;
@@ -346,6 +355,7 @@ void	Game::moveWall()
 				{
 					temp._posX = 16;
 					temp._posY = y;
+					//std::cout << "CREATED !bot" <<std::endl;
 					assign = assignWall(*it_wall, false, temp, false);
 				}
 				it_wall ++;

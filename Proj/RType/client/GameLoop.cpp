@@ -2,7 +2,7 @@
 #include "PlayerShip.h"
 #include "Background.h"
 #include "IngameMenu.h"
-#include "Clock.h"
+#include "Clock.hpp"
 #include "ClientCommunication.cpp"
 #include "rtype_common.h"
 #include "SystemException.h"
@@ -80,7 +80,7 @@ void	GameLoop::handleStartLoading(void *data)
 	this->_udpsock->send(this->_p);
 }
 
-void			GameLoop::defaultCallback(unsigned int opcode, IReadableSocket& sock)
+void			GameLoop::defaultCallback(char opcode, IReadableSocket& sock)
 {
 	//std::cout << "default callbak opcode :" << (int)opcode << std::endl;
 }
@@ -155,7 +155,6 @@ void	GameLoop::displaySprite(short x, short y, eSprites id)
 
 	tmp.setPosition(x, y);
 	this->_window->draw(tmp);
-
 }
 
 void	GameLoop::initNetwork(void)
@@ -165,7 +164,6 @@ void	GameLoop::initNetwork(void)
 		this->_comm.interpretCommand(*this->_tcpsock);
 	}
 	this->_comm.interpretCommand(*this->_udpsock);
-
 }
 
 void	GameLoop::handleNetwork(void)
@@ -189,8 +187,8 @@ void	GameLoop::mainLoop(void)
 		this->_window->clear();
 		loopTimer.initialise();
 		this->handleNetwork();
-        //this->manageEvent(&running, &ship);
-		//this->sendMovement();
+        this->manageEvent(&running, &ship);
+		this->sendMovement();
 		if (running)
 		{
 			bg.moveBackground();

@@ -34,7 +34,7 @@ Room::~Room(void)
 {
 }
 
-void	Room::callBackError(unsigned int opcode, IReadableSocket& client)
+void	Room::callBackError(char opcode, IReadableSocket& client)
 {
 	// faire un fichier qui resume les opcodes d'erreur
 	/*std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;

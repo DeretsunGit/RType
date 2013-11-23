@@ -49,7 +49,7 @@ bool			PlayMenu::getTcpSuccess(void) const
 	return this->_tcp_success;
 }
 
-void			PlayMenu::defaultCallback(unsigned int opcode, IReadableSocket& sock)
+void			PlayMenu::defaultCallback(char opcode, IReadableSocket& sock)
 {
 	//std::cout << "default callbak opcode :" << (int)opcode << std::endl;
 }

@@ -62,8 +62,8 @@ struct s_inputs
 
 struct s_recv_inputs
 {
-	u_long from;
-	s_inputs in;
+	u_long		from;
+	s_inputs	in;
 };
 /* END OF BLOCK STRUCTURES DEFINITION */
 
@@ -74,12 +74,12 @@ template<typename T>
 class ServerCommunication
 {
 private:
-  std::map<unsigned int, bool (ServerCommunication::*)(IReadableSocket&)> _commandMap;
-  std::map<unsigned int, void (T::*)(void*)> _callableMap;
+  std::map<char, bool (ServerCommunication::*)(IReadableSocket&)> _commandMap;
+  std::map<char, void (T::*)(void*)> _callableMap;
   u_long			     from;
 
   T* _handler;
-  void (T::*_defaultCallback)(unsigned int, IReadableSocket&);
+  void (T::*_defaultCallback)(char, IReadableSocket&);
 
 public:
 	ServerCommunication()
@@ -104,12 +104,12 @@ public:
 
 	~ServerCommunication() {}
 
-	void setCallback(unsigned int opcode, void (T::*mthd)(void* data))
+	void setCallback(char opcode, void (T::*mthd)(void* data))
 	{
 	  this->_callableMap[opcode] = mthd;
 	}
 
-	void setDefaultCallback(void (T::*cb)(unsigned int, IReadableSocket&))
+	void setDefaultCallback(void (T::*cb)(char, IReadableSocket&))
 	{
 		_defaultCallback = cb;
 	}
@@ -121,19 +121,15 @@ public:
 
 	void interpretCommand(IReadableSocket& socket)
 	{
-		typename std::map<unsigned int, bool (ServerCommunication::*)(IReadableSocket&) >::const_iterator ite;
-		unsigned int opcode ;
+		typename std::map<char, bool (ServerCommunication::*)(IReadableSocket&) >::const_iterator ite;
+		char opcode ;
 		if (socket.readable())
 		{
-		socket.recv(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
-		opcode = ntohl(opcode);
+			socket.recv(&opcode, 1);
 			if (_handler && (ite = _commandMap.find(opcode)) != _commandMap.end())
 			{
 				if ((this->*(ite->second))(socket) == false)
-				{
-					opcode = htonl(opcode);
-					socket.putback(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
-				}
+					socket.putback(&opcode, 1);
 			}
 			else if (_handler != NULL && _defaultCallback != NULL)
 				(this->_handler->*_defaultCallback)(opcode, socket);

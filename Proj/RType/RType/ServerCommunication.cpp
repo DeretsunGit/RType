@@ -8,14 +8,14 @@
 template<class T>
 void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& rooms) // ajouter un tcpSocket pour pouvoir l'envoyer avant l'initialisation du client ? (erreur 66, RTypeServer.cpp L52)
 {
-	unsigned int opcode = htonl(Opcodes::roomList);
+	char opcode = Opcodes::roomList;
 	unsigned short datasize = htons(static_cast<short>(rooms.size()) *  (sizeof(char) * 34));
 	char name[32], id = 0, nbplayer = 0;
 	int i = 0;
 	std::list<Room *>::const_iterator ite = rooms.begin();
 
 	packet.reset();
-	packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 
 	while (ite != rooms.end() && i < 5)
@@ -37,7 +37,7 @@ void ServerCommunication<T>::TCProomList(Packet& packet, std::list<Room *>& room
 template<class T>
 void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 {
-	unsigned int opcode = htonl(Opcodes::roomState);
+	char opcode = Opcodes::roomState;
 	unsigned short datasize = htons(((32 + (4 * 32)) * sizeof(char)) + (4 * sizeof(bool)));
 	char name[32];
 	char players[4][32];
@@ -47,7 +47,7 @@ void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 	strncpy(name, room.getName().c_str(), 32);
 
 	packet.reset();
-	packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(short));
 	packet.write(name, 32 * sizeof(char));
 
@@ -69,18 +69,18 @@ void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 template<class T>
 void ServerCommunication<T>::TCPwrongMap(Packet& packet)
 {
-	unsigned int opcode = htonl(Opcodes::wrongMap);
+	char opcode = Opcodes::wrongMap;
 	unsigned short datasize = htons(0);
 
 	packet.reset();
-	packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(short));
 }
 
 template<class T>
 void ServerCommunication<T>::TCPstartLoading(Packet& packet, unsigned short UDPport)//std::list<std::string>& filenames, std::list<std::string>& md5, unsigned short UDPport) // on remplacera les deux listes filename/md5 par une liste de File quand j'aurai l'API filesystem
 {
-	unsigned int opcode = htonl(Opcodes::startLoading);
+	char opcode = Opcodes::startLoading;
 	unsigned short datasize = htons((sizeof(unsigned short)));// + (static_cast<unsigned short>(filenames.size()) * (160 * sizeof(char))));
 	unsigned short udp_to_send = htons(UDPport);
 //	char name[128], md5_to_cpy[32];
@@ -88,7 +88,7 @@ void ServerCommunication<T>::TCPstartLoading(Packet& packet, unsigned short UDPp
 //	std::list<std::string>::const_iterator m_ite = md5.begin();
 
 	packet.reset();
-	packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 	packet.write(reinterpret_cast<char*>(&udp_to_send), sizeof(unsigned short));
 
@@ -109,14 +109,14 @@ void ServerCommunication<T>::TCPstartLoading(Packet& packet, unsigned short UDPp
 template<class T>
 void ServerCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filename, const char* data, size_t size)
 {
-	unsigned int opcode = htonl(Opcodes::fileTrunk);
+	char opcode = Opcodes::fileTrunk;
   unsigned short datasize = htons((32 * sizeof(char)) + (sizeof(unsigned int)) + (static_cast<unsigned short>(size) * sizeof(char)));
   char name[32];
 
   strncpy(name, filename, 32);
   packet.reset();
 
-  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+  packet.write(&opcode, sizeof(char));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(name, 32 * sizeof(char));
   packet.write(reinterpret_cast<char*>(&size), sizeof(unsigned int));
@@ -126,7 +126,7 @@ void ServerCommunication<T>::TCPsendFileTrunk(Packet& packet, const char* filena
 template<class T>
 void ServerCommunication<T>::TCPassocSprites(Packet& packet, const char* filename, std::list<char>& idSprites, std::list<unsigned short[4]>& coords)
 {
-	unsigned int opcode = htonl(Opcodes::assocSprite);
+	char opcode = Opcodes::assocSprite;
 	unsigned short datasize = htons((32 * sizeof(char)) + (static_cast<unsigned short>(idSprites.size()) * (sizeof(char) + (sizeof(unsigned short) * 4))));
 	char name[32], id;
 	unsigned short coord[4];
@@ -136,7 +136,7 @@ void ServerCommunication<T>::TCPassocSprites(Packet& packet, const char* filenam
 	memset(name, 0, 32);
 	packet.reset();
 	strncpy(name, filename, 32);
-	packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 	packet.write(name, 32 * sizeof(char));
 	while (s_ite != idSprites.end() && c_ite != coords.end())
@@ -156,18 +156,18 @@ void ServerCommunication<T>::TCPassocSprites(Packet& packet, const char* filenam
 template<class T>
 void ServerCommunication<T>::UDPok(Packet& packet)
 {
-	unsigned int opcode = htonl(Opcodes::UDPOkay);
+	char opcode = Opcodes::UDPOkay;
 	unsigned short datasize = htons(0);
 
 	packet.reset();
-	packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 }
 
 template<class T>
 void ServerCommunication<T>::TCPsendError(Packet& packet, char errorCode, const char* errorMsg)
 {
-	unsigned int opcode = htonl(Opcodes::sendError);
+	char opcode = Opcodes::sendError;
 	unsigned short datasize = htons(sizeof(char) * 257);
 	char msg[256];
 
@@ -175,7 +175,7 @@ void ServerCommunication<T>::TCPsendError(Packet& packet, char errorCode, const 
 	strncpy(msg, errorMsg, 256);
 
 	packet.reset();
-	packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 	packet.write(&errorCode, sizeof(char));
 	packet.write(msg, 256 * sizeof(char));
@@ -184,7 +184,7 @@ void ServerCommunication<T>::TCPsendError(Packet& packet, char errorCode, const 
 template<class T>
 void ServerCommunication<T>::UDPscreenState(Packet& packet, unsigned int score, std::list<Element*>& elements) // elements pour idSprite et CoordSprite
 {
-  unsigned int opcode = htonl(Opcodes::screenState);
+  char opcode = Opcodes::screenState;
   unsigned short datasize = htons(sizeof(unsigned int) + (static_cast<unsigned short>(elements.size()) * (sizeof(unsigned int) + sizeof(t_coord))));
   unsigned int score_to_send = htonl(score);
   unsigned int id = 24;
@@ -192,7 +192,7 @@ void ServerCommunication<T>::UDPscreenState(Packet& packet, unsigned int score, 
   std::list<Element*>::const_iterator ite = elements.begin();
 
   packet.reset();
-  packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+  packet.write(&opcode, sizeof(char));
   packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
   packet.write(reinterpret_cast<char*>(&score_to_send), sizeof(unsigned int));
   while (ite != elements.end())
@@ -209,12 +209,12 @@ void ServerCommunication<T>::UDPscreenState(Packet& packet, unsigned int score, 
 template<class T>
 void ServerCommunication<T>::UDPendOfGame(Packet& packet, unsigned int score)
 {
-	unsigned int opcode = htonl(Opcodes::endOfGame);
+	char opcode = Opcodes::endOfGame;
 	unsigned short datasize = htons(sizeof(unsigned int));
 	unsigned int score_to_send = htonl(score);
 
 	packet.reset();
-	packet.write(reinterpret_cast<char*>(&opcode), sizeof(unsigned int));
+	packet.write(&opcode, sizeof(char));
 	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 	packet.write(reinterpret_cast<char*>(&score_to_send), sizeof(unsigned int));
 }
@@ -588,9 +588,9 @@ bool ServerCommunication<T>::UDPinputs(IReadableSocket& socket)
 	  socket.putback(reinterpret_cast<char*>(&datasize), readsize);
 	  return false;
 	}
-	  if ((readsize = socket.recv(reinterpret_cast<char*>(&in.in), sizeof(in.in))) != sizeof(in.in))
+      if ((readsize = socket.recv(reinterpret_cast<char*>(&in.in), sizeof(in.in))) != sizeof(in.in))
 	{
-		socket.putback(reinterpret_cast<char*>(&in.in), readsize);
+	  socket.putback(reinterpret_cast<char*>(&in.in), readsize);
 	  socket.putback(reinterpret_cast<char*>(&datasize), 2);
 	  return false;
 	}
