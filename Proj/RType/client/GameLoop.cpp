@@ -138,18 +138,6 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 				case sf::Keyboard::Escape:
 					this->openBackMenu(running);
 					break;
-				case sf::Keyboard::Up:
-					this->_input.y = 2;
-					break;
-				case sf::Keyboard::Right:
-					this->_input.x = 1;
-					break;
-				case sf::Keyboard::Left:
-					this->_input.x = 2;
-					break;
-				case sf::Keyboard::Down:
-					this->_input.y = 1;
-					break;
 				case sf::Keyboard::F1:
 					if (!this->_started) {
 						this->readyUp();
@@ -159,6 +147,14 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 				break;
 		}
 	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		this->_input.y = 2;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		this->_input.x = 1;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		this->_input.x = 2;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		this->_input.y = 1;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
 		this->openBackMenu(running);
