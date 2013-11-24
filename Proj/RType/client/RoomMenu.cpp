@@ -53,13 +53,7 @@ void			RoomMenu::parseRoomList(void *data)
 	this->_buttons[0] = new CreateRoomButton(this->_spritemgr, this->_tcpsock);
 	this->_buttons[1] = new JoinRoomButton(this->_spritemgr, this->_tcpsock, *list);
 	
-	/*this->_size = list->size();
-	this->_buttons.resize(this->_size);
-	for (std::list<s_room_info>::iterator it = list->begin(); it != list->end(); it++)
-	{
-		this->_buttons[i] = new RoomButton(this->_spritemgr, "1 room", this->_tcpsock, it->id, this->_udpport);
-		i = i + 1;
-	}*/
+
 }
 
 void	RoomMenu::childAction()

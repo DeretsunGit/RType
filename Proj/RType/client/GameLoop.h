@@ -29,7 +29,11 @@ private:
 	s_screen_state					_screenstate;
 	s_inputs						_input;
 	eUdpState						_udpState;
-	
+	s_room_state_info				_roomstate;
+	bool							_started;
+	bool							_roomStateFilled;
+	sf::Font						_font;
+	sf::Text						_text[4];
 public:
 	GameLoop(sf::RenderWindow*, TCPSocketClient*);
 	void		manageEvent(bool *, PlayerShip *);
@@ -46,6 +50,9 @@ public:
 	void		drawScreenState(void);
 	void		sendMovement(void);
 	eUdpState	getUdpState(void) const;
+	void		readyUp(void);
+	void		drawLobby(void);
+	void		handleRoomState(void *);
 	~GameLoop(void);
 };
 

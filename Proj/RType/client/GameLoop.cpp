@@ -20,9 +20,19 @@ GameLoop::GameLoop(sf::RenderWindow *window, TCPSocketClient* tcpsock)
 	this->_comm.setCallback(Opcodes::UDPOkay, &GameLoop::handleUDPOkay);
 	this->_comm.setCallback(Opcodes::screenState, &GameLoop::handleScreenState);
 	this->_comm.setCallback(Opcodes::startLoading, &GameLoop::handleStartLoading);
-	this->_comm.TCPsetReady(this->_p);
-	this->_tcpsock->send(this->_p);
+	this->_comm.setCallback(Opcodes::roomState, &GameLoop::handleRoomState);
 	this->_set = new SettingsParser("assets/settings.ini");
+	this->_started = false;
+	if (!_font.loadFromFile("assets/arial.ttf"))
+		std::cerr << "Error loading font" << std::endl;
+	for (int i = 0 ; i < 4 ; i++)
+	{
+		_text[i].setFont(_font);
+		_text[i].setCharacterSize(30);
+		_text[i].setPosition(static_cast<float>(800), static_cast<float>(250 + i * 100));
+	}
+	this->_comm.TCProomState(*this->_tcpsock);
+	this->_roomStateFilled = false;
 }
 
 GameLoop::~GameLoop(void)
@@ -85,10 +95,18 @@ void			GameLoop::defaultCallback(char opcode, IReadableSocket& sock)
 	//std::cout << "default callbak opcode :" << (int)opcode << std::endl;
 }
 
+void	GameLoop::readyUp(void)
+{
+	this->_comm.TCPsetReady(this->_p);
+	this->_tcpsock->send(this->_p);
+	
+}
+
 void	GameLoop::handleUDPOkay(void *data)
 {
 	this->_comm.TCPletsPlay(this->_p);
 	this->_tcpsock->send(this->_p);
+	this->_started = true;
 }
 
 void	GameLoop::openBackMenu(bool *running)
@@ -121,7 +139,6 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 					this->openBackMenu(running);
 					break;
 				case sf::Keyboard::Up:
-					std::cout << "upe" << std::endl;
 					this->_input.y = 2;
 					break;
 				case sf::Keyboard::Right:
@@ -132,6 +149,11 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 					break;
 				case sf::Keyboard::Down:
 					this->_input.y = 1;
+					break;
+				case sf::Keyboard::F1:
+					if (this->_started) {
+						this->readyUp();
+					}
 					break;
 				}
 				break;
@@ -168,8 +190,49 @@ void	GameLoop::initNetwork(void)
 
 void	GameLoop::handleNetwork(void)
 {
-	this->_comm.interpretCommand(*this->_udpsock);
-	this->_comm.UDPscreenState(*this->_udpsock);
+	if (!_started)
+	{
+		this->_comm.interpretCommand(*this->_tcpsock);
+		this->_comm.TCProomState(*this->_tcpsock);
+	}
+	else
+	{
+		this->_comm.interpretCommand(*this->_udpsock);
+		this->_comm.UDPscreenState(*this->_udpsock);
+	}
+}
+
+void		GameLoop::handleRoomState(void *data)
+{
+	std::cout << "handleroomstate" << std::endl;
+	s_room_state_info*	state(static_cast<s_room_state_info*>(data));
+	
+	this->_roomstate = *state;
+	this->_roomStateFilled = true;
+}
+
+void	GameLoop::drawLobby(void)
+{
+	unsigned int i = 0;
+	std::string	tmp;
+	
+	std::cout << "drawlobby" << std::endl;
+	if (this->_roomStateFilled)
+	{
+		while (i < 4)
+		{
+			std::cout << "in da loop" << std::endl;
+			tmp = "Name: ";
+			tmp.append(_roomstate.players[i]);
+			tmp.append((_roomstate.playerState[i] ? "Ready" : "Waiting"));
+			_text[i].setString(tmp);
+			++i;
+			this->_window->draw(_text[i]);
+		}
+		if (this->_udpState != SUCCESS)
+			this->_udpState = SUCCESS;
+	}
+	std::cout << "end drawlobby" << std::endl;
 }
 
 void	GameLoop::mainLoop(void)
@@ -178,25 +241,39 @@ void	GameLoop::mainLoop(void)
 	Background			bg(this->_spritemgr.getSpritebyId(BG_IMG));
 	Clock				loopTimer;
 	float				execTime;
-	bool running = true;
+	bool				running = true;
+	bool				initNet = true;
 	
-	this->initNetwork();
-	std::cout << "after initnet" << std::endl;
+
+	std::cout << "mainloop" << std::endl;
 	while (running)
     {
+		if (this->_started && initNet) {
+			initNet = false;
+			this->initNetwork();
+		}
 		this->_window->clear();
 		loopTimer.initialise();
 		this->handleNetwork();
         this->manageEvent(&running, &ship);
-		this->sendMovement();
+		if (running && _started)
+			this->sendMovement();
 		if (running)
 		{
+			std::cout << "ife" << std::endl;
 			bg.moveBackground();
 			this->_window->draw(bg.getSprite());
-			this->drawScreenState();
+			if (!this->_started)
+			{
+				std::cout << "!started" << std::endl;
+				this->drawLobby();
+			}
+			else
+			{
+				this->drawScreenState();
+			}
 			this->_window->display();
 		}
-		std::cout << "in loop" << std::endl;
 		execTime = loopTimer.getTimeBySec();
 		Sleep((unsigned long)(GAMELOOPTIME - execTime));
     }
