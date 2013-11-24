@@ -41,6 +41,10 @@ class Movement
 				this->_temp._posX = 0;
 			if (this->_temp._posX > 1500)
 				this->_temp._posX = 1500;
+			if (this->_temp._posY < 0)
+				this->_temp._posY = 0;
+			if (this->_temp._posY > 850)
+				this->_temp._posY = 850;
 			elem->setPos(&(this->_temp));
 		}
 	}

@@ -112,6 +112,7 @@ void	Room::roomLoop()
 	this->_m.lock();
 	Clock	loopTimer;
 	float	execTime;
+	int		i = 0;
 
 	bool finish = false;
 	std::vector<Player*>::iterator	ite = this->_party.begin();
@@ -119,8 +120,13 @@ void	Room::roomLoop()
 	std::cout << "Room " << this->_name << "Started to Loop" << std::endl;
 	while (this->_party.size() > 0 && finish == false)
 	{
-		this->_RoomCom.TCProomState(this->_pack, *this);
 		loopTimer.initialise();
+		while (i != this->_party.size())
+		{
+			this->_RoomCom.TCProomState(this->_pack, *this);
+			this->_party[i]->getClient()->getTCPSock()->send(this->_pack);
+			i++;
+		}
 		ite = (this->_party).begin();
 		while ( (ite != (this->_party).end()))
 		{
