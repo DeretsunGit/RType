@@ -59,7 +59,7 @@ public:
 	t_scriptMap		*getMap();
 	t_scriptWave	*getWave();
 	//std::string		getScriptFile();
-	bool			getRandom();
+	bool			getRandom() const;
 	
 	void			setScriptFile(std::string *);
 	void			setRandom(bool);

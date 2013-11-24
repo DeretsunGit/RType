@@ -35,7 +35,7 @@ void	Ennemy::setIdWave(int idWave)
 	this->_idWave = idWave;
 }
 
-int		Ennemy::getIdWave()
+int		Ennemy::getIdWave() const
 {
 	return (this->_idWave);
 }

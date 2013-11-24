@@ -32,5 +32,5 @@ public:
 	void	setBullet(std::list<Bullet*> &, t_bullet &);
 	void	setIdWave(int);
 
-	int		getIdWave();
+	int		getIdWave() const;
 };

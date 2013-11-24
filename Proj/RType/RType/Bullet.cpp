@@ -17,7 +17,7 @@ void	Bullet::setIdWave(int idWave)
 	this->_idWave = idWave;
 }
 
-int		Bullet::getIdWave()
+int		Bullet::getIdWave() const
 {
 	return (this->_idWave);
 }

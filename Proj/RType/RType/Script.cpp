@@ -46,11 +46,9 @@ void	Script::setRandomMap()
 	short int	botLen = 0;
 
 	Randomization<char> my_rand;
-	while (topLen < this->_mapSize || botLen < this->_mapSize) // top
+	while (topLen < this->_mapSize || botLen < this->_mapSize)
 	{
-//		std::cout << topLen << "<->" << botLen << std::endl;
-		rand = this->_rand->tRand(1, this->_patternList.size());
-		//rand = distribution(generator);
+		rand = this->_rand->tRand(1, static_cast<char>(this->_patternList.size()));
 		if (this->_patternList[rand]._isTop == true)
 		{
 			if((topLen += this->_patternList[rand]._len) <= this->_mapSize)
@@ -66,9 +64,9 @@ void	Script::setRandomMap()
 
 bool	Script::getPattern()
 {
-	int				len = 0;
-	int				pos = 0;
-	int				pos2 = 0;
+	size_t			len = 0;
+	size_t			pos = 0;
+	size_t			pos2 = 0;
 	std::string		line;
 	std::string		temp;
 	t_pattern		newPattern;
@@ -82,12 +80,7 @@ bool	Script::getPattern()
 	while (std::getline(*(this->_patternFile), line))
 	{
 		if ((*this->_patternFile).eof() || line.find("/") == 1)
-		{
 			std::cout << "END :" <<line << std::endl;
-
-	// on lit dans le fichier, get line, on cut sur les ':', 1er = no patern, 2eme = longueur, 3eme on cut sur les ',', et on get la hauteur
-	// on met tout dans une liste
-		}
 		else
 		{
 			pos = 0;
@@ -99,14 +92,9 @@ bool	Script::getPattern()
 				temp = line.substr(pos, len);
 				pos = pos2 + 1;
 				if ((newPattern._id = strTo<int>(temp)) < 100)
-				{
 					newPattern._isTop = true;
-				}
 				else
-				{
 					newPattern._isTop = false;
-				}
-				//((newPattern._id = strTo<int>(temp)) >= 100) ? newPattern._isTop = true : newPattern._isTop = false;
 			}
 			else
 				std::cout << "Pattern file corrupted." << std::endl;
@@ -134,7 +122,7 @@ bool	Script::getPattern()
 	return (true);
 }
 
-bool		Script::getRandom()
+bool		Script::getRandom() const
 {
 	return (this->_isRandom);
 }

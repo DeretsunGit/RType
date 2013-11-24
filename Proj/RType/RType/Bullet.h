@@ -12,5 +12,5 @@ public:
 
 	void	setIdWave(int);
 
-	int		getIdWave();
+	int		getIdWave() const;
 };
