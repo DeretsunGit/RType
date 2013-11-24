@@ -183,8 +183,7 @@ add_executable (Server
 	Wall.h
 	Script.h
 	Script.cpp
-	Randomisation.h
-	Randomisation.cpp
+	Randomization.hpp
 	ESprites.h
 	Movement.hpp
 	)
