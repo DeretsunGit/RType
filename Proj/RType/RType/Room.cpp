@@ -73,9 +73,10 @@ bool	Room::startGame()
 		if (this->_nbReady == this->_party.size())
 			ready = true;
 	}
+	
 	std::cout << "UDP is ok !" << std::endl;
 	//on leur renvoie udpokay
-	this->_RoomCom.UDPok(this->_pack);
+/*	this->_RoomCom.UDPok(this->_pack);
 	this->_udpSock->broadcast(this->_pack);
 	std::cout << "sending UDPokay" << std::endl;
 	//on attend lets play
@@ -89,7 +90,7 @@ bool	Room::startGame()
 		}
 		if (this->_nbReady == this->_party.size())
 			ready = true;
-	}
+	}*/
 	std::cout << "Everybody's ok ! Game Starting !" << std::endl;
 	if (ready == true)
 	{
@@ -118,6 +119,7 @@ void	Room::roomLoop()
 	std::cout << "Room " << this->_name << "Started to Loop" << std::endl;
 	while (this->_party.size() > 0 && finish == false)
 	{
+		this->_RoomCom.TCProomState(this->_pack, *this);
 		loopTimer.initialise();
 		ite = (this->_party).begin();
 		while ( (ite != (this->_party).end()))

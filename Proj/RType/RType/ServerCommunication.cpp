@@ -594,6 +594,8 @@ bool ServerCommunication<T>::UDPinputs(IReadableSocket& socket)
 	  socket.putback(reinterpret_cast<char*>(&datasize), 2);
 	  return false;
 	}
+	  in.in.x = ntohs(in.in.x);
+	  in.in.y = ntohs(in.in.y);
       in.from = this->from;
       (_handler->*_callableMap[Opcodes::inputs])(&in);
       return true;

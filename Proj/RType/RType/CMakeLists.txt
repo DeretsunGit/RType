@@ -186,8 +186,7 @@ add_executable (Server
 	Randomisation.h
 	Randomisation.cpp
 	ESprites.h
-	Movement.h
-	Movement.cpp
+	Movement.hpp
 	)
 
 add_executable (Client

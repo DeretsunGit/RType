@@ -6,14 +6,18 @@ template class ServerCommunication<Room>;
 Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
   : _players(p), _script(s), _udpSock(UDPsock)
 {
+	this->_GameCom.setCallback(Opcodes::letsPlay, &Game::letsPlay);
 	this->_GameCom.setCallback(Opcodes::inputs, &Game::inputs);
-//	this->_GameCom.setCallback(, &Game::pauseOk);
 	this->_GameCom.setDefaultCallback(&Game::callBackError);
 	this->_GameCom.setHandler(this);
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	this->_globalPos = 17;
 	this->genPool();
+	this->_nbReady = 0;
+
+	std::cout << (this->_players[0])->getPos()._posX << "/" << (this->_players[0])->getPos()._posY << std::endl;
+
 
 	std::cout << "Pools fully created" << std::endl;
 	this->mapGeneration();
@@ -35,10 +39,8 @@ void	Game::inputs(void *data)
 	s_recv_inputs	*dataStruct = reinterpret_cast<s_recv_inputs *>(data);;
 	short		i = 0;
 
-	std::cout << "KAKOUK"<< std::endl;
 	while (i < this->_players.size())
 	{
-	std::cout << this->_players[i]->getClient()->getInaddr() << std::endl;
 		if (dataStruct->from == this->_players[i]->getClient()->getInaddr())
 		{
 			this->_move.genericMove(PlayerMove, this->_players[i], dataStruct->in.x, dataStruct->in.y);
@@ -47,6 +49,12 @@ void	Game::inputs(void *data)
 		}
 		i++;
 	}
+}
+
+void	Game::letsPlay(void *data)
+{
+	// launch game if all clients said it
+	this->_nbReady ++;
 }
 
 void		Game::sendError(char errorCode, const char *message)
@@ -140,31 +148,54 @@ void	Game::genPool()
 
 bool	Game::startGame()
 {
+	bool ready= false;
+	short int i;
+
+	this->_GameCom.UDPok(this->_pack);
+	this->_udpSock->broadcast(this->_pack);
+	std::cout << "sending UDPokay" << std::endl;
+	//on attend lets play
+	this->_nbReady = 0;
+	while (ready != true)
+	{
+		i = 0;
+		while (i < this->_players.size())
+		{
+			this->_GameCom.interpretCommand(*(this->_players[i]->getClient()->getTCPSock()));
+			i++;
+		}
+		if (this->_nbReady == this->_players.size())
+			ready = true;
+	}
+	std::cout << "koukou" << std::endl;
 	return (true);
 }
 
 void	Game::gameLoop()
 {
+	Clock	GameTime;
 	Clock	loopTimer;
 	float	execTime;
 	unsigned int i;
 
+	GameTime.initialise();
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
-	//	std::cout << "loop" << std::endl;
+//		std::cout << "a" << std::endl;
 		loopTimer.initialise();
+		this->moveWall();
+
 		i = 0;
 		while (i < this->_players.size())
 		{
 			this->_GameCom.interpretCommand(*this->_udpSock);
 			i ++;
 		}
-		this->moveWall();
 //		this->collision();
 		// (pop de Wave)
 		//syncMap();
-		this->sendPriority();
+		this->sendPriority((unsigned long)(GameTime.getTimeBySec() * 10));
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
 			this->_endGame = true;
 		execTime = loopTimer.getTimeBySec();
@@ -188,7 +219,6 @@ void	Game::collision()
 	int										collision_ret;
 	std::list<Wall*>::iterator				it_wall;
 	std::vector<t_coord>::const_iterator	it_coord;
-	std::vector<Player*>::const_iterator	it_player;
 	std::vector<t_coord>					shittyvar_currentcelll;
 
 
@@ -206,24 +236,10 @@ void	Game::collision()
 				}
 			}
 		}
-	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
-		{
-			if ((*it_player)->getHP() != 0)
-			{
-				shittyvar_currentcelll = ((*it_player)->getCurrentCell());
-				for (it_coord = shittyvar_currentcelll.begin(); it_coord != shittyvar_currentcelll.end(); it_coord++)
-					{
-						if ((collision_ret = (*it_player)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX])) != -1)
-						{
-								// collision entre *it_player et l'objet d'id collision_ret
-						}
-					}
-			}
-		}
 	//ajouter ennemis
 }
 
-void	Game::sendPriority()
+void	Game::sendPriority(unsigned long score)
 {
 	short int					maxPriority = 0;
 	std::list<Element *>		elemToSend;
@@ -235,7 +251,6 @@ void	Game::sendPriority()
 		elemToSend.push_back(this->_players[i]);
 		i++;
 	}
-	//std::cout << "Sended " << i << "Players" << std::endl;
 	i = 0;
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 		{
@@ -245,7 +260,7 @@ void	Game::sendPriority()
 						i++;
 			}
 		}
-	this->_GameCom.UDPscreenState(this->_pack, 0, elemToSend);
+	this->_GameCom.UDPscreenState(this->_pack, score, elemToSend);
 }
 
 void	Game::moveBullets()

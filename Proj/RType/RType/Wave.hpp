@@ -5,6 +5,7 @@
 #include "Clock.hpp"
 #include "Bullet.h"
 #include "ESprites.h"
+#include "Movement.hpp"
 //#include "Randomisation.cpp"
 //template class Randomisation<bool>;
 
@@ -17,6 +18,7 @@ protected:
 	t_coord				_pos;
 	Clock				_timeFireEnnemy;
 	Clock				_timePopEnnemy;
+	Movement			_move;
 	char				_color;
 	int					_nbEnnemies;
 	float				_popInterval;
@@ -40,12 +42,12 @@ public:
 		this->_ennemy.firstSprite = ENEMY_RED_1;
 		this->_ennemy.nbSprites = 8;
 		this->_ennemy.hp = 1;
-		this->_ennemy.speed = 1;
+		this->_ennemy.speed = 6;
 
 		this->_bullet.hitBoxSize._posX = 5;
 		this->_bullet.hitBoxSize._posY = 5;
 		this->_bullet.hp = 1;
-		this->_bullet.speed = 2;
+		this->_bullet.speed = 10;
 	}
 
 	~Wave()
@@ -135,7 +137,7 @@ public:
 		{
 			if (((*it)->getIdWave() == this->_id) && ((*it)->getHP() > 0))
 			{
-				//là il faut coder les mouvements des ennemies
+				this->_move.genericMove(MoveTypes::Linear, (*it), 1, 0);				//là il faut coder les mouvements des ennemies
 			}
 		}
 	}
@@ -148,7 +150,7 @@ public:
 		{
 			if (((*it)->getIdWave() == this->_id) && ((*it)->getHP() > 0))
 			{
-				//là il faut coder les mouvements des boulettes
+				this->_move.genericMove(MoveTypes::Linear, (*it), 1, 0);	
 			}
 		}
 	}
@@ -168,17 +170,4 @@ public:
 	{
 		return (this->_nbEnnemies);
 	}
-
-	//Wave(int, std::list<float>&);
-	//~Wave();
-
-	//void				action(std::list<Ennemy*>&, std::list<Bullet*>&, float);
-	//std::list<eSprites>	fillSpriteEnemy(eSprites, int);
-	//void				popEnnemy(std::list<Ennemy*>&);
-	//void				moveEnnemy(std::list<Ennemy*>&);
-	//void				moveBullet(std::list<Bullet*>&);
-	//void				shoot(std::list<Ennemy*>&, std::list<Bullet*>&);
-	//bool				checkEnemiesStillAlive(std::list<Ennemy*>&);
-
-	//int					getNbEnnemies();
 };
