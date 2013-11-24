@@ -29,9 +29,9 @@ link_directories(${CMAKE_BINARY_DIR})
 set_option(CMAKE_BUILD_TYPE "Debug" STRING "Type of build (Debug or Release)")
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	set(SFML_LIBS sfml-graphics-s-d sfml-window-s-d sfml-system-s-d sfml-audio-s-d)
+	set(SFML_LIBS sfml-graphics-s-d sfml-window-s-d sfml-system-s-d)
 else("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	set(SFML_LIBS sfml-graphics-s sfml-window-s sfml-system-s sfml-audio-s)
+	set(SFML_LIBS sfml-graphics-s sfml-window-s sfml-system-s)
 endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
 if(WIN32)
