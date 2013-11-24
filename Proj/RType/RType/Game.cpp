@@ -152,7 +152,6 @@ void	Game::gameLoop()
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
-		std::cout << "a" << std::endl;
 		loopTimer.initialise();
 		this->moveWall();
 
@@ -247,7 +246,6 @@ void	Game::moveBullets()
 		{
 			if ((*it_bullet)->getHP() != 0)
 			{
-				// on check le mouvement de la bullet et on fait la translation correspondante
 			}
 		}
 }
@@ -260,7 +258,6 @@ void Game::playerShoot(Player *currentPlayer)
 	{
 		if ((*it_bullet)->getHP() == 0)
 		{
-		  //			(*it_bullet)->setPos(&(currentPlayer->getPos())); // faux car tir en haut a gauche
 			(*it_bullet)->setHP(1);
 			(*it_bullet)->setFaction(PLAYER);
 		}
@@ -346,7 +343,6 @@ void	Game::moveWall()
 			}
 			--y;
 		}
-		std::cout << "--------------NEW Screen " << this->_firstColumn <<"/" << this->_globalPos << " ------------" << std::endl;
 		this->_globalPos ++;
 		if (this->_firstColumn < 16)
 			this->_firstColumn++;
@@ -359,7 +355,6 @@ bool	Game::assignWall(Wall * vWall, bool isfirst, t_coord &temp, bool isTop)
 {
 	t_coord						coord;
 
-	//vWall->cleanSprite();
 	if (isTop)
 		vWall->addSprite(WALL_UP);
 	else
