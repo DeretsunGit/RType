@@ -114,7 +114,7 @@ bool FileManager::loadDirectory(const char* dirPath)
 		if (std::string(data.cFileName) != std::string(".") && std::string(data.cFileName) != std::string(".."))
 			if (!loadDirectory(data.cFileName))
 			{
-				FindClose(handle);	
+				FindClose(handle);
 				return false;
 			}
 	}
@@ -146,7 +146,7 @@ bool FileManager::loadDirectory(const char* dirPath)
 	return true;
 }
 #else
-bool Filemanager::loadDirectory(const char* dirPath)
+bool FileManager::loadDirectory(const char* dirPath)
 {
 	DIR *dir;
 	struct dirent *entry;
@@ -164,7 +164,7 @@ bool Filemanager::loadDirectory(const char* dirPath)
 		if (entry->d_type == DT_DIR)
 		{
 			if (std::string(entry->d_name) != std::string(".")
-				&& std::string(entry->d_name) != std::string("..")) 
+				&& std::string(entry->d_name) != std::string(".."))
 				if (!loadDirectory(entry->d_name))
 				{
 					closedir(dir);

@@ -184,6 +184,7 @@ add_executable (Server
 	Script.h
 	Script.cpp
 	Randomization.hpp
+	Randomization.cpp
 	ESprites.h
 	Movement.hpp
 	)
@@ -253,7 +254,6 @@ add_executable (Client
 	ESprites.h
 	Clock.hpp
 	)
-
 add_executable (DebugClient
 	${CMAKE_BINARY_DIR}/Abstract/SocketStack.h
 	${CMAKE_BINARY_DIR}/client_debug/main.cpp
