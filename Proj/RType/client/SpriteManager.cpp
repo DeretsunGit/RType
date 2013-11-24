@@ -11,7 +11,8 @@ SpriteManager::SpriteManager(void)
 		!this->_bgtexture2.loadFromFile("assets/bg2.png") ||
 		!this->_creditstexture.loadFromFile("assets/credits.png") ||
 		!this->_walltexture.loadFromFile("assets/mur.png")	||
-		!this->_enemyTexture.loadFromFile("assets/enemy.gif"))
+		!this->_enemyTexture.loadFromFile("assets/enemy.gif") ||
+		!this->_bgmenutexture.loadFromFile("assets/menubg.jpg"))
 		std::cerr << "Error opening texture file" << std::endl;
 	this->_sprites.resize(NB_SPRITES);
 	for (int i = SHIP_BLUE_IDLE ; i <= SHIP_RED_UPMAX ; i++)
@@ -33,6 +34,7 @@ SpriteManager::SpriteManager(void)
 	this->_sprites[CREDITS].setTexture(this->_creditstexture);
 	this->_sprites[BG_IMG].setTexture(this->_bgtexture);
 	this->_sprites[BG_IMG2].setTexture(this->_bgtexture2);
+	this->_sprites[BG_IMG_MENU].setTexture(this->_bgmenutexture);
 	this->_sprites[SHIP_BLUE_IDLE].setTextureRect(sf::IntRect(67, 0, 33, 18));
 	this->_sprites[SHIP_BLUE_UPMAX].setTextureRect(sf::IntRect(123, 0, 32, 18));
 	this->_sprites[SHIP_BLUE_UP].setTextureRect(sf::IntRect(90, 0, 32, 18));

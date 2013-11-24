@@ -12,6 +12,7 @@ private:
 	sf::Sprite				_defaultSprite;
 	sf::Texture				_shiptexture;
 	sf::Texture				_menutexture;
+	sf::Texture				_bgmenutexture;
 	sf::Texture				_bgtexture;
 	sf::Texture				_bgtexture2;
 	sf::Texture				_creditstexture;

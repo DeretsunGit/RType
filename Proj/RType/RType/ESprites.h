@@ -1,6 +1,6 @@
 #pragma once
 
-#define NB_SPRITES	(67)
+#define NB_SPRITES	(69)
 
 enum eSprites
 {
@@ -67,5 +67,6 @@ enum eSprites
 	JOIN_ROOM_ON,
 	BG_IMG,
 	BG_IMG2,
+	BG_IMG_MENU,
 	CREDITS
 };

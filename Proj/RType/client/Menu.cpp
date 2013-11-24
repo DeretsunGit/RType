@@ -6,6 +6,7 @@
 #include "RoomButton.h"
 #include "BackMainButton.h"
 #include "BackGameButton.h"
+#include "Background.h"
 
 Menu::Menu(sf::RenderWindow *window, SpriteManager *spritemgr)
 {
@@ -72,10 +73,11 @@ void			Menu::displayMenu() const
 void			Menu::menuLoop()
 {
 	sf::Sprite	logo;
+	Background	bg(this->_spritemgr->getSpritebyId(BG_IMG_MENU));
 	bool		running = true;
 
 	logo = this->_spritemgr->getSpritebyId(GAME_LOGO);
-	logo.setPosition(1400 / 2 - static_cast<float>(logo.getTextureRect().width) / 2, 100); 
+	logo.setPosition(340, 100); 
 	while (running && this->_window->isOpen())
 	{
 		this->childAction();
@@ -101,6 +103,7 @@ void			Menu::menuLoop()
 				this->_buttons[this->_active]->action(event.key.code, this->_window, &running);
 		}
 		this->_window->clear();
+		this->_window->draw(bg.getSprite());
 		this->_window->draw(logo);
 		this->displayMenu();
 		this->_window->display();
