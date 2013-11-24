@@ -9,7 +9,7 @@ JoinRoomMenu::JoinRoomMenu(sf::RenderWindow *window, SpriteManager *spritemgr, T
 {
 	int	i = 0;
 
-	this->_size = list->size();
+	this->_size = static_cast<unsigned int>(list->size());
 	this->_buttons.resize(this->_size);
 
 	for (std::list<s_room_info>::iterator it = list->begin(); it != list->end(); it++)
