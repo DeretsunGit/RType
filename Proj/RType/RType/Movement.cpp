@@ -49,5 +49,11 @@ void Movement::playerMove(Element *elem, short int x, short int y)
 		this->_temp._posY = (elem->getPos()._posY - elem->getSpeed());
 	
 	if (x != 0 || y != 0)
-		elem->setPos(&(this->_temp));
+		{
+			if (this->_temp._posX < 0)
+				this->_temp._posX = 0;
+			if (this->_temp._posX > 1500)
+				this->_temp._posX = 1500;
+			elem->setPos(&(this->_temp));
+		}
 }

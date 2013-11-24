@@ -56,7 +56,7 @@ public:
 	void	mapGeneration();
 	void	playerReset();
 	void	collision();
-	void	sendPriority();
+	void	sendPriority(unsigned long);
 	void	getInputs();
 	bool	isPlayerAlive();
 	

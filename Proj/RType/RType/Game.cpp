@@ -173,10 +173,12 @@ bool	Game::startGame()
 
 void	Game::gameLoop()
 {
+	Clock	GameTime;
 	Clock	loopTimer;
 	float	execTime;
 	unsigned int i;
 
+	GameTime.initialise();
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
@@ -192,7 +194,7 @@ void	Game::gameLoop()
 //		this->collision();
 		// (pop de Wave)
 		//syncMap();
-		this->sendPriority();
+		this->sendPriority((unsigned long)(GameTime.getTimeBySec() * 10));
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
 			this->_endGame = true;
 		execTime = loopTimer.getTimeBySec();
@@ -251,7 +253,7 @@ void	Game::collision()
 	//ajouter ennemis
 }
 
-void	Game::sendPriority()
+void	Game::sendPriority(unsigned long score)
 {
 	short int					maxPriority = 0;
 	std::list<Element *>		elemToSend;
@@ -272,7 +274,7 @@ void	Game::sendPriority()
 						i++;
 			}
 		}
-	this->_GameCom.UDPscreenState(this->_pack, 0, elemToSend);
+	this->_GameCom.UDPscreenState(this->_pack, score, elemToSend);
 }
 
 void	Game::moveBullets()
