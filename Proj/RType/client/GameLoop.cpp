@@ -201,7 +201,6 @@ void		GameLoop::handleRoomState(void *data)
 	
 	this->_roomstate = *state;
 	this->_roomStateFilled = true;
-	std::cout << "handleroomstate" << std::endl;
 }
 
 void	GameLoop::drawLobby(void)
