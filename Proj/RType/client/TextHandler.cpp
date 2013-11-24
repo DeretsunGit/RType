@@ -13,7 +13,7 @@ TextHandler::TextHandler()
 	this->_assoc[sf::Keyboard::H] = 'h';
 	this->_assoc[sf::Keyboard::I] = 'i';
 	this->_assoc[sf::Keyboard::J] = 'j';
-	this->_assoc[sf::Keyboard::Q] = 'k';
+	this->_assoc[sf::Keyboard::K] = 'k';
 	this->_assoc[sf::Keyboard::L] = 'l';
 	this->_assoc[sf::Keyboard::M] = 'm';
 	this->_assoc[sf::Keyboard::N] = 'n';

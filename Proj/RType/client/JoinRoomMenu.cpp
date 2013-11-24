@@ -14,7 +14,7 @@ JoinRoomMenu::JoinRoomMenu(sf::RenderWindow *window, SpriteManager *spritemgr, T
 
 	for (std::list<s_room_info>::iterator it = list->begin(); it != list->end(); it++)
 	{
-		this->_buttons[i] = new RoomButton(this->_spritemgr, "1 room", socket, it->id);
+		this->_buttons[i] = new RoomButton(this->_spritemgr, it->name, socket, it->id);
 		i = i + 1;
 	}
 }

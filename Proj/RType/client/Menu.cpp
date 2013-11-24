@@ -85,8 +85,8 @@ void			Menu::menuLoop()
 			if(event.type == sf::Event::Closed)
 			{
 				std::cout << "event closed" << std::endl;
+				this->_window->close();
 				running = false;
-				//this->_window->close();
 			}
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
 				running = false;

@@ -20,7 +20,6 @@ void	CreateRoomButton::action(sf::Keyboard::Key key, sf::RenderWindow *window, b
 	{
 		this->_comm.TCPsetRoom(this->_p, this->_roomname.c_str());
 		this->_tcpsock->send(this->_p);
-		std::cout << "room button action" << std::endl;
 		GameLoop	loop(window, this->_tcpsock); //virer dernier param
 		*running = false;
 		loop.mainLoop();

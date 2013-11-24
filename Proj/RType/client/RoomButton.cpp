@@ -23,13 +23,8 @@ void	RoomButton::action(sf::Keyboard::Key, sf::RenderWindow *window, bool *runni
 	GameLoop	loop(window, this->_tcpsock);
 	this->_comm.TCPselectRoom(this->_p, this->_roomId);
 	this->_tcpsock->send(this->_p);
-
-	while (loop.getUdpState() == LOADING);
 	*running = false;
-	if (loop.getUdpState() == SUCCESS)
-		loop.mainLoop();
-	else
-		return;
+	loop.mainLoop();
 }
 
 void	RoomButton::displayButton(unsigned int pos, unsigned int max, sf::RenderWindow *window)
