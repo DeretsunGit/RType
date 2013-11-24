@@ -29,9 +29,10 @@ GameLoop::GameLoop(sf::RenderWindow *window, TCPSocketClient* tcpsock)
 	{
 		_text[i].setFont(_font);
 		_text[i].setCharacterSize(30);
+		_text[i].setColor(sf::Color::Magenta);
 		_text[i].setPosition(static_cast<float>(800), static_cast<float>(250 + i * 100));
 	}
-	this->_comm.TCProomState(*this->_tcpsock);
+	//this->_comm.TCProomState(*this->_tcpsock);
 	this->_roomStateFilled = false;
 }
 
@@ -49,7 +50,6 @@ void	GameLoop::drawScreenState(void)
 	{
 		while (it != end)
 		{
-			//std::cout << "id sprite : " << static_cast<eSprites>(it->first) << " pakasté : " << it->first << std::endl;
 			this->displaySprite(it->second._posX, it->second._posY, static_cast<eSprites>(it->first));
 			++it;
 		}
@@ -74,7 +74,6 @@ void	GameLoop::handleStartLoading(void *data)
 {
 	s_start_loading*	loader(static_cast<s_start_loading*>(data));
 
-	std::cout << loader->udp << std::endl;
 	try
 	{
 		this->_udpsock = new UDPSocketClient(this->_set->getServer().c_str(), loader->udp);
@@ -86,6 +85,7 @@ void	GameLoop::handleStartLoading(void *data)
 		return;
 	}
 	this->_udpState = SUCCESS;
+	this->_started = true;
 	this->_comm.UDPReady(this->_p, this->_set->getNick().c_str());
 	this->_udpsock->send(this->_p);
 }
@@ -99,7 +99,6 @@ void	GameLoop::readyUp(void)
 {
 	this->_comm.TCPsetReady(this->_p);
 	this->_tcpsock->send(this->_p);
-	
 }
 
 void	GameLoop::handleUDPOkay(void *data)
@@ -107,6 +106,7 @@ void	GameLoop::handleUDPOkay(void *data)
 	this->_comm.TCPletsPlay(this->_p);
 	this->_tcpsock->send(this->_p);
 	this->_started = true;
+	std::cout << "in udpokay" << std::endl;
 }
 
 void	GameLoop::openBackMenu(bool *running)
@@ -151,7 +151,7 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 					this->_input.y = 1;
 					break;
 				case sf::Keyboard::F1:
-					if (this->_started) {
+					if (!this->_started) {
 						this->readyUp();
 					}
 					break;
@@ -193,7 +193,6 @@ void	GameLoop::handleNetwork(void)
 	if (!_started)
 	{
 		this->_comm.interpretCommand(*this->_tcpsock);
-		this->_comm.TCProomState(*this->_tcpsock);
 	}
 	else
 	{
@@ -204,7 +203,6 @@ void	GameLoop::handleNetwork(void)
 
 void		GameLoop::handleRoomState(void *data)
 {
-	std::cout << "handleroomstate" << std::endl;
 	s_room_state_info*	state(static_cast<s_room_state_info*>(data));
 	
 	this->_roomstate = *state;
@@ -216,23 +214,20 @@ void	GameLoop::drawLobby(void)
 	unsigned int i = 0;
 	std::string	tmp;
 	
-	std::cout << "drawlobby" << std::endl;
 	if (this->_roomStateFilled)
 	{
 		while (i < 4)
 		{
-			std::cout << "in da loop" << std::endl;
 			tmp = "Name: ";
 			tmp.append(_roomstate.players[i]);
-			tmp.append((_roomstate.playerState[i] ? "Ready" : "Waiting"));
+			tmp.append((_roomstate.playerState[i] ? " Ready" : " Waiting"));
 			_text[i].setString(tmp);
-			++i;
 			this->_window->draw(_text[i]);
+			++i;
 		}
 		if (this->_udpState != SUCCESS)
 			this->_udpState = SUCCESS;
 	}
-	std::cout << "end drawlobby" << std::endl;
 }
 
 void	GameLoop::mainLoop(void)
@@ -244,8 +239,6 @@ void	GameLoop::mainLoop(void)
 	bool				running = true;
 	bool				initNet = true;
 	
-
-	std::cout << "mainloop" << std::endl;
 	while (running)
     {
 		if (this->_started && initNet) {
@@ -260,12 +253,10 @@ void	GameLoop::mainLoop(void)
 			this->sendMovement();
 		if (running)
 		{
-			std::cout << "ife" << std::endl;
 			bg.moveBackground();
 			this->_window->draw(bg.getSprite());
 			if (!this->_started)
 			{
-				std::cout << "!started" << std::endl;
 				this->drawLobby();
 			}
 			else
