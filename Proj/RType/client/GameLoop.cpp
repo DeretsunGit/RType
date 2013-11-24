@@ -121,7 +121,7 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 					this->openBackMenu(running);
 					break;
 				case sf::Keyboard::Up:
-					std::cout << "upe" << std::endl;
+					//std::cout << "upe" << std::endl;
 					this->_input.y = 2;
 					break;
 				case sf::Keyboard::Right:
