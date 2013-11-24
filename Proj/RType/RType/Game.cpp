@@ -182,15 +182,15 @@ void	Game::gameLoop()
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
-	//	std::cout << "loop" << std::endl;
 		loopTimer.initialise();
+		this->moveWall();
+
 		i = 0;
 		while (i < this->_players.size())
 		{
 			this->_GameCom.interpretCommand(*this->_udpSock);
 			i ++;
 		}
-		this->moveWall();
 //		this->collision();
 		// (pop de Wave)
 		//syncMap();
