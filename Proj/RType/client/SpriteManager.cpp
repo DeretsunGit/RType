@@ -14,9 +14,10 @@ SpriteManager::SpriteManager(void)
 		!this->_enemyTexture.loadFromFile("assets/enemy.gif"))
 		std::cerr << "Error opening texture file" << std::endl;
 	this->_sprites.resize(NB_SPRITES);
-	for (int i = SHIP_BLUE_IDLE ; i <= SHIP_BLUE_UPMAX ; i++)
+	for (int i = SHIP_BLUE_IDLE ; i <= SHIP_RED_UPMAX ; i++)
 	{
 		this->_sprites[i].setTexture(this->_shiptexture);
+		this->_sprites[i].setScale(3, 3);
 	}
 	for (int i = GAME_LOGO ; i <= JOIN_ROOM_ON ; i++)
 	{
@@ -25,22 +26,37 @@ SpriteManager::SpriteManager(void)
 	for (int i = ENEMY_RED_1 ; i <= ENEMY_RED_8 ; i++)
 	{
 		this->_sprites[i].setTexture(this->_enemyTexture);
+
 	}
 	this->_sprites[WALL_DOWN].setTexture(this->_walltexture);
 	this->_sprites[WALL_UP].setTexture(this->_walltexture);
 	this->_sprites[CREDITS].setTexture(this->_creditstexture);
 	this->_sprites[BG_IMG].setTexture(this->_bgtexture);
 	this->_sprites[BG_IMG2].setTexture(this->_bgtexture2);
-	this->_sprites[SHIP_BLUE_IDLE].setTextureRect(sf::IntRect(167, 3, 32, 14));
-	this->_sprites[SHIP_BLUE_IDLE].setScale(3, 3);
-	this->_sprites[SHIP_BLUE_UPMAX].setTextureRect(sf::IntRect(233, 3, 32, 14));
-	this->_sprites[SHIP_BLUE_UP].setTextureRect(sf::IntRect(200, 3, 32, 14));
-	this->_sprites[SHIP_BLUE_DOWNMAX].setTextureRect(sf::IntRect(134, 3, 32, 14));
-	this->_sprites[SHIP_BLUE_DOWN].setTextureRect(sf::IntRect(134, 3, 32, 14));
-	this->_sprites[ENGINE_SLOW].setTextureRect(sf::IntRect(234, 18, 32, 32));
-	this->_sprites[ENGINE_NORM].setTextureRect(sf::IntRect(200, 18, 32, 32));
-	this->_sprites[ENGINE_FAST].setTextureRect(sf::IntRect(167, 18, 32, 32));
-	this->_sprites[ENGINE_MAXI].setTextureRect(sf::IntRect(134, 18, 32, 32));
+	this->_sprites[SHIP_BLUE_IDLE].setTextureRect(sf::IntRect(67, 0, 33, 18));
+	this->_sprites[SHIP_BLUE_UPMAX].setTextureRect(sf::IntRect(123, 0, 32, 18));
+	this->_sprites[SHIP_BLUE_UP].setTextureRect(sf::IntRect(90, 0, 32, 18));
+	this->_sprites[SHIP_BLUE_DOWNMAX].setTextureRect(sf::IntRect(0, 0, 32, 18));
+	this->_sprites[SHIP_BLUE_DOWN].setTextureRect(sf::IntRect(33, 0, 32, 18));
+	this->_sprites[SHIP_RED_IDLE].setTextureRect(sf::IntRect(67, 18, 33, 18));
+	this->_sprites[SHIP_RED_UPMAX].setTextureRect(sf::IntRect(123, 18, 32, 18));
+	this->_sprites[SHIP_RED_UP].setTextureRect(sf::IntRect(90, 18, 32, 18));
+	this->_sprites[SHIP_RED_DOWNMAX].setTextureRect(sf::IntRect(0, 18, 32, 14));
+	this->_sprites[SHIP_RED_DOWN].setTextureRect(sf::IntRect(33, 18, 32, 14));
+	this->_sprites[SHIP_GREEN_IDLE].setTextureRect(sf::IntRect(67, 36, 33, 18));
+	this->_sprites[SHIP_GREEN_UPMAX].setTextureRect(sf::IntRect(123, 36, 32, 14));
+	this->_sprites[SHIP_GREEN_UP].setTextureRect(sf::IntRect(90, 36, 32, 14));
+	this->_sprites[SHIP_GREEN_DOWNMAX].setTextureRect(sf::IntRect(0, 36, 32, 14));
+	this->_sprites[SHIP_GREEN_DOWN].setTextureRect(sf::IntRect(33, 36, 32, 14));
+	this->_sprites[SHIP_YELLOW_IDLE].setTextureRect(sf::IntRect(67, 54, 33, 18));
+	this->_sprites[SHIP_YELLOW_UPMAX].setTextureRect(sf::IntRect(123, 54, 32, 14));
+	this->_sprites[SHIP_YELLOW_UP].setTextureRect(sf::IntRect(90, 54, 32, 14));
+	this->_sprites[SHIP_YELLOW_DOWNMAX].setTextureRect(sf::IntRect(0, 54, 32, 14));
+	this->_sprites[SHIP_YELLOW_DOWN].setTextureRect(sf::IntRect(33, 54, 32, 14));
+	//this->_sprites[ENGINE_SLOW].setTextureRect(sf::IntRect(234, 18, 32, 32));
+	//this->_sprites[ENGINE_NORM].setTextureRect(sf::IntRect(200, 18, 32, 32));
+	//this->_sprites[ENGINE_FAST].setTextureRect(sf::IntRect(167, 18, 32, 32));
+	//this->_sprites[ENGINE_MAXI].setTextureRect(sf::IntRect(134, 18, 32, 32));
 	this->_sprites[GAME_LOGO].setTextureRect(sf::IntRect(0, 0, 480, 85));
 	this->_sprites[MENU_PLAY].setTextureRect(sf::IntRect(0, 90, 450, 54));
 	this->_sprites[MENU_SETT].setTextureRect(sf::IntRect(0, 213, 450, 54));
