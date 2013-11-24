@@ -41,6 +41,7 @@ void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 	unsigned short datasize = htons(((32 + (4 * 32)) * sizeof(char)) + (4 * sizeof(bool)));
 	char name[32];
 	char players[4][32];
+	bool status[4];
 	std::vector<Player*>::const_iterator ite;
 	int i = 0;
 
@@ -55,15 +56,19 @@ void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 	while (ite != room.getPlayers().end() && i < 4)
 	{
 		strncpy(players[i], (*ite)->getName().c_str(), 32);
+		status[i] = (*ite)->getReady();
 		++ite;
 		++i;
 	}
 	while (i < 4)
 	{
 		players[i][0] = 0;
+		status[i] = false;
 		++i;
 	}
 	packet.write(players[0], (4 * 32) * sizeof(char));
+	packet.write(reinterpret_cast<char*>(status), (4 * sizeof(bool)));
+	
 }
 
 template<class T>
