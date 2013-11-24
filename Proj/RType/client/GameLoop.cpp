@@ -139,10 +139,6 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 					this->openBackMenu(running);
 					break;
 				case sf::Keyboard::Up:
-<<<<<<< HEAD
-=======
-					//std::cout << "upe" << std::endl;
->>>>>>> 8ebb3cca0d9bf26767b64d4b4ce8686b41dd769c
 					this->_input.y = 2;
 					break;
 				case sf::Keyboard::Right:
@@ -278,10 +274,6 @@ void	GameLoop::mainLoop(void)
 			}
 			this->_window->display();
 		}
-<<<<<<< HEAD
-=======
-//		std::cout << "in loop" << std::endl;
->>>>>>> 8ebb3cca0d9bf26767b64d4b4ce8686b41dd769c
 		execTime = loopTimer.getTimeBySec();
 		Sleep((unsigned long)(GAMELOOPTIME - execTime));
     }
