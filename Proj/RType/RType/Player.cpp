@@ -13,8 +13,8 @@ Player::Player(Client* c, int id)
 	this->_shield =		LIGHT;
 	this->setSpeed(8);
 
-	temp._posX = 100;
-	temp._posY = 50;
+	temp._posX = 45;
+	temp._posY = 25;
 	this->setHitboxSize(&temp);
 	temp._posX = 100;
 	temp._posY = 450;
@@ -22,8 +22,14 @@ Player::Player(Client* c, int id)
 	this->setPos(&temp);
 	this->setHP(	3);
 	this->setId(id);
-	this->addSprite(SHIP_BLUE_IDLE);
-	std::cout << this->getPos()._posX << "/" << this->getPos()._posY << std::endl;
+	if (id == 1)
+		this->addSprite(SHIP_BLUE_IDLE);
+	if (id == 2)
+		this->addSprite(SHIP_RED_IDLE);
+	if (id == 3)
+		this->addSprite(SHIP_GREEN_IDLE);
+	if (id == 4)
+		this->addSprite(SHIP_YELLOW_IDLE);
 }
 
 bool	Player::getIsShooting() const

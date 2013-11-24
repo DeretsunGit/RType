@@ -152,7 +152,7 @@ void	Game::gameLoop()
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
-	//	std::cout << "a" << std::endl;
+		std::cout << "a" << std::endl;
 		loopTimer.initialise();
 		this->moveWall();
 
@@ -171,7 +171,6 @@ void	Game::gameLoop()
 			}
 		}
 		this->collision();
-		// (pop de Wave)
 		this->sendPriority((unsigned long)(GameTime.getTimeBySec() * 10));
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
 			this->_endGame = true;
@@ -181,19 +180,10 @@ void	Game::gameLoop()
 		execTime = loopTimer.getTimeBySec();
 		Sleep((unsigned long)(GAMELOOPTIME - execTime));
 	}
-	if (this->_globalPos == 256)
-	{
-		// send win
-	}
-	else
-	{
-		// send lose
-	}
 }
 
 void	Game::collision()
 {
-	int										collision_ret;
 	std::list<Wall*>::iterator				it_wall;
 	std::vector<t_coord>::const_iterator	it_coord;
 	std::vector<t_coord>					shittyvar_currentcelll;
@@ -235,6 +225,7 @@ void	Game::sendPriority(unsigned long score)
 		elemToSend.push_back(this->_players[i]);
 		i++;
 	}
+	std::cout << "sending" << i << "ships" << std::endl;
 	i = 0;
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 		{
