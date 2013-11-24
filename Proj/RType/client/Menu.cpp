@@ -22,7 +22,7 @@ Menu::Menu(Menu &ref)
 	this->_buttons.resize(this->_size);
 	this->_window = ref.getWindow();
 	this->_spritemgr = ref.getSpriteMgr();
-	for (int i = 0 ; i < this->_size ; i++)
+	for (unsigned int i = 0 ; i < this->_size ; i++)
 	{
 		this->_buttons[i] = ref._buttons[i];
 	}
