@@ -44,6 +44,7 @@ void	Room::callBackError(char opcode, IReadableSocket& client)
 
 bool	Room::startGame()
 {
+	int		i = 0;
 	bool	ready(false);
 	ready = false;
 	std::vector<Player *>::iterator	ite = this->_party.begin();
@@ -51,15 +52,12 @@ bool	Room::startGame()
 	std::cout << "Room (id = " << this->_id << ", nb player = "<< this->_nbReady
 				<<") attempt to create a game." << std::endl;
 	//startloading
-	while (ite != this->_party.end())
+	while (i < this->_party.size())
 	{
-		std::cout << "fail : "<< this->_udpSock->getPort() << std::endl;
 		this->_RoomCom.TCPstartLoading(this->_pack, this->_udpSock->getPort());
-		std::cout << "-----------" << std::endl;
-		this->_currentClient->getTCPSock()->send(this->_pack);
-		std::cout << "fail bis" << std::endl;
+		this->_party[i]->getClient()->getTCPSock()->send(this->_pack);
 
-		++ite;
+		i ++;
 	}
 	std::cout << "Start Loading send... Waiting UDP port confirmation ..." << std::endl;
 	// on attend udpready des clients
@@ -123,6 +121,7 @@ void	Room::roomLoop()
 		loopTimer.initialise();
 		while (i != this->_party.size())
 		{
+			std::cout << "jouge" << std::endl;
 			this->_RoomCom.TCProomState(this->_pack, *this);
 			this->_party[i]->getClient()->getTCPSock()->send(this->_pack);
 			i++;
