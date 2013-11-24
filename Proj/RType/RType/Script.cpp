@@ -12,8 +12,8 @@ Script::Script()
 
 Script::~Script(void)
 {
-	delete this->_scriptFile;
-	delete this->_patternFile;
+//	delete this->_scriptFile;
+	//delete this->_patternFile;
 }
 
 void	Script::LoadMap(std::string	*map)
@@ -64,7 +64,7 @@ void	Script::setRandomMap()
 	}
 }
 
-void	Script::getPattern()
+bool	Script::getPattern()
 {
 	int				len = 0;
 	int				pos = 0;
@@ -77,7 +77,7 @@ void	Script::getPattern()
 	if(this->_patternFile->fail())
 	{
 	  std::cout << "Script " << PATTERNFILE <<  ": No such file or directory" << std::endl;
-	  return;
+	  return (false);
 	}
 	while (std::getline(*(this->_patternFile), line))
 	{
@@ -127,9 +127,11 @@ void	Script::getPattern()
 	if (this->_patternList.size() == 0)
 	{
 		std::cout << "Patternfile is empty" << std::endl;
+		return (false);
 	}
 	else
-		std::cout << "Pattern list Retrived !" << std::endl;
+		std::cout << "Pattern list OK !" << std::endl;
+	return (true);
 }
 
 bool		Script::getRandom()

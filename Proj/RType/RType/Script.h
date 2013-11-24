@@ -51,7 +51,7 @@ public:
 	void			makeRandomScript();
 	void			setRandomMap();
 	t_scriptWave	*setRandomWave();
-	void			getPattern();
+	bool			getPattern();
 	std::vector<t_pattern>	getPatternList();
 
 	//chargement

@@ -20,7 +20,7 @@ private:
 	UDPSocketServer*	_udpSock;
 	ServerCommunication<Game>		_GameCom;
 
-	const std::vector<Player*>&	_players;
+	std::vector<Player*>&	_players;
 	std::list<Wave>			_livingThings;
 	//std::list<Clock &>		_waveTime;
 	Movement					_move;
@@ -40,7 +40,7 @@ private:
 	Packet					_pack;
 
 public:
-	Game(const std::vector<Player*>& p, Script *, UDPSocketServer *);
+	Game(std::vector<Player*>& p, Script *, UDPSocketServer *);
 	~Game();
 
 //ServerCommunication
