@@ -66,5 +66,6 @@ enum eSprites
 	JOIN_ROOM,
 	JOIN_ROOM_ON,
 	BG_IMG,
+	BG_IMG2,
 	CREDITS
 };

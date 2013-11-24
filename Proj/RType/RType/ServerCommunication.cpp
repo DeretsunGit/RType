@@ -55,7 +55,7 @@ void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 	ite = room.getPlayers().begin();
 	while (ite != room.getPlayers().end() && i < 4)
 	{
-		strncpy(players[i], (*ite)->getName().c_str(), 32);
+		strncpy(players[i], (*ite)->getClient()->getName()->c_str(), 32);
 		status[i] = (*ite)->getReady();
 		++ite;
 		++i;

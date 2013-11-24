@@ -234,6 +234,7 @@ void	GameLoop::mainLoop(void)
 {
 	PlayerShip			ship(this->_spritemgr.getSpritebyId(SHIP_BLUE_IDLE));
 	Background			bg(this->_spritemgr.getSpritebyId(BG_IMG));
+	Background			bg2(this->_spritemgr.getSpritebyId(BG_IMG2));
 	Clock				loopTimer;
 	float				execTime;
 	bool				running = true;
@@ -253,8 +254,10 @@ void	GameLoop::mainLoop(void)
 			this->sendMovement();
 		if (running)
 		{
-			bg.moveBackground();
+			bg.moveBackground(1);
+			bg2.moveBackground(2);
 			this->_window->draw(bg.getSprite());
+			this->_window->draw(bg2.getSprite());
 			if (!this->_started)
 			{
 				this->drawLobby();

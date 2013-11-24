@@ -7,7 +7,8 @@ SpriteManager::SpriteManager(void)
 	//segfault, faire une gestion derreur un peu moins inexistante
 	if (!this->_shiptexture.loadFromFile("assets/ship.gif") ||
 		!this->_menutexture.loadFromFile("assets/menu.png") ||
-		!this->_bgtexture.loadFromFile("assets/bg.png")		||
+		!this->_bgtexture.loadFromFile("assets/bg.png")	||
+		!this->_bgtexture2.loadFromFile("assets/bg2.png") ||
 		!this->_creditstexture.loadFromFile("assets/credits.png") ||
 		!this->_walltexture.loadFromFile("assets/mur.png")	||
 		!this->_enemyTexture.loadFromFile("assets/enemy.gif"))
@@ -29,6 +30,7 @@ SpriteManager::SpriteManager(void)
 	this->_sprites[WALL_UP].setTexture(this->_walltexture);
 	this->_sprites[CREDITS].setTexture(this->_creditstexture);
 	this->_sprites[BG_IMG].setTexture(this->_bgtexture);
+	this->_sprites[BG_IMG2].setTexture(this->_bgtexture2);
 	this->_sprites[SHIP_BLUE_IDLE].setTextureRect(sf::IntRect(167, 3, 32, 14));
 	this->_sprites[SHIP_BLUE_IDLE].setScale(3, 3);
 	this->_sprites[SHIP_BLUE_UPMAX].setTextureRect(sf::IntRect(233, 3, 32, 14));

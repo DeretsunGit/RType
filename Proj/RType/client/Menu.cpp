@@ -90,7 +90,7 @@ void			Menu::menuLoop()
 				this->decActive();
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down)
 				this->incActive();
-			if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return ||
+			if (this->_buttons.size() > 0 && event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return ||
 				(event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Num9) ||
 				event.key.code == sf::Keyboard::BackSpace || event.key.code == sf::Keyboard::Period ||
 				event.key.code == sf::Keyboard::Subtract)) //peu élégant voir meme totalement disgracieux
