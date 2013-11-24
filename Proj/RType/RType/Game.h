@@ -31,6 +31,7 @@ private:
 	short int				_firstColumn;
 	std::list<Element*>		_map[18][17]; // [hauteur y][largeur x]
 	short int				_globalPos;
+	short int				_nbReady;
 
 	// pools
 	std::list<Wall*>		_wallPool;
@@ -44,7 +45,7 @@ public:
 
 //ServerCommunication
 	void	inputs(void *);
-	void	pauseOk(void *);
+	void	letsPlay(void *);
 	void	callBackError(char, IReadableSocket&);
 	void	sendError(char, const char *);
 

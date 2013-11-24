@@ -6,14 +6,15 @@ template class ServerCommunication<Room>;
 Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
   : _players(p), _script(s), _udpSock(UDPsock)
 {
+	this->_GameCom.setCallback(Opcodes::letsPlay, &Game::letsPlay);
 	this->_GameCom.setCallback(Opcodes::inputs, &Game::inputs);
-//	this->_GameCom.setCallback(, &Game::pauseOk);
 	this->_GameCom.setDefaultCallback(&Game::callBackError);
 	this->_GameCom.setHandler(this);
 	this->_endGame = false;
 	this->_firstColumn = 0;
 	this->_globalPos = 17;
 	this->genPool();
+	this->_nbReady = 0;
 
 	std::cout << (this->_players[0])->getPos()._posX << "/" << (this->_players[0])->getPos()._posY << std::endl;
 
@@ -48,6 +49,12 @@ void	Game::inputs(void *data)
 		}
 		i++;
 	}
+}
+
+void	Game::letsPlay(void *data)
+{
+	// launch game if all clients said it
+	this->_nbReady ++;
 }
 
 void		Game::sendError(char errorCode, const char *message)
@@ -141,6 +148,26 @@ void	Game::genPool()
 
 bool	Game::startGame()
 {
+	bool ready= false;
+	short int i;
+
+	this->_GameCom.UDPok(this->_pack);
+	this->_udpSock->broadcast(this->_pack);
+	std::cout << "sending UDPokay" << std::endl;
+	//on attend lets play
+	this->_nbReady = 0;
+	while (ready != true)
+	{
+		i = 0;
+		while (i < this->_players.size())
+		{
+			this->_GameCom.interpretCommand(*(this->_players[i]->getClient()->getTCPSock()));
+			i++;
+		}
+		if (this->_nbReady == this->_players.size())
+			ready = true;
+	}
+	std::cout << "koukou" << std::endl;
 	return (true);
 }
 
@@ -233,12 +260,9 @@ void	Game::sendPriority()
 
 	while (i < this->_players.size())
 	{
-/*	std::cout << "Player : x->" << this->_players[i]->getPos()._posX << ", y->"<<
-			this->_players[i]->getPos()._posY << std::endl;
-	*/	elemToSend.push_back(this->_players[i]);
+		elemToSend.push_back(this->_players[i]);
 		i++;
 	}
-	//std::cout << "Sended " << i << "Players" << std::endl;
 	i = 0;
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 		{

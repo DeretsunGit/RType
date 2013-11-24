@@ -196,7 +196,7 @@ void	GameLoop::mainLoop(void)
 			this->drawScreenState();
 			this->_window->display();
 		}
-		std::cout << "in loop" << std::endl;
+//		std::cout << "in loop" << std::endl;
 		execTime = loopTimer.getTimeBySec();
 		Sleep((unsigned long)(GAMELOOPTIME - execTime));
     }
