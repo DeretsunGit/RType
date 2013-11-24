@@ -61,7 +61,7 @@ public:
 	std::list<eSprites>		getSprite() const;
 
 	void					move();
-	int						isCollision(std::list<Element*>);
+	bool					isCollision(Element*);
 	void					addToCurrentCell(t_coord);
 	void					setCell(t_coord);
 	void					checkCell();

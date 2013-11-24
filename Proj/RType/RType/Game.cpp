@@ -171,7 +171,7 @@ void	Game::gameLoop()
 				it = this->_players.erase(it);
 			}
 		}
-//		this->collision();
+		this->collision();
 		// (pop de Wave)
 		this->sendPriority((unsigned long)(GameTime.getTimeBySec() * 10));
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
@@ -198,19 +198,21 @@ void	Game::collision()
 	std::list<Wall*>::iterator				it_wall;
 	std::vector<t_coord>::const_iterator	it_coord;
 	std::vector<t_coord>					shittyvar_currentcelll;
-
+	int										i = 0;
 
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 	{
 		if ((*it_wall)->getHP() != 0)
 		{
-			shittyvar_currentcelll = ((*it_wall)->getCurrentCell());
-			for (it_coord = shittyvar_currentcelll.begin(); it_coord != shittyvar_currentcelll.end(); it_coord++)
+			i = 0;
+			while (i < this->_players.size())
+			{
+				if ((*it_wall)->isCollision(this->_players[i]) == true)
 				{
-					if ((collision_ret = (*it_wall)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX])) != -1)
-					{
-						// collision entre *it_wall et l'objet d'id collision_ret
-					}
+					if (this->_players[i]->getHP() > 0)
+						this->_players[i]->setHP(this->_players[i]->getHP() - 1);
+				}
+				i++;
 			}
 		}
 	}
@@ -370,6 +372,9 @@ bool	Game::assignWall(Wall * vWall, bool isfirst, t_coord &temp, bool isTop)
 	coord._posX = temp._posX * 100;
 	coord._posY = temp._posY * 50;
 	vWall->setPos(&coord);
+	coord._posX = 100;
+	coord._posY = 50;
+	vWall->setHitboxSize(&coord);
 	if (isfirst)
 		coord._posX = temp._posX;
 	else

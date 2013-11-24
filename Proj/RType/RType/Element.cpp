@@ -15,35 +15,28 @@ Element::~Element()
 {
 }
 
-int Element::isCollision(std::list<Element*> cell)
+bool	Element::isCollision(Element* elem)
 {
-	/*
-	// check uniquement pour les joueurs et les bullet du joueur et les murs
-	std::list<Element*>::iterator it;
-	// on check les collisions par rapport a l'environnement uniquement
-	// on determine dans quel partie de l'ecran on se trouve, et on renvoie la liste des cellules recouvertes par la hitbox
-	it = cell.begin();
-	while (it != cell.end())
+	if ((this->getFaction() != elem->getFaction()))
 	{
-		if ((this->getFaction() != (*it)->getFaction()))
+/*		std::cout << "x->" << this->_pos._posX << "/"<< elem->getPos()._posX << "--"
+		 << "y->" << this->_pos._posY << "/"<< elem->getPos()._posY << std::endl;
+		 */
+		if ((this->_pos._posX < (elem->getPos())._posX &&
+			this->_pos._posX + this->_hitboxSize._posX > (elem->getPos())._posX) ||
+			(this->_pos._posX < (elem->getPos())._posX + (elem->getHitboxSize())._posX &&
+			this->_pos._posX + this->_hitboxSize._posX > (elem->getPos())._posX  + (elem->getHitboxSize())._posX))
 		{
-			if ((this->_pos._posX < ((*it)->getPos())._posX &&
-				this->_pos._posX + this->_hitboxSize._posX > ((*it)->getPos())._posX) ||
-				(this->_pos._posX < ((*it)->getPos())._posX + ((*it)->getHitboxSize())._posX &&
-				this->_pos._posX + this->_hitboxSize._posX > ((*it)->getPos())._posX  + ((*it)->getHitboxSize())._posX))
+			if ((this->_pos._posY < (elem->getPos())._posY &&
+				this->_pos._posY + this->_hitboxSize._posY > (elem->getPos())._posY) ||
+				(this->_pos._posY < (elem->getPos())._posY + (elem->getHitboxSize())._posY &&
+				this->_pos._posY + this->_hitboxSize._posY > (elem->getPos())._posY  + (elem->getHitboxSize())._posY))
 			{
-					if ((this->_pos._posY < ((*it)->getPos())._posY &&
-					this->_pos._posY + this->_hitboxSize._posY > ((*it)->getPos())._posY) ||
-					(this->_pos._posY < ((*it)->getPos())._posY + ((*it)->getHitboxSize())._posY &&
-					this->_pos._posY + this->_hitboxSize._posY > ((*it)->getPos())._posY  + ((*it)->getHitboxSize())._posY))
-					{
-						return ((*it)->getId());
-					}
+				return (true);
 			}
 		}
-		it ++;
-	}*/
-	return (-1);
+	}
+	return (false);
 }
 
 void	Element::checkCell()

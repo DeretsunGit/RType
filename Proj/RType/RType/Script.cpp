@@ -12,7 +12,7 @@ Script::Script()
 
 Script::~Script(void)
 {
-//	delete this->_scriptFile;
+	//delete this->_scriptFile;
 	//delete this->_patternFile;
 }
 
