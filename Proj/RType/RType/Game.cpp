@@ -146,14 +146,13 @@ void	Game::gameLoop()
 	Clock	GameTime;
 	Clock	loopTimer;
 	float	execTime;
-	unsigned int i;
 	std::vector<Player*>::iterator	it = this->_players.begin();
 
 	GameTime.initialise();
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
-//		std::cout << "a" << std::endl;
+	//	std::cout << "a" << std::endl;
 		loopTimer.initialise();
 		this->moveWall();
 
@@ -199,6 +198,7 @@ void	Game::collision()
 	std::vector<t_coord>::const_iterator	it_coord;
 	std::vector<t_coord>					shittyvar_currentcelll;
 	int										i = 0;
+	t_coord									coord;
 
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
 	{
@@ -210,7 +210,12 @@ void	Game::collision()
 				if ((*it_wall)->isCollision(this->_players[i]) == true)
 				{
 					if (this->_players[i]->getHP() > 0)
+					{
+						coord._posX = 100;
+						coord._posY = 450;
 						this->_players[i]->setHP(this->_players[i]->getHP() - 1);
+						this->_players[i]->setPos(&coord);
+					}	
 				}
 				i++;
 			}

@@ -52,20 +52,32 @@ bool	Room::startGame()
 				<<") attempt to create a game." << std::endl;
 	while (i < this->_party.size())
 	{
+		std::cout << "->" << i << std::endl;
 		this->_RoomCom.TCPstartLoading(this->_pack, this->_udpSock->getPort());
 		this->_party[i]->getClient()->getTCPSock()->send(this->_pack);
 		i ++;
 	}
+	std::cout << "00001" << std::endl;
 	this->_nbReady = 0;
 	while (ready != true)
 	{
+		std::cout << "Waiting confirmation" << std::endl;
 		for (ite = this->_party.begin(); ite != this->_party.end(); ite++)
 		{
+			std::cout << "wut" << std::endl;
 			this->_RoomCom.interpretCommand(*this->_udpSock);
+			std::cout << "dafuq" << std::endl;
+
 		}
-		if (this->_nbReady == this->_party.size())
+		std::cout << (int)(this->_nbReady) << ":" << this->_party.size() << std::endl;
+		if ((int)(this->_nbReady) == this->_party.size())
 			ready = true;
+
+		Sleep(50);
+		std::cout << "end" << std::endl;
 	}
+	std::cout << "00002" << std::endl;
+
 	if (ready == true)
 	{
 		this->_script->LoadMap(this->_map);
@@ -97,6 +109,7 @@ void	Room::roomLoop()
 		loopTimer.initialise();
 		while (i != this->_party.size())
 		{
+			std::cout << "Sending roomstate"<< std::endl;
 			this->_RoomCom.TCProomState(this->_pack, *this);
 			this->_party[i]->getClient()->getTCPSock()->send(this->_pack);
 			i++;
@@ -191,18 +204,22 @@ void	Room::UDPReady(void *data)
 	int i = 0;
 	s_udp_ready *mydata = static_cast<s_udp_ready *>(data);
 
+	std::cout << "UDPREADY" << std::endl;
 	while (i < _party.size())
 	{
+		std::cout << *(_party[i]->getClient()->getName()) << "///" << mydata->nickname << std::endl;
 		if (*(_party[i]->getClient()->getName()) == mydata->nickname)
 		{
 			if (_party[i]->getClient()->getInaddr() == 0)
 			{
+				std::cout << "IZ k " << std::endl;
 				this->_nbReady ++;
 				_party[i]->getClient()->setInaddr(mydata->from);
 			}
 		}
 		++i;
 	}
+	std::cout << "Evrithing ok "<< std::endl;
 }
 
 void	Room::letsPlay(void *data)

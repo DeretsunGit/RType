@@ -137,7 +137,7 @@ public:
 		{
 			if (((*it)->getIdWave() == this->_id) && ((*it)->getHP() > 0))
 			{
-				this->_move.genericMove(MoveTypes::Linear, (*it), 1, 0);				//là il faut coder les mouvements des ennemies
+				this->_move.genericMove(Linear, (*it), 1, 0);				//là il faut coder les mouvements des ennemies
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public:
 		{
 			if (((*it)->getIdWave() == this->_id) && ((*it)->getHP() > 0))
 			{
-				this->_move.genericMove(MoveTypes::Linear, (*it), 1, 0);	
+				this->_move.genericMove(Linear, (*it), 1, 0);	
 			}
 		}
 	}
