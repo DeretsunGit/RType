@@ -182,6 +182,7 @@ void	Game::gameLoop()
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
 	while (this->_endGame != true)
 	{
+//		std::cout << "a" << std::endl;
 		loopTimer.initialise();
 		this->moveWall();
 
@@ -218,7 +219,6 @@ void	Game::collision()
 	int										collision_ret;
 	std::list<Wall*>::iterator				it_wall;
 	std::vector<t_coord>::const_iterator	it_coord;
-	std::vector<Player*>::const_iterator	it_player;
 	std::vector<t_coord>					shittyvar_currentcelll;
 
 
@@ -234,20 +234,6 @@ void	Game::collision()
 							// collision entre *it_wall et l'objet d'id collision_ret
 						}
 				}
-			}
-		}
-	for (it_player = (this->_players).begin(); it_player != (this->_players).end(); it_player++)
-		{
-			if ((*it_player)->getHP() != 0)
-			{
-				shittyvar_currentcelll = ((*it_player)->getCurrentCell());
-				for (it_coord = shittyvar_currentcelll.begin(); it_coord != shittyvar_currentcelll.end(); it_coord++)
-					{
-						if ((collision_ret = (*it_player)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX])) != -1)
-						{
-								// collision entre *it_player et l'objet d'id collision_ret
-						}
-					}
 			}
 		}
 	//ajouter ennemis

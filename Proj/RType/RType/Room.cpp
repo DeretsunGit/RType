@@ -119,6 +119,7 @@ void	Room::roomLoop()
 	std::cout << "Room " << this->_name << "Started to Loop" << std::endl;
 	while (this->_party.size() > 0 && finish == false)
 	{
+		this->_RoomCom.TCProomState(this->_pack, *this);
 		loopTimer.initialise();
 		ite = (this->_party).begin();
 		while ( (ite != (this->_party).end()))

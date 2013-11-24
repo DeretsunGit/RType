@@ -6,7 +6,7 @@
 //#include "rtype_common.h"
 #include "Clock.hpp"
 #include "Script.h"
-#include "Movement.h"
+#include "Movement.hpp"
 #include "Wave.hpp"
 #include "Wall.h"
 #include "Bullet.h"

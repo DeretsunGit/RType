@@ -17,6 +17,7 @@ Element::~Element()
 
 int Element::isCollision(std::list<Element*> cell)
 {
+	/*
 	// check uniquement pour les joueurs et les bullet du joueur et les murs
 	std::list<Element*>::iterator it;
 	// on check les collisions par rapport a l'environnement uniquement
@@ -41,7 +42,7 @@ int Element::isCollision(std::list<Element*> cell)
 			}
 		}
 		it ++;
-	}
+	}*/
 	return (-1);
 }
 
