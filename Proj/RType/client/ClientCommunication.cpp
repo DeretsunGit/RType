@@ -291,21 +291,21 @@ bool ClientCommunication<T>::TCProomState(IReadableSocket& socket) const
 	  return false;
 	}
       stack.push(datasize);
-      if ((readsize = socket.recv(name, 32)) != 32)
+      if ((readsize = socket.recv(name, 32)) != (32 * sizeof(char)))
 	{
 	  socket.putback(name, readsize);
 	  stack.put_back(socket);
 	  return false;
 	}
       stack.push(name);
-      if ((readsize = socket.recv(reinterpret_cast<char*>(block.players), sizeof(block.players))) != sizeof(block.players))
+      if ((readsize = socket.recv(reinterpret_cast<char*>(block.players[0]), (sizeof(char) * (4 * 32)))) != (sizeof(char) * (4 * 32)))
 	{
-	  socket.putback(reinterpret_cast<char*>(block.players), readsize);
+	  socket.putback(reinterpret_cast<char*>(block.players[0]), readsize);
 	  stack.put_back(socket);
 	  return false;
 	}
       stack.push(block.players);
-      if ((readsize = socket.recv(reinterpret_cast<char*>(block.playerState), sizeof(block.playerState))) != sizeof(block.playerState))
+      if ((readsize = socket.recv(reinterpret_cast<char*>(block.playerState), sizeof(bool) * 4)) != sizeof(bool) * 4)
 	{
 	  socket.putback(reinterpret_cast<char*>(block.playerState), readsize);
 	  stack.put_back(socket);

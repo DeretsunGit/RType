@@ -38,7 +38,7 @@ template<class T>
 void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 {
 	char opcode = Opcodes::roomState;
-	unsigned short datasize = htons(((32 + (4 * 32)) * sizeof(char)) + (4 * sizeof(bool)));
+	unsigned short datasize = htons(((5 * 32) * sizeof(char)) + (4 * sizeof(bool)));
 	char name[32];
 	char players[4][32];
 	bool status[4];
@@ -49,7 +49,7 @@ void ServerCommunication<T>::TCProomState(Packet& packet, Room& room)
 
 	packet.reset();
 	packet.write(&opcode, sizeof(char));
-	packet.write(reinterpret_cast<char*>(&datasize), sizeof(short));
+	packet.write(reinterpret_cast<char*>(&datasize), sizeof(unsigned short));
 	packet.write(name, 32 * sizeof(char));
 
 	ite = room.getPlayers().begin();
