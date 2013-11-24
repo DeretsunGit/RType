@@ -44,7 +44,7 @@ public:
 	void		handleStartLoading(void *);
 	void		handleScreenState(void *);
 	void		defaultCallback(char, IReadableSocket&);
-	void		handleNetwork();
+	void		handleNetwork(bool*);
 	void		mainLoop(void);
 	void		initNetwork(void);
 	void		drawScreenState(void);

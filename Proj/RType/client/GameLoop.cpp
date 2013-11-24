@@ -182,8 +182,10 @@ void	GameLoop::initNetwork(void)
 	this->_comm.interpretCommand(*this->_udpsock);
 }
 
-void	GameLoop::handleNetwork(void)
+void	GameLoop::handleNetwork(bool *running)
 {
+	if (!this->_tcpsock->isLive())
+		*running = false;
 	if (!_started)
 	{
 		this->_comm.interpretCommand(*this->_tcpsock);
@@ -242,7 +244,7 @@ void	GameLoop::mainLoop(void)
 		}
 		this->_window->clear();
 		loopTimer.initialise();
-		this->handleNetwork();
+		this->handleNetwork(&running);
         this->manageEvent(&running, &ship);
 		if (running && _started)
 			this->sendMovement();
