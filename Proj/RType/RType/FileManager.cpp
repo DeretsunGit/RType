@@ -68,7 +68,7 @@ bool FileManager::addFile(const char* path)
 
 bool FileManager::removeFileByFilename(const char* filename)
 {
-	std::list<File>::const_iterator ite = _files.begin();
+	std::list<File>::iterator ite = _files.begin();
 
 	while (ite != _files.end())
 	{
@@ -84,7 +84,7 @@ bool FileManager::removeFileByFilename(const char* filename)
 
 bool FileManager::removeFileByPath(const char* path)
 {
-	std::list<File>::const_iterator ite;
+	std::list<File>::iterator ite;
 
 	ite = std::find(_files.begin(), _files.end(), path);
 	if (ite != _files.end())
@@ -114,7 +114,7 @@ bool FileManager::loadDirectory(const char* dirPath)
 		if (std::string(data.cFileName) != std::string(".") && std::string(data.cFileName) != std::string(".."))
 			if (!loadDirectory(data.cFileName))
 			{
-				FindClose(handle);	
+				FindClose(handle);
 				return false;
 			}
 	}
@@ -146,7 +146,7 @@ bool FileManager::loadDirectory(const char* dirPath)
 	return true;
 }
 #else
-bool Filemanager::loadDirectory(const char* dirPath)
+bool FileManager::loadDirectory(const char* dirPath)
 {
 	DIR *dir;
 	struct dirent *entry;
@@ -164,7 +164,7 @@ bool Filemanager::loadDirectory(const char* dirPath)
 		if (entry->d_type == DT_DIR)
 		{
 			if (std::string(entry->d_name) != std::string(".")
-				&& std::string(entry->d_name) != std::string("..")) 
+				&& std::string(entry->d_name) != std::string(".."))
 				if (!loadDirectory(entry->d_name))
 				{
 					closedir(dir);
@@ -191,6 +191,7 @@ bool FileManager::loadList(const std::list<File>& files)
 	while (ite != files.end())
 	{
 		_files.push_back(*ite);
+		++ite;
 	}
 	_loaded = true;
 	return true;

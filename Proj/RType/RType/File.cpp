@@ -1,7 +1,5 @@
 /* FILE API by gilmai_k */
 
-#pragma once
-
 #include <cstring>
 #include <cstdio>
 #include <iostream>

@@ -60,9 +60,9 @@ public:
 
 	void	genericMove(MoveTypes mt, Element *elem, short int mult = 1, short int y = 0)
 	{
-		if (mt == MoveTypes::PlayerMove)
+		if (mt == PlayerMove)
 			this->playerMove(elem, mult, y);
-		else if (mt == MoveTypes::Linear)
+		else if (mt == Linear)
 			this->linearMove(elem, mult);
 		else
 		{
