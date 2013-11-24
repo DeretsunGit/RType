@@ -10,5 +10,6 @@ int main()
 	MainMenu			menu(renderwindow, spritemgr);
 
 	menu.menuLoop();
+	std::cout << "after main lup" << std::endl;
 	return 0;
 }

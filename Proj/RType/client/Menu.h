@@ -14,6 +14,8 @@ enum eMenus
 	INGAME
 };
 
+#define	NOTCLOSED	(this->_window->isOpen())
+
 class Menu
 {
 protected:

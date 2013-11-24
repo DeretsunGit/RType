@@ -32,7 +32,6 @@ GameLoop::GameLoop(sf::RenderWindow *window, TCPSocketClient* tcpsock)
 		_text[i].setColor(sf::Color::Magenta);
 		_text[i].setPosition(static_cast<float>(800), static_cast<float>(250 + i * 100));
 	}
-	//this->_comm.TCProomState(*this->_tcpsock);
 	this->_roomStateFilled = false;
 }
 
@@ -90,9 +89,8 @@ void	GameLoop::handleStartLoading(void *data)
 	this->_udpsock->send(this->_p);
 }
 
-void			GameLoop::defaultCallback(char opcode, IReadableSocket& sock)
+void	GameLoop::defaultCallback(char opcode, IReadableSocket& sock)
 {
-	//std::cout << "default callbak opcode :" << (int)opcode << std::endl;
 }
 
 void	GameLoop::readyUp(void)
@@ -106,7 +104,6 @@ void	GameLoop::handleUDPOkay(void *data)
 	this->_comm.TCPletsPlay(this->_p);
 	this->_tcpsock->send(this->_p);
 	this->_started = true;
-	std::cout << "in udpokay" << std::endl;
 }
 
 void	GameLoop::openBackMenu(bool *running)
@@ -130,7 +127,7 @@ void	GameLoop::manageEvent(bool *running, PlayerShip *player)
 		switch (event.type)
 		{
 			case sf::Event::Closed:
-				this->_window->close();
+				*running = false;
 				break;
 			case sf::Event::KeyPressed:
 				switch (event.key.code)

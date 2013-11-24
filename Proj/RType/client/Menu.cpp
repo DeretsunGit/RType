@@ -76,14 +76,18 @@ void			Menu::menuLoop()
 
 	logo = this->_spritemgr->getSpritebyId(GAME_LOGO);
 	logo.setPosition(1400 / 2 - static_cast<float>(logo.getTextureRect().width) / 2, 100); 
-	while (running)
+	while (running && this->_window->isOpen())
 	{
 		this->childAction();
 		sf::Event event;
         while (this->_window->pollEvent(event))
         {
 			if(event.type == sf::Event::Closed)
-				this->_window->close();
+			{
+				std::cout << "event closed" << std::endl;
+				running = false;
+				//this->_window->close();
+			}
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
 				running = false;
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
