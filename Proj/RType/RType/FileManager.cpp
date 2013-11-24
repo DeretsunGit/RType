@@ -68,7 +68,7 @@ bool FileManager::addFile(const char* path)
 
 bool FileManager::removeFileByFilename(const char* filename)
 {
-	std::list<File>::const_iterator ite = _files.begin();
+	std::list<File>::iterator ite = _files.begin();
 
 	while (ite != _files.end())
 	{
@@ -84,7 +84,7 @@ bool FileManager::removeFileByFilename(const char* filename)
 
 bool FileManager::removeFileByPath(const char* path)
 {
-	std::list<File>::const_iterator ite;
+	std::list<File>::iterator ite;
 
 	ite = std::find(_files.begin(), _files.end(), path);
 	if (ite != _files.end())
@@ -191,6 +191,7 @@ bool FileManager::loadList(const std::list<File>& files)
 	while (ite != files.end())
 	{
 		_files.push_back(*ite);
+		++ite;
 	}
 	_loaded = true;
 	return true;
