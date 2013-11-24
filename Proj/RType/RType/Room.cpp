@@ -36,7 +36,6 @@ Room::~Room(void)
 
 void	Room::callBackError(char opcode, IReadableSocket& client)
 {
-	// faire un fichier qui resume les opcodes d'erreur
 	/*std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;
 	std::cout << " can't be done while _isWaiting = true" << std::endl;*/
 	this->sendError(61, "You can't perform this action by now.");
@@ -51,16 +50,12 @@ bool	Room::startGame()
 
 	std::cout << "Room (id = " << this->_id << ", nb player = "<< this->_nbReady
 				<<") attempt to create a game." << std::endl;
-	//startloading
 	while (i < this->_party.size())
 	{
 		this->_RoomCom.TCPstartLoading(this->_pack, this->_udpSock->getPort());
 		this->_party[i]->getClient()->getTCPSock()->send(this->_pack);
-
 		i ++;
 	}
-	std::cout << "Start Loading send... Waiting UDP port confirmation ..." << std::endl;
-	// on attend udpready des clients
 	this->_nbReady = 0;
 	while (ready != true)
 	{
@@ -71,25 +66,6 @@ bool	Room::startGame()
 		if (this->_nbReady == this->_party.size())
 			ready = true;
 	}
-	
-	std::cout << "UDP is ok !" << std::endl;
-	//on leur renvoie udpokay
-/*	this->_RoomCom.UDPok(this->_pack);
-	this->_udpSock->broadcast(this->_pack);
-	std::cout << "sending UDPokay" << std::endl;
-	//on attend lets play
-	this->_nbReady = 0;
-	ready = false;
-	while (ready != true)
-	{
-		for (ite = this->_party.begin(); ite != this->_party.end(); ite++)
-		{
-			this->_RoomCom.interpretCommand(*(this->_currentClient->getTCPSock()));
-		}
-		if (this->_nbReady == this->_party.size())
-			ready = true;
-	}*/
-	std::cout << "Everybody's ok ! Game Starting !" << std::endl;
 	if (ready == true)
 	{
 		this->_script->LoadMap(this->_map);
@@ -121,7 +97,6 @@ void	Room::roomLoop()
 		loopTimer.initialise();
 		while (i != this->_party.size())
 		{
-			std::cout << "jouge" << std::endl;
 			this->_RoomCom.TCProomState(this->_pack, *this);
 			this->_party[i]->getClient()->getTCPSock()->send(this->_pack);
 			i++;
@@ -133,12 +108,16 @@ void	Room::roomLoop()
 			this->_RoomCom.interpretCommand(*(this->_currentClient->getTCPSock()));
 			if ((this->_currentClient->getRoomLeaver()) == true)
 				ite = this->_party.erase(ite);
+			else if (this->_currentClient->getTCPSock()->isLive() == false)
+			{
+				(*ite)->getClient()->setDelete(true);
+				ite = this->_party.erase(ite);
+			}
 			else
 				ite++;
 		}
 		if (this->_nbReady == this->_party.size() && this->_party.size() > 0)
 		{
-			std::cout << this->_nbReady <<" - "<< this->_party.size() << std::endl;
 			this->startGame();
 			std::cout << "----------------------GAME ENDED-----------------------"<< std::endl;
 			finish = true;
@@ -156,7 +135,6 @@ void	Room::roomLoop()
 
 void	Room::leaveRoom(void *data)
 {
-	std::cout << "LEAVER"<< std::endl;
 	this->_currentClient->setRoomLeaver(true);
 	this->_currentClient->setWaiting(true);
 	std::cout << "Leaver Ok" << std::endl;
@@ -172,8 +150,6 @@ void	Room::setMap(void *data)
 
 void	Room::changeDifficulty(void *data)
 {
-//	s_change_difficulty *dataStruct = (reinterpret_cast<s_change_difficulty *>(data));
-	std::cout << "Changing difficluty" << std::endl;
 	this->_difficulty = *(reinterpret_cast<char *>(data));
 }
 
@@ -184,7 +160,6 @@ void	Room::getFileTrunk(void *data)
 
 void	Room::setReady(void *data)
 {
-	std::cout << "Player Ready" << std::endl;
 	int i = 0;
 	std::vector<Player*>::iterator ite = _party.begin();
 
@@ -213,18 +188,15 @@ void	Room::downloadRessource(void *data)
 
 void	Room::UDPReady(void *data)
 {
-	std::cout << "I HAZ BIN CALID, ME ZI     UDPREADY !" << std::endl;
 	int i = 0;
 	s_udp_ready *mydata = static_cast<s_udp_ready *>(data);
 
-	std::cout << "name : " << mydata->nickname << std::endl;
 	while (i < _party.size())
 	{
 		if (*(_party[i]->getClient()->getName()) == mydata->nickname)
 		{
 			if (_party[i]->getClient()->getInaddr() == 0)
 			{
-				std::cout << "LOL" << std::endl;
 				this->_nbReady ++;
 				_party[i]->getClient()->setInaddr(mydata->from);
 			}
@@ -235,7 +207,6 @@ void	Room::UDPReady(void *data)
 
 void	Room::letsPlay(void *data)
 {
-	// launch game if all clients said it
 	this->_nbReady ++;
 }
 
@@ -261,7 +232,6 @@ void		Room::startLoading()
 #include <iostream>
 bool	Room::removeClient(int id)
 {
-	//this->_m.lock();
 	int i = 0;
 	std::vector<Player*>::iterator ite = _party.begin();
 
@@ -275,13 +245,11 @@ bool	Room::removeClient(int id)
 		++i;
 		++ite;
 	}
-	//this->_m.unlock();
 	return (false);
 }
 
 bool	Room::removePlayer(int id)
 {
-	//this->_m.lock();
 	int i = 0;
 	std::vector<Player*>::iterator ite = _party.begin();
 
@@ -295,25 +263,21 @@ bool	Room::removePlayer(int id)
 		++i;
 		++ite;
 	}
-	//this->_m.unlock();
 	return (false);
 }
 
 bool	Room::addClient(Client* newClient)
 {
- // this->_m.lock();
-  if (_party.size() < 2)
-  {
-    std::cout << "PUSH BACK" <<  std::endl;
 	if (this->_party.size() < 4)
-	    _party.push_back(new Player(newClient, this->validId()));
+	{
+		_party.push_back(new Player(newClient, this->validId()));
+		return (true);
+	}
 	else
+	{
 		std::cout << "This lobby is full." << std::endl;
-	this->_m.unlock();
-    return (true);
-  }
- // this->_m.unlock();
-  return (false);
+		return (false);
+	}
 }
 
 bool	Room::addPlayer(Player* player)

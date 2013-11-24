@@ -17,7 +17,7 @@ RTypeServer::RTypeServer(int port, char maxRoom, std::string blPath)
 	this->_RTypeServerCom.setHandler(this);
 	this->setMaxRoom(maxRoom);
 	this->loadDynEnnemy("koukou");
-	std::cout << "1 on " << DEBUGSTATE << " Finished..." << std::endl;
+	std::cout << "Starting server..." << std::endl;
 
 }
 
@@ -28,16 +28,12 @@ RTypeServer::~RTypeServer()
 
 void		RTypeServer::callBackError(char opcode, IReadableSocket& clientSock)
 {
-	// faire un fichier qui resume les opcodes d'erreur
-	std::cout << "Impossible Action : -"<<//0x" << std::hex <<
-		static_cast<int>(opcode);
 	std::cout << "- can't be done while _isWaiting = true" << std::endl;
 	this->sendError(60, "You can't perform this action by now.");
 }
 
 bool		RTypeServer::start()
 {
-	//this->genRoomPool(this->_maxRoom);
 	this->serverLoop();
 	return (true);
 }
@@ -48,7 +44,6 @@ bool		RTypeServer::serverLoop()
 	ITCPSocketClient*	newClient;
 	Clock	loopTimer;
 	float	execTime;
-	// création du prompt - commande de load des lib dynamiques
 
 	while (this->_isrunning)
 	{
@@ -80,8 +75,6 @@ void		RTypeServer::CheckClientAnswer()
 			if ((*it_client)->getDelete() == true)
 			{
 				temp = *it_client;
-		//	this->_clientList.erase(it_client);
-		//		delete temp;
 			}
 			else if ((*it_client)->getWaiting() == true)
 			{
@@ -122,9 +115,8 @@ void		RTypeServer::setRoom(void *data)
 				(*it_room)->setName(reinterpret_cast<char*>(data));
 				(*it_room)->addClient(this->_currentClient);
 				this->_currentClient->setWaiting(false);
-				std::cout << "6 on " << DEBUGSTATE << " Finished : " <<
-					*(this->_currentClient->getName()) << " Joined Room " <<
-					((*it_room)->getName()) << " of id : " <<
+				std::cout << "-" << *(this->_currentClient->getName()) <<
+					" created Room " << ((*it_room)->getName()) << " of id : " <<
 					static_cast<int>((*it_room)->getId()) << std::endl;
 				(*it_room)->getThread()->start();
 				return;
@@ -167,7 +159,6 @@ void		RTypeServer::leaveRoom(void *data)
 void		RTypeServer::sendRoomList()
 {
 	this->_RTypeServerCom.TCProomList(this->_pack, (this->_roomPool));
-	std::cout << "size -> " <<  this->_pack.getSize()<< std::endl;
 	this->_currentClient->getTCPSock()->send(this->_pack);
 }
 
@@ -192,7 +183,7 @@ void		RTypeServer::genRoomPool(int nbroom)
 	int		i = 0;
 	std::vector<t_pattern>	pattern;
 
-	_temp.getPattern();
+	this->_isrunning = _temp.getPattern();
 	pattern = _temp.getPatternList();
 	while (i < nbroom)
 	{

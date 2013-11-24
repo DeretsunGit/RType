@@ -1,19 +1,19 @@
 #include "Script.h"
-#include "Randomisation.cpp"
-template class Randomisation<char>;
+#include "Randomization.hpp"
+template class Randomization<char>;
 
 Script::Script()
 {
 	this->_patternFile = new std::ifstream();
 	//this->getPattern();
-	this->_rand = new Randomisation<char>;
+	this->_rand = new Randomization<char>;
 	this->_mapSize = 256;
 }
 
 Script::~Script(void)
 {
-	delete this->_scriptFile;
-	delete this->_patternFile;
+	//delete this->_scriptFile;
+	//delete this->_patternFile;
 }
 
 void	Script::LoadMap(std::string	*map)
@@ -45,7 +45,7 @@ void	Script::setRandomMap()
 	short int	topLen = 0;
 	short int	botLen = 0;
 
-	Randomisation<char> my_rand;
+	Randomization<char> my_rand;
 	while (topLen < this->_mapSize || botLen < this->_mapSize) // top
 	{
 //		std::cout << topLen << "<->" << botLen << std::endl;
@@ -64,7 +64,7 @@ void	Script::setRandomMap()
 	}
 }
 
-void	Script::getPattern()
+bool	Script::getPattern()
 {
 	int				len = 0;
 	int				pos = 0;
@@ -77,7 +77,7 @@ void	Script::getPattern()
 	if(this->_patternFile->fail())
 	{
 	  std::cout << "Script " << PATTERNFILE <<  ": No such file or directory" << std::endl;
-	  return;
+	  return (false);
 	}
 	while (std::getline(*(this->_patternFile), line))
 	{
@@ -127,9 +127,11 @@ void	Script::getPattern()
 	if (this->_patternList.size() == 0)
 	{
 		std::cout << "Patternfile is empty" << std::endl;
+		return (false);
 	}
 	else
-		std::cout << "Pattern list Retrived !" << std::endl;
+		std::cout << "Pattern list OK !" << std::endl;
+	return (true);
 }
 
 bool		Script::getRandom()

@@ -13,8 +13,8 @@ Player::Player(Client* c, int id)
 	this->_shield =		LIGHT;
 	this->setSpeed(8);
 
-	temp._posX = 50;
-	temp._posY = 30;
+	temp._posX = 100;
+	temp._posY = 50;
 	this->setHitboxSize(&temp);
 	temp._posX = 100;
 	temp._posY = 450;

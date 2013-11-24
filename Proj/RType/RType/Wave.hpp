@@ -6,7 +6,7 @@
 #include "Bullet.h"
 #include "ESprites.h"
 #include "Movement.hpp"
-//#include "Randomisation.cpp"
+#include "Randomization.hpp"
 //template class Randomisation<bool>;
 
 class Wave

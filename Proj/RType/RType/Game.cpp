@@ -3,7 +3,7 @@
 #include "ServerCommunication.cpp"
 template class ServerCommunication<Room>;
 
-Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
+Game::Game(std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
   : _players(p), _script(s), _udpSock(UDPsock)
 {
 	this->_GameCom.setCallback(Opcodes::letsPlay, &Game::letsPlay);
@@ -29,8 +29,6 @@ Game::Game(const std::vector<Player*>& p, Script *s, UDPSocketServer * UDPsock)
 void	Game::callBackError(char opcode, IReadableSocket&)
 {
 	std::cout << "Callbackerror, opcode :"<< opcode << std::endl; 
-	/*	std::cout << "Impossible Action : callback with opcode " << std::hex << opcode;
-	std::cout << " can't be done while Game is already lauched" << std::endl;*/
 	this->sendError(61, "You can't perform this action by now.");
 }
 
@@ -44,8 +42,6 @@ void	Game::inputs(void *data)
 		if (dataStruct->from == this->_players[i]->getClient()->getInaddr())
 		{
 			this->_move.genericMove(PlayerMove, this->_players[i], dataStruct->in.x, dataStruct->in.y);
-			//this->_players[i]->setshoot(dataStruct->fire);
-			//this->_players[i]->setSide(dataStruct->shield);
 		}
 		i++;
 	}
@@ -53,7 +49,6 @@ void	Game::inputs(void *data)
 
 void	Game::letsPlay(void *data)
 {
-	// launch game if all clients said it
 	this->_nbReady ++;
 }
 
@@ -61,26 +56,7 @@ void		Game::sendError(char errorCode, const char *message)
 {
 	this->_GameCom.TCPsendError(this->_pack, errorCode, message);
 }
-/*
-void	Game::TCPsend(Packet& tosend)
-{
-  std::cout << __LINE__ << std::endl;
-	std::vector<Player*>::const_iterator	it_player(this->_players.begin());
-  std::cout << __LINE__ << std::endl;
-	std::vector<Player*>::const_iterator	end(this->_players.end());
-  std::cout << __LINE__ << std::endl;
 
-  if (tosend.getSize())
-  {
-    while (it_player != end)
-    {
-      std::cout << (*it_player)->getClient() << '|' << (*it_player)->getClient()->getTCPSock() << std::endl;
-	  (*it_player)->getClient()->getTCPSock()->send(tosend);
-      ++it_player;
-    }
-  }
-}
-*/
 void	Game::mapGeneration()
 {
 	bool						assign = false;
@@ -90,10 +66,8 @@ void	Game::mapGeneration()
 	t_coord						coord;
 	std::list<Wall*>::iterator	it;
 
-	// on génère maintenant visibleMap
 		while (x < 17)
 		{
-			// on parcours topmap
 			y = 0;
 			while (y < atoi(this->_script->getMap()->_topMap.substr(x, 1).c_str()))
 			{
@@ -130,7 +104,6 @@ void	Game::mapGeneration()
 			}
 			x++;
 		}
-	std::cout << "finished !" << std::endl;
 }
 
 void	Game::genPool()
@@ -153,8 +126,6 @@ bool	Game::startGame()
 
 	this->_GameCom.UDPok(this->_pack);
 	this->_udpSock->broadcast(this->_pack);
-	std::cout << "sending UDPokay" << std::endl;
-	//on attend lets play
 	this->_nbReady = 0;
 	while (ready != true)
 	{
@@ -167,7 +138,6 @@ bool	Game::startGame()
 		if (this->_nbReady == this->_players.size())
 			ready = true;
 	}
-	std::cout << "koukou" << std::endl;
 	return (true);
 }
 
@@ -177,6 +147,7 @@ void	Game::gameLoop()
 	Clock	loopTimer;
 	float	execTime;
 	unsigned int i;
+	std::vector<Player*>::iterator	it = this->_players.begin();
 
 	GameTime.initialise();
 	std::cout << "entering the mysterious arcanes of gameloop" << std::endl; 
@@ -186,15 +157,22 @@ void	Game::gameLoop()
 		loopTimer.initialise();
 		this->moveWall();
 
-		i = 0;
-		while (i < this->_players.size())
+		it = (this->_players).begin();
+		while (it != this->_players.end())
 		{
-			this->_GameCom.interpretCommand(*this->_udpSock);
-			i ++;
+			if (this->_udpSock->isLive())
+			{
+				this->_GameCom.interpretCommand(*this->_udpSock);
+				it ++;
+			}
+			else
+			{
+				(*it)->getClient()->setDelete(true);
+				it = this->_players.erase(it);
+			}
 		}
-//		this->collision();
+		this->collision();
 		// (pop de Wave)
-		//syncMap();
 		this->sendPriority((unsigned long)(GameTime.getTimeBySec() * 10));
 		if (this->_globalPos == 256 || this->isPlayerAlive() == false)
 			this->_endGame = true;
@@ -220,23 +198,24 @@ void	Game::collision()
 	std::list<Wall*>::iterator				it_wall;
 	std::vector<t_coord>::const_iterator	it_coord;
 	std::vector<t_coord>					shittyvar_currentcelll;
-
+	int										i = 0;
 
 	for (it_wall = (this->_wallPool).begin(); it_wall != (this->_wallPool).end(); it_wall++)
+	{
+		if ((*it_wall)->getHP() != 0)
 		{
-			if ((*it_wall)->getHP() != 0)
+			i = 0;
+			while (i < this->_players.size())
 			{
-				shittyvar_currentcelll = ((*it_wall)->getCurrentCell());
-				for (it_coord = shittyvar_currentcelll.begin(); it_coord != shittyvar_currentcelll.end(); it_coord++)
-					{
-						if ((collision_ret = (*it_wall)->isCollision(_map[(*it_coord)._posY][(*it_coord)._posX])) != -1)
-						{
-							// collision entre *it_wall et l'objet d'id collision_ret
-						}
+				if ((*it_wall)->isCollision(this->_players[i]) == true)
+				{
+					if (this->_players[i]->getHP() > 0)
+						this->_players[i]->setHP(this->_players[i]->getHP() - 1);
 				}
+				i++;
 			}
 		}
-	//ajouter ennemis
+	}
 }
 
 void	Game::sendPriority(unsigned long score)
@@ -256,8 +235,8 @@ void	Game::sendPriority(unsigned long score)
 		{
 			if ((*it_wall)->getHP() != 0)
 			{
-						elemToSend.push_back(*it_wall);
-						i++;
+				elemToSend.push_back(*it_wall);
+				i++;
 			}
 		}
 	this->_GameCom.UDPscreenState(this->_pack, score, elemToSend);
@@ -323,9 +302,6 @@ void	Game::moveWall()
 			if ((*it_wall)->getHP() != 0)
 			{
 				this->_move.genericMove(Linear, (*it_wall), 1, 0);
-				/*temp._posX = (*it_wall)->getPos()._posX - (3 * (*it_wall)->getSpeed());
-				temp._posY = (*it_wall)->getPos()._posY;
-				(*it_wall)->setPos(&temp);*/
 				if ((*it_wall)->getPos()._posX <= -100 )
 				{
 					temp._posX = 0;
@@ -334,7 +310,6 @@ void	Game::moveWall()
 					(*it_wall)->setHP(0);
 					(*it_wall)->setPos(&temp);
 					(*it_wall)->setSendPriority(2);
-					//this->_map[((*it_wall)->getCurrentCell().front()._posY)][((*it_wall)->getCurrentCell().front()._posX)].clear();
 					(*it_wall)->cleanCurrentCell();
 				}
 			}
@@ -352,7 +327,6 @@ void	Game::moveWall()
 				{
 					temp._posX = 16;
 					temp._posY = y;
-				//	std::cout << "CREATED !top" <<std::endl;
 					assign = assignWall(*it_wall, false, temp, true);
 				}
 				it_wall ++;
@@ -370,7 +344,6 @@ void	Game::moveWall()
 				{
 					temp._posX = 16;
 					temp._posY = y;
-					//std::cout << "CREATED !bot" <<std::endl;
 					assign = assignWall(*it_wall, false, temp, false);
 				}
 				it_wall ++;
@@ -383,31 +356,6 @@ void	Game::moveWall()
 			this->_firstColumn++;
 		else
 			this->_firstColumn = 0;
-/*		short x;
-		y = 0;
-	while (y < 18)
-	{
-		x = this->_firstColumn;
-		while (x < 17)
-		{
-			if (this->_map[y][x].size() > 0)
-				std::cout << "[=]";
-			else
-				std::cout << "   ";
-			x ++;
-		}
-		x = 0;
-		while (x < this->_firstColumn)
-		{
-			if (this->_map[y][x].size() > 0)
-				std::cout << "[=]";
-			else
-				std::cout << "   ";
-			x ++;
-		}
-		std::cout << "-" << std::endl;
-		y ++;
-	}*/
 	}
 }
 
@@ -424,12 +372,14 @@ bool	Game::assignWall(Wall * vWall, bool isfirst, t_coord &temp, bool isTop)
 	coord._posX = temp._posX * 100;
 	coord._posY = temp._posY * 50;
 	vWall->setPos(&coord);
+	coord._posX = 100;
+	coord._posY = 50;
+	vWall->setHitboxSize(&coord);
 	if (isfirst)
 		coord._posX = temp._posX;
 	else
 		coord._posX = this->_firstColumn;
 	coord._posY = temp._posY;
-	//this->_map[coord._posY][coord._posX].push_back(vWall);
 	vWall->addToCurrentCell(coord);
 	return (true);
 }

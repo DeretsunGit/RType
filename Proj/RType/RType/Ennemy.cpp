@@ -1,6 +1,5 @@
 #include "Ennemy.h"
-#include "Randomisation.cpp"
-template class Randomisation<bool>;
+#include "Randomization.hpp"
 
 Ennemy::Ennemy(int id)
 {
