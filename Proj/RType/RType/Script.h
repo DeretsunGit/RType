@@ -8,7 +8,7 @@
 #include "rtype_common.h"
 #include "Wave.hpp"
 #include "Script.h"
-#include "Randomisation.h"
+#include "Randomization.hpp"
 
 typedef struct	s_scriptWave
 {
@@ -39,7 +39,7 @@ class Script
 	std::ifstream	*_patternFile;
 	std::ifstream	*_scriptFile;
 	std::vector<t_pattern> _patternList;
-	Randomisation<char>		*_rand;
+	Randomization<char>		*_rand;
 
 public:
 	Script();

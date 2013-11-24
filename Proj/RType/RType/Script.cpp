@@ -1,12 +1,12 @@
 #include "Script.h"
-#include "Randomisation.cpp"
-template class Randomisation<char>;
+#include "Randomization.hpp"
+template class Randomization<char>;
 
 Script::Script()
 {
 	this->_patternFile = new std::ifstream();
 	//this->getPattern();
-	this->_rand = new Randomisation<char>;
+	this->_rand = new Randomization<char>;
 	this->_mapSize = 256;
 }
 
@@ -45,7 +45,7 @@ void	Script::setRandomMap()
 	short int	topLen = 0;
 	short int	botLen = 0;
 
-	Randomisation<char> my_rand;
+	Randomization<char> my_rand;
 	while (topLen < this->_mapSize || botLen < this->_mapSize) // top
 	{
 //		std::cout << topLen << "<->" << botLen << std::endl;
